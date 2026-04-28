@@ -147,21 +147,3 @@ Word_Play/
 **Goal structure determines deception strategy, not just rate.**
 
 Aligned agents deceive reactively under pressure (4.2:1 impulsive:premeditated), while competitive agents plan strategically (4.0:1 premeditated:impulsive). This challenges the assumption that emergent AI deception is uniformly impulsive.
-
-## Citation
-
-If you use this code or findings, please cite:
-
-```
-[Paper citation to be added after publication]
-```
-
-## Acknowledgements
-
-- Original framework: WordPlay (Darci Prout)
-- LLM deception research: [Your research team]
-- OpenAI GPT-5.4 for agent reasoning and deception classification
-
-## License
-
-[Add your license here]
