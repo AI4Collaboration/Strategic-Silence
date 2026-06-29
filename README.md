@@ -31,7 +31,7 @@ Key research questions:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Jerick-1380/Emergent-Deception.git
+git clone https://github.com/Jerick-1380/LLM-Emergent-Deception.git
 cd Emergent-Deception
 ```
 
