@@ -78,6 +78,22 @@ class Inventory(Component):
         self.inventory: list[Entity] = []
         self.starting_inventory = starting_inventory or []
 
+    def add(self, item: Entity, env: Environment | None = None) -> bool:
+        if not (self.inventory_size < 0 or len(self.inventory) < self.inventory_size):
+            return False
+        self.inventory.append(item)
+        if "in_inventory" not in item.tags:
+            item.tags.append("in_inventory")
+        if env is not None and item not in env.state.entities:
+            env.instantiate_entity(item)
+        return True
+
+    def remove(self, item: Entity) -> Entity | None:
+        if item not in self.inventory:
+            return None
+        self.inventory.remove(item)
+        return item
+
     def on_instantiation(self, env: Environment, seed: int | None) -> None:
         for entity in self.starting_inventory:
             entity.position = deepcopy(self.entity.position)
@@ -87,13 +103,24 @@ class Inventory(Component):
 
     def post_actions_step(self, env: Environment) -> None:
         for obj_entity in self.inventory:
-            # TODO: we can likely do something nicer than a deepcopy (e.g., by adding some kinda of functionality to the
-            #       Position class)
             obj_entity.position = deepcopy(self.entity.position)
 
     def on_destroy(self, env):
-        # Drop items on death
         for item in self.inventory:
             item.tags.remove("in_inventory")
 
         self.inventory = []
+
+
+def inventory_items(entity: Entity) -> list[Entity]:
+    inventory = entity.get_component(Inventory)
+    if inventory is None:
+        return []
+    return list(inventory.inventory)
+
+
+def inventory_has_room(entity: Entity, count: int = 1) -> bool:
+    inventory = entity.get_component(Inventory)
+    if inventory is None:
+        return False
+    return inventory.inventory_size < 0 or len(inventory.inventory) + count <= inventory.inventory_size
