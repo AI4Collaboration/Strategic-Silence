@@ -52,8 +52,6 @@ CONDITIONS = {
 def assign_goals(condition_name: str, num_agents: int, rng: random.Random) -> List[PrivateGoal]:
     """Assign goals to agents based on experimental condition.
 
-from __future__ import annotations
-
     Each agent gets the same goal within their tier (no more sampling from pools).
 
     Args:

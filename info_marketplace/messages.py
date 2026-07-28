@@ -2,6 +2,57 @@
 
 from __future__ import annotations
 from dataclasses import dataclass, field
+from enum import Enum
+
+
+class CommunicationType(Enum):
+    REPORT = "REPORT"
+    PROMISE = "PROMISE"
+    NONE = "NONE"
+
+
+@dataclass
+class CommunicationChoice:
+    """Records an agent's communication decision for a round — including silence.
+
+    This captures the *choice* of whether to communicate, not just the content
+    of messages that were sent. Silence (NONE) is a first-class signal here.
+    """
+
+    agent_name: str
+    round_num: int
+    public_type: CommunicationType
+    private_type: CommunicationType
+    private_recipient: str | None = None
+
+    @property
+    def sent_any(self) -> bool:
+        return self.public_type != CommunicationType.NONE or self.private_type != CommunicationType.NONE
+
+    @property
+    def fully_silent(self) -> bool:
+        return self.public_type == CommunicationType.NONE and self.private_type == CommunicationType.NONE
+
+    @property
+    def silent_in_public(self) -> bool:
+        return self.public_type == CommunicationType.NONE
+
+    @property
+    def only_whispered(self) -> bool:
+        return self.public_type == CommunicationType.NONE and self.private_type != CommunicationType.NONE
+
+    def to_dict(self) -> dict:
+        return {
+            "agent": self.agent_name,
+            "round": self.round_num,
+            "public_type": self.public_type.value,
+            "private_type": self.private_type.value,
+            "private_recipient": self.private_recipient,
+            "sent_any": self.sent_any,
+            "fully_silent": self.fully_silent,
+            "silent_in_public": self.silent_in_public,
+            "only_whispered": self.only_whispered,
+        }
 
 
 @dataclass
