@@ -18,12 +18,10 @@ from info_marketplace.marketplace_actions import ScoutAction
 def test_phase1_perfect_format():
     """Test perfect format with all sections."""
     text = """PRIVATE PLAN: Gather food and deposit
-from __future__ import annotations
-
 PUBLIC MESSAGE: REPORT Forest: "Found 3 food"
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 1)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 1)
 
     assert plan == "Gather food and deposit"
     assert len(messages) == 1
@@ -38,7 +36,7 @@ def test_phase1_lowercase_headers():
 public message: report River: "water here"
 private message: none"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 2)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 2)
 
     assert "secret" in plan.lower()
     assert len(messages) == 1
@@ -51,7 +49,7 @@ def test_phase1_both_none():
 PUBLIC MESSAGE: NONE
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 3)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 3)
 
     assert "exploring" in plan.lower()
     assert len(messages) == 0
@@ -61,7 +59,7 @@ def test_phase1_free_form_text():
     """Test when output is free-form without headers."""
     text = """I'm going to explore the forest and gather some resources."""
 
-    plan, messages = parse_phase1(text, "Agent_0", 4)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 4)
 
     assert "explore" in plan.lower() or "forest" in plan.lower()
     assert len(messages) == 0
@@ -73,7 +71,7 @@ def test_phase1_invalid_region():
 PUBLIC MESSAGE: REPORT InvalidPlace: "nothing"
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 5)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 5)
 
     assert plan == "test"
     assert len(messages) == 0  # Invalid region should be skipped
@@ -85,7 +83,7 @@ def test_phase1_private_to_agent():
 PUBLIC MESSAGE: NONE
 PRIVATE MESSAGE: to Agent_2: REPORT Mines: "gold here" """
 
-    plan, messages = parse_phase1(text, "Agent_0", 6)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 6)
 
     assert len(messages) == 1
     assert not messages[0].is_public
@@ -99,7 +97,7 @@ PUBLIC MESSAGE: REPORT Forest: "first"
 PUBLIC MESSAGE: REPORT River: "second"
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 7)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 7)
 
     # Should only parse first public (before PRIVATE MESSAGE)
     public_msgs = [m for m in messages if m.is_public]
@@ -113,7 +111,7 @@ def test_phase1_about_phrasing():
 PUBLIC MESSAGE: REPORT about Plains: "found food"
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 8)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 8)
 
     assert len(messages) == 1
     assert messages[0].region_claimed == "Plains"
@@ -126,7 +124,7 @@ def test_phase1_promise_with_deadline():
 PUBLIC MESSAGE: PROMISE Agent_3: "will scout Mines" by round 10
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 5)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 5)
 
     assert len(messages) == 1
     assert isinstance(messages[0], Promise)
@@ -141,7 +139,7 @@ def test_phase1_promise_no_deadline():
 PUBLIC MESSAGE: PROMISE Agent_1: "bring water"
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 5)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 5)
 
     assert len(messages) == 1
     assert isinstance(messages[0], Promise)
@@ -150,7 +148,7 @@ PRIVATE MESSAGE: NONE"""
 
 def test_phase1_empty_input():
     """Test empty input."""
-    plan, messages = parse_phase1("", "Agent_0", 1)
+    plan, messages, _ = parse_phase1("", "Agent_0", 1)
 
     assert plan == "No output received"
     assert len(messages) == 0
@@ -162,7 +160,7 @@ def test_phase1_no_quotes_in_report():
 PUBLIC MESSAGE: REPORT Forest: found resources here.
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 1)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 1)
 
     assert len(messages) == 1
     assert "resources" in messages[0].claim.lower()
@@ -174,7 +172,7 @@ def test_phase1_fuzzy_region_normalization():
 PUBLIC MESSAGE: REPORT the Forest: "testing"
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 1)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 1)
 
     assert len(messages) == 1
     assert messages[0].region_claimed == "Forest"
@@ -420,7 +418,7 @@ def test_phase1_private_to_self():
 PUBLIC MESSAGE: NONE
 PRIVATE MESSAGE: to Agent_0: REPORT Forest: "secret" """
 
-    plan, messages = parse_phase1(text, "Agent_0", 1)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 1)
 
     # Should still parse (logic to reject is in game layer, not parser)
     assert len(messages) == 1
@@ -433,7 +431,7 @@ def test_phase1_reports_plural():
 PUBLIC MESSAGE: REPORTS Forest: "found stuff"
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 1)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 1)
 
     assert len(messages) == 1
     assert messages[0].claim == "found stuff"
@@ -445,7 +443,7 @@ def test_phase1_promises_plural():
 PUBLIC MESSAGE: PROMISES Agent_2: "will help" by round 5
 PRIVATE MESSAGE: NONE"""
 
-    plan, messages = parse_phase1(text, "Agent_0", 2)
+    plan, messages, _ = parse_phase1(text, "Agent_0", 2)
 
     assert len(messages) == 1
     assert isinstance(messages[0], Promise)

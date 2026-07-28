@@ -8,8 +8,6 @@ from typing import Optional, Dict, List, Tuple
 class MarketplaceRenderer:
     """Renders Info Marketplace trial data to PNG frames using PyGame."""
 
-from __future__ import annotations
-
     def __init__(self, trial_data: dict, sprites_dir: Path, output_dir: Path):
         """Initialize renderer with trial data and output settings.
 

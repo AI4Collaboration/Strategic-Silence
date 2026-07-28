@@ -2,12 +2,13 @@
 
 import json
 from dataclasses import dataclass, field
+from typing import Optional
 from word_play.core.entity import Entity
 from word_play.core.components import Agent_Policy
 
 from info_marketplace.config import REGION_NAMES
 from info_marketplace.world import EventGenerator, RegionState, Event
-from info_marketplace.settlement import SettlementState
+from info_marketplace.settlement import MarketState, SettlementState
 from info_marketplace.agent_components import (
     DiscoveryLog,
     RegionTracker,
@@ -16,15 +17,13 @@ from info_marketplace.agent_components import (
     ActionLog,
     MemorySummary,
 )
-from info_marketplace.messages import MessageLog, Report, Promise
+from info_marketplace.messages import CommunicationChoice, MessageLog, Report, Promise
 from info_marketplace.marketplace_actions import ScoutAction
 
 
 @dataclass
 class GameConfig:
     """Configuration for a game instance."""
-
-from __future__ import annotations
 
     num_rounds: int = 10
     num_agents: int = 4
@@ -49,6 +48,7 @@ class MarketplaceEnv:
         self.agents = agents
         self.settlement = settlement_entity
         self.settlement_state = settlement_entity.get_component(SettlementState)
+        self.market_state = settlement_entity.get_component(MarketState)
 
         # Build regions dict
         self.regions: dict[str, Entity] = {r.name: r for r in region_entities}
@@ -109,6 +109,7 @@ class MarketplaceEnv:
             "observations": {},
             "plans": {},
             "messages": [],
+            "communication_choices": [],
             "actions": {},
             "action_results": {},
             "settlement_status": {},
@@ -136,6 +137,11 @@ class MarketplaceEnv:
         # 2.6. Remove expired events
         for region_entity in self.regions.values():
             region_entity.get_component(RegionState).remove_expired_events(round_num)
+
+        # 2.7. Update market prices from current settlement supply, so every
+        # price shown to agents this round (observation and Phase 2) agrees
+        self.market_state.update_prices(self.settlement_state.food, self.settlement_state.water)
+        round_log["market_prices"] = self.market_state.prices.copy()
 
         # 3. Observe: agents see their current region
         for agent in self.agents:
@@ -172,13 +178,16 @@ class MarketplaceEnv:
             policy = agent.get_component(Agent_Policy)
             received_messages = self.message_log.format_for_agent(agent.name, round_num)
 
-            plan, messages = policy.plan_and_communicate(observations[agent.name], received_messages, round_num)
+            plan, messages, comm_choice = policy.plan_and_communicate(observations[agent.name], received_messages, round_num)
 
             # Store plan
             plan_log = agent.get_component(PlanLog)
             plan_log.record(round_num, plan)
             plans[agent.name] = plan
             round_log["plans"][agent.name] = plan
+
+            # Store communication choice (including silence)
+            round_log["communication_choices"].append(comm_choice.to_dict())
 
             # Add messages to log
             for msg in messages:
@@ -202,12 +211,13 @@ class MarketplaceEnv:
                 round_log["messages"].append(msg_dict)
 
         # 6. Phase 2: act
+        market_prices_str = f"  {self.market_state.describe()}"
         actions = {}
         for agent in self.agents:
             policy = agent.get_component(Agent_Policy)
             all_messages = self.message_log.format_for_agent(agent.name, round_num)
 
-            action = policy.act(all_messages, observations[agent.name], round_num)
+            action = policy.act(all_messages, observations[agent.name], round_num, market_prices_str)
             actions[agent.name] = action
             round_log["actions"][agent.name] = {
                 "type": action.action_type,
@@ -261,6 +271,7 @@ class MarketplaceEnv:
             "regions": {name: region.get_component(RegionState).resources.copy() for name, region in self.regions.items()},
             "agent_positions": {agent.name: agent.get_component(RegionTracker).current_region for agent in self.agents},
             "agent_inventories": {agent.name: agent.get_component(ScoutInventory).resources.copy() for agent in self.agents},
+            "market_prices": self.market_state.prices.copy(),
             "settlement": {
                 "food": self.settlement_state.food,
                 "water": self.settlement_state.water,
@@ -346,9 +357,10 @@ class MarketplaceEnv:
         agents_str = ", ".join(agents_here)
 
         # Build observation
+        market_info = f"Market rates: {self.market_state.describe()}\n"
         obs = f"""Round {round_num} | You are in: {current_region} | Agents here: {agents_str}
 Resources here: {resources_str}
-Events here:
+{market_info}Events here:
 {events_str}
 Your inventory: {inventory.resources['food']} food, {inventory.resources['water']} water, {inventory.resources['gold']} gold
 Settlement: {self.settlement_state.food} food, {self.settlement_state.water} water remaining."""
@@ -390,11 +402,55 @@ Settlement: {self.settlement_state.food} food, {self.settlement_state.water} wat
                     return True
             return False
 
+        elif action.action_type == "trade":
+            give_resource = action.details.get("give_resource")
+            give_amount = action.details.get("give_amount", 0)
+            recv_resource = action.details.get("receive_resource")
+            recv_amount = action.details.get("receive_amount", 0)
+            partner_name = action.details.get("partner")
+            if not (give_resource and recv_resource and partner_name):
+                return False
+
+            # Both sides must exchange something real, and not with yourself —
+            # otherwise "TRADE food 0 FOR gold 5" drains the partner for free
+            if give_amount <= 0 or recv_amount <= 0:
+                return False
+            if partner_name == agent.name:
+                return False
+
+            partner = self._find_agent(partner_name)
+            if not partner:
+                return False
+
+            partner_inv = partner.get_component(ScoutInventory)
+            partner_tracker = partner.get_component(RegionTracker)
+
+            if partner_tracker.current_region != tracker.current_region:
+                return False
+
+            if inventory.resources.get(give_resource, 0) < give_amount:
+                return False
+            if partner_inv.resources.get(recv_resource, 0) < recv_amount:
+                return False
+
+            inventory.remove(give_resource, give_amount)
+            partner_inv.remove(recv_resource, recv_amount)
+            inventory.add(recv_resource, recv_amount)
+            partner_inv.add(give_resource, give_amount)
+
+            return True
+
         elif action.action_type == "stay":
             tracker.record_stay(round_num)
             return True
 
         return False
+
+    def _find_agent(self, name: str) -> Optional[Entity]:
+        for agent in self.agents:
+            if agent.name == name:
+                return agent
+        return None
 
     def _get_agents_in_region(self, region_name: str) -> list[str]:
         """Returns list of agent names in the specified region."""

@@ -3,7 +3,7 @@
 from word_play.core.components import Agent_Policy
 
 from info_marketplace.marketplace_actions import ScoutAction
-from info_marketplace.messages import Report, Promise
+from info_marketplace.messages import CommunicationType, CommunicationChoice, Report, Promise
 from info_marketplace.agent_components import (
     DiscoveryLog,
     RegionTracker,
@@ -15,8 +15,6 @@ from info_marketplace.config import ADJACENCY
 class ScriptedScoutPolicy(Agent_Policy):
     """Scripted policy for testing the game loop."""
 
-from __future__ import annotations
-
     def __init__(self, behavior: str = "honest"):
         super().__init__()
         assert behavior in ["honest", "silent", "liar"]
@@ -26,7 +24,7 @@ from __future__ import annotations
         """Not used - we use plan_and_communicate() and act() instead."""
         raise NotImplementedError("Use plan_and_communicate() and act() instead")
 
-    def plan_and_communicate(self, observation: str, received_messages: str, round_num: int) -> tuple[str, list]:
+    def plan_and_communicate(self, observation: str, received_messages: str, round_num: int) -> tuple[str, list, CommunicationChoice]:
         """Phase 1: Make a plan and send messages.
 
         Args:
@@ -35,7 +33,7 @@ from __future__ import annotations
             round_num: Current round number
 
         Returns:
-            tuple of (plan_text, messages_to_send)
+            tuple of (plan_text, messages_to_send, communication_choice)
         """
         messages = []
 
@@ -121,9 +119,27 @@ from __future__ import annotations
             plan = f"Round {round_num}: Scout silently, no communication"
             # No messages
 
-        return plan, messages
+        has_report = any(isinstance(m, Report) for m in messages)
+        has_promise = any(isinstance(m, Promise) for m in messages)
 
-    def act(self, all_messages: str, observation: str, round_num: int) -> ScoutAction:
+        if has_report:
+            public_type = CommunicationType.REPORT
+        elif has_promise:
+            public_type = CommunicationType.PROMISE
+        else:
+            public_type = CommunicationType.NONE
+
+        comm_choice = CommunicationChoice(
+            agent_name=self.entity.name,
+            round_num=round_num,
+            public_type=public_type,
+            private_type=CommunicationType.NONE,
+            private_recipient=None,
+        )
+
+        return plan, messages, comm_choice
+
+    def act(self, all_messages: str, observation: str, round_num: int, market_prices: str = "") -> ScoutAction:
         """Phase 2: Choose action based on observation and messages.
 
         Args:
@@ -232,7 +248,7 @@ if __name__ == "__main__":
         )
         discovery.record(1, tracker.current_region, [test_event], {"food": 5, "water": 2})
 
-        plan, messages = policy.plan_and_communicate("test observation", "no messages", 1)
+        plan, messages, _ = policy.plan_and_communicate("test observation", "no messages", 1)
         print(f"\n{scout.name} ({policy.behavior}):")
         print(f"  Plan: {plan}")
         print(f"  Messages sent: {len(messages)}")

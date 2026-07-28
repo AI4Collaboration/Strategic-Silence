@@ -1,5 +1,7 @@
 """Experiment orchestration for the Information Marketplace simulation."""
 
+from __future__ import annotations
+
 import argparse
 import json
 import logging
@@ -37,8 +39,6 @@ logging.getLogger("httpcore").setLevel(logging.WARNING)
 class ExperimentConfig:
     """Configuration for an experiment run."""
     experiment_name: str
-from __future__ import annotations
-
     condition_name: str
     model_name: str = "gpt-5.4-mini"
     num_trials: int = 20
