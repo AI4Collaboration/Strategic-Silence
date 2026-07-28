@@ -1,3 +1,4 @@
+from __future__ import annotations
 from word_play.core import Action, Entity, Environment, Target_Is_Self
 
 
