@@ -22,6 +22,14 @@ ORTHOGONAL_GOAL = PrivateGoal(
     short_label="explorer"
 )
 
+# In the single-point world there is no travel, so the exploration goal is
+# replaced with one that is equally settlement-orthogonal but achievable.
+ORTHOGONAL_GOAL_POINT = PrivateGoal(
+    description="Personally deposit at least one unit of each resource type (food, water, gold) to the settlement by end of game.",
+    goal_tier="ORTHOGONAL",
+    short_label="collector"
+)
+
 COMPETITIVE_GOAL = PrivateGoal(
     description="End with the most total resources (food + water + gold) of any agent.",
     goal_tier="COMPETITIVE",
@@ -49,7 +57,9 @@ CONDITIONS = {
 }
 
 
-def assign_goals(condition_name: str, num_agents: int, rng: random.Random) -> List[PrivateGoal]:
+def assign_goals(
+    condition_name: str, num_agents: int, rng: random.Random, env_variant: str = "ring"
+) -> List[PrivateGoal]:
     """Assign goals to agents based on experimental condition.
 
     Each agent gets the same goal within their tier (no more sampling from pools).
@@ -69,6 +79,7 @@ def assign_goals(condition_name: str, num_agents: int, rng: random.Random) -> Li
         raise ValueError(f"Unknown condition: {condition_name}. Valid: {list(CONDITIONS.keys())}")
 
     distribution = CONDITIONS[condition_name]["goal_distribution"]
+    orthogonal_goal = ORTHOGONAL_GOAL_POINT if env_variant == "point" else ORTHOGONAL_GOAL
 
     # Build goal list based on distribution
     goals = []
@@ -76,7 +87,7 @@ def assign_goals(condition_name: str, num_agents: int, rng: random.Random) -> Li
         if tier == "ALIGNED":
             goals.extend([ALIGNED_GOAL] * count)
         elif tier == "ORTHOGONAL":
-            goals.extend([ORTHOGONAL_GOAL] * count)
+            goals.extend([orthogonal_goal] * count)
         elif tier == "COMPETITIVE":
             goals.extend([COMPETITIVE_GOAL] * count)
         else:

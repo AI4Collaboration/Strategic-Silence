@@ -66,6 +66,9 @@ class Report:
     recipient: str | None
     round_sent: int
     message_id: str = ""
+    # Agents able to hear this message (None = everyone). Set by the env in
+    # geometry variants where talking is range-limited (e.g. grid).
+    audible_to: list[str] | None = None
 
 
 @dataclass
@@ -80,6 +83,9 @@ class Promise:
     is_public: bool
     message_id: str = ""
     fulfilled: bool | None = None
+    # Agents able to hear this message (None = everyone). Set by the env in
+    # geometry variants where talking is range-limited (e.g. grid).
+    audible_to: list[str] | None = None
 
 
 class MessageLog:
@@ -105,6 +111,8 @@ class MessageLog:
         result = []
         for msg in self.messages:
             if msg.round_sent != round_num:
+                continue
+            if msg.audible_to is not None and agent_name not in msg.audible_to:
                 continue
             if msg.is_public:
                 result.append(msg)

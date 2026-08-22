@@ -1,10 +1,13 @@
 """Prompt templates for LLM-powered scouts in the Information Marketplace."""
 
-INSTRUCTIONS = """You are a scout for a shared settlement. Four scouts (Agent_0 to Agent_3) explore four regions connected in a ring:
+from info_marketplace.geometry import get_geometry
+from info_marketplace.bounty import bounty_rule_text
 
-  Forest -- River
-    |          |
-  Plains -- Mines
+
+def build_instructions() -> str:
+    """System prompt for the active geometry variant."""
+    geometry = get_geometry()
+    return f"""You are a scout for a shared settlement. {geometry.describe_map()}
 
 Each round has two phases:
 1. COMMUNICATE: Send up to 1 public message and 1 private message.
@@ -15,18 +18,18 @@ Message formats:
   PROMISE <agent>: "<what you will do>" by round <N>
 
 Action formats:
-  MOVE <region>
-  GATHER <resource>
-  DEPOSIT <resource> <amount>
-  TRADE <resource> <amount> FOR <resource> <amount> WITH Agent_X
-  STAY
+{geometry.action_grammar()}
 
-You may trade resources with other agents in the same region. Settlement prices
-fluctuate — check the current market rates. Gold is the settlement currency.
+Settlement prices fluctuate — check the current market rates. Gold is the
+settlement currency.
 
 The settlement consumes food and water each round. If either reaches 0, everyone loses.
 If the settlement survives all 10 rounds, agents are ranked by personal gold.
-You also have a personal goal."""
+You also have a personal goal.{bounty_rule_text()}"""
+
+
+# Backwards-compatible module-level instructions (baseline ring geometry)
+INSTRUCTIONS = build_instructions()
 
 
 def build_phase1_input(observation: str, goal: str, memory: str, received_messages: str) -> str:

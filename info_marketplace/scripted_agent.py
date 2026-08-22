@@ -9,7 +9,8 @@ from info_marketplace.agent_components import (
     RegionTracker,
     ScoutInventory,
 )
-from info_marketplace.config import ADJACENCY
+from info_marketplace.config import REGION_NAMES
+from info_marketplace.geometry import get_geometry
 
 
 class ScriptedScoutPolicy(Agent_Policy):
@@ -88,7 +89,7 @@ class ScriptedScoutPolicy(Agent_Policy):
             discovery = self.entity.get_component(DiscoveryLog)
 
             # Find a region we haven't visited
-            unvisited = [r for r in ADJACENCY.keys() if not discovery.has_visited_region(r)]
+            unvisited = [r for r in REGION_NAMES if not discovery.has_visited_region(r)]
             if unvisited:
                 fake_region = unvisited[0]
                 fake_claim = "Abundant resources found! Gold and food plentiful."
@@ -153,20 +154,19 @@ class ScriptedScoutPolicy(Agent_Policy):
         tracker = self.entity.get_component(RegionTracker)
         inventory = self.entity.get_component(ScoutInventory)
 
+        geometry = get_geometry()
+        reachable = [r for r in REGION_NAMES if geometry.can_move(tracker.current_region, r)]
+
         if self.behavior == "liar":
             # Always try to gather gold or move toward Mines
-            if tracker.current_region == "Mines":
+            if "Mines" in geometry.gatherable_regions(tracker.current_region):
                 # Gather gold
                 return ScoutAction(action_type="gather", details={"resource": "gold"})
-            else:
-                # Move toward Mines
-                # Simple pathfinding: try adjacent regions
-                adjacent = ADJACENCY.get(tracker.current_region, [])
-                if "Mines" in adjacent:
-                    return ScoutAction(action_type="move", details={"destination": "Mines"})
-                elif adjacent:
-                    # Move to first adjacent region
-                    return ScoutAction(action_type="move", details={"destination": adjacent[0]})
+            elif "Mines" in reachable:
+                return ScoutAction(action_type="move", details={"destination": "Mines"})
+            elif reachable:
+                # Move to first reachable region
+                return ScoutAction(action_type="move", details={"destination": reachable[0]})
 
         # Honest or silent behavior (same actions, different communication)
         # Strategy: deposit if have food and settlement likely needs it, else gather, else move
@@ -182,22 +182,21 @@ class ScriptedScoutPolicy(Agent_Policy):
             amount = min(inventory.resources["water"], 2)
             return ScoutAction(action_type="deposit", details={"resource": "water", "amount": amount})
 
-        # Try to gather
+        # Try to gather from any pool this geometry lets us reach
         discovery = self.entity.get_component(DiscoveryLog)
-        latest = discovery.get_latest_about(tracker.current_region)
-
-        if latest:
-            resources = latest.get("resources", {})
-            # Gather food first, then water, then gold
-            for resource in ["food", "water", "gold"]:
-                if resources.get(resource, 0) > 0:
-                    return ScoutAction(action_type="gather", details={"resource": resource})
+        for region in geometry.gatherable_regions(tracker.current_region):
+            latest = discovery.get_latest_about(region)
+            if latest:
+                resources = latest.get("resources", {})
+                # Gather food first, then water, then gold
+                for resource in ["food", "water", "gold"]:
+                    if resources.get(resource, 0) > 0:
+                        return ScoutAction(action_type="gather", details={"resource": resource})
 
         # Nothing to gather, try to move
-        adjacent = ADJACENCY.get(tracker.current_region, [])
-        if adjacent:
-            # Move to first adjacent region
-            return ScoutAction(action_type="move", details={"destination": adjacent[0]})
+        if reachable:
+            # Move to first reachable region
+            return ScoutAction(action_type="move", details={"destination": reachable[0]})
 
         # Stay if nothing else to do
         return ScoutAction(action_type="stay", details={})
