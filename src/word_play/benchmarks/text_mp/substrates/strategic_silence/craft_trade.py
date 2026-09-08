@@ -13,7 +13,7 @@ from .world import GeneralSilenceWorld, WorldSpec, Inventory, Supply, Communicat
 from info_marketplace.config import STARTING_RESOURCES, ADJACENCY, REGION_NAMES
 from info_marketplace.world import EventGenerator, RegionState
 from info_marketplace.agent_components import DiscoveryLog
-from info_marketplace.opportunity_policy import parse_communication
+from info_marketplace.craft_trade_protocol import parse_communication
 
 POSITIONS = {'Forest':[0,0], 'River':[1,0], 'Plains':[0,1], 'Mines':[1,1]}
 GOALS = {'aligned':'Ensure settlement survival.',

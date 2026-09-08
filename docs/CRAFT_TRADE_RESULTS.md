@@ -8,7 +8,7 @@ Snapshot: **2026-09-08 20:23 UTC**, while collection was in progress. This is a 
 python scripts/reproduce_craft_trade.py
 ```
 
-This standard-library-only command verifies SHA-256 hashes for the archived inputs and recomputes results from completed games. [Machine-readable results](../data/craft_trade/2026-09-08/derived_summary.json) and [input manifest](../data/craft_trade/2026-09-08/manifest.json) accompany it. Raw games and request/response journals are gzip-compressed JSON/JSONL; Python's `gzip` module reads them directly. No credentials are included. Opaque provider `reasoning_details.data` payloads were omitted for publication; actual actor prompts, explicit plans/messages, usage and costs are retained. This transformation is recorded in the manifest.
+This standard-library-only command verifies SHA-256 hashes for the archived inputs and recomputes results from completed games. [Machine-readable results](../data/craft_trade/2026-09-08/derived_summary.json) and [input manifest](../data/craft_trade/2026-09-08/archive.json) accompany it. The checksummed `raw_snapshot.zip` contains the per-file manifest, source provenance, and raw games/request journals as gzip-compressed JSON/JSONL; Python's `gzip` module reads them directly. No credentials are included. Opaque provider `reasoning_details.data` payloads were omitted for publication; actual actor prompts, explicit plans/messages, usage and costs are retained. This transformation is recorded in the manifest.
 
 ## Descriptive results
 

@@ -16,7 +16,7 @@ Use Python 3.10+ (3.14 used for this snapshot), install the project and requirem
 
 ```sh
 python -m pip install -e . -r requirements.txt
-PYTHONPATH=src:. python -m pytest tests/test_craft_trade_paper.py tests/test_craft_trade_taxonomy.py tests/test_parser_quote_preservation.py -q
+PYTHONPATH=src:. python -m pytest tests/test_craft_trade_paper.py tests/test_craft_trade_taxonomy.py tests/test_parser_quote_preservation.py tests/test_craft_trade_snapshot.py -q
 ```
 
 Paid collection is opt-in and requires an explicit budget and `OPENROUTER_API_KEY` in the environment or an ignored `.env`:
@@ -27,8 +27,10 @@ PYTHONPATH=src:. python scripts/run_craft_trade_paper.py run --budget-usd 10 --o
 
 The public runner uses GPT-5.4 with low reasoning, pinned to OpenAI through OpenRouter, with a shared actor/judge budget and no automatic retry. It targets 50 seeds per condition but stops before dispatch if a call cannot fit its budget. Network errors stop the run and retain reservations. Do not reuse an old output directory to raise its budget. Repository-specific historical continuation wrappers are not required to run a fresh cohort.
 
-The original plan instruction explicitly asks what is in the agent's interest to share or keep private. This is plan-elicited behavior. Actor and judge prompts are in the runner/environment and archived API journals. The original seven-file collection source bundles are under `data/craft_trade/2026-09-08/collection_sources`; fresh-run hashes differ for the portable runner metadata.
+The original plan instruction explicitly asks what is in the agent's interest to share or keep private. This is plan-elicited behavior. Actor and judge prompts are in the runner/environment and archived API journals. The original seven-file collection source bundles are inside `raw_snapshot.zip` under `collection_sources`; fresh-run hashes differ for the portable runner metadata.
 
 ## Known instrumentation boundaries
 
 STAY is physical inaction, not communication silence. Invalid output is not counted as deliberate silence. The inherited helper world includes placeholder task/action contexts; those are not the actual model inputs and must not define materiality or deadlines. Use API request journals and real environment observations for annotation. The legacy plan parser may truncate on field-like language; raw responses are preserved. The taxonomy exporter flags raw/parsed plan differences.
+
+Publication validation: 28 focused tests pass, including deterministic replay of all 26 complete archived games (every observation and post-action state) and equality of the archived/current judge prompt. Shared legacy classifier, goal prompts, event generator, geometry and scripted-policy changes unrelated to this extension are excluded.

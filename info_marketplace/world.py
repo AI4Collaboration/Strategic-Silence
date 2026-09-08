@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 import random
-import math
 from dataclasses import dataclass, field
 
 from word_play.core.components import Component
@@ -158,14 +157,7 @@ class RegionState(Component):
 class EventGenerator:
     """Generates one event per round with escalating stakes."""
 
-    def __init__(self, seed: int, weights: list[float] | None = None):
-        if weights is not None and (
-            len(weights) != len(EVENT_TYPES)
-            or any(not math.isfinite(w) or w < 0 for w in weights)
-            or sum(weights) <= 0
-        ):
-            raise ValueError("event weights must be finite, nonnegative, and have positive total")
-        self.weights = None if weights is None else list(weights)
+    def __init__(self, seed: int):
         self.rng = random.Random(seed)
         self.event_counter = 0
 
@@ -175,9 +167,7 @@ class EventGenerator:
         region = self.rng.choice(REGION_NAMES)
 
         # Event type distribution varies by round
-        if self.weights is not None:
-            weights = self.weights
-        elif round_num <= 3:
+        if round_num <= 3:
             weights = [60, 20, 10, 10]  # RESOURCE_FOUND, GOLD_FOUND, THREAT, DEPLETION
         elif round_num <= 6:
             weights = [30, 30, 20, 20]

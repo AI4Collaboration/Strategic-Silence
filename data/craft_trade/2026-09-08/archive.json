@@ -1,0 +1,7 @@
+{
+  "archive": "raw_snapshot.zip",
+  "sha256": "ee8b7906d0bf070bd7191105ad435d2a5dd55c5d484b2e5f91f5f4125b3cf7e6",
+  "snapshot_utc": "2026-09-08T20:23:12.098916+00:00",
+  "publication_transform": "Opaque reasoning_details.data payloads removed from provider responses; actor request messages, explicit generated plans/messages, usage and costs unchanged.",
+  "note": "Internal manifest verifies individual raw artifacts; derived_summary.json is reproduced from these inputs."
+}

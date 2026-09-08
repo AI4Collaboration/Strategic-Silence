@@ -10,7 +10,7 @@ from info_marketplace.pilot_runtime import BudgetedJournal,RunStopped,live_trans
 from info_marketplace.classifier import classify_message_rulebased,DeceptionLabel
 from info_marketplace.messages import Report
 from info_marketplace.ground_truth import GroundTruthLog
-from info_marketplace.opportunity_policy import parse_communication
+from info_marketplace.craft_trade_protocol import parse_communication
 
 # Reuse the existing judge prompt literally; no invocation of its keyword fallback.
 source=ROOT/'info_marketplace/classifier.py'
@@ -34,7 +34,7 @@ def write(path,value):
  path=Path(path);tmp=path.with_suffix(path.suffix+'.tmp');tmp.write_text(json.dumps(value,indent=2,default=str)+'\n');tmp.replace(path)
 
 def sources():
- paths=[Path(__file__),ROOT/'src/word_play/benchmarks/text_mp/substrates/strategic_silence/craft_trade.py',ROOT/'src/word_play/benchmarks/text_mp/substrates/strategic_silence/world.py',source,ROOT/'info_marketplace/parser.py',ROOT/'info_marketplace/pilot_runtime.py',ROOT/'info_marketplace/world.py']
+ paths=[Path(__file__),ROOT/'src/word_play/benchmarks/text_mp/substrates/strategic_silence/craft_trade.py',ROOT/'src/word_play/benchmarks/text_mp/substrates/strategic_silence/world.py',source,ROOT/'info_marketplace/parser.py',ROOT/'info_marketplace/craft_trade_protocol.py',ROOT/'info_marketplace/pilot_runtime.py',ROOT/'info_marketplace/world.py']
  return {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
 
 BUDGET_USD = 10.0

@@ -1,11 +1,24 @@
 """Verify the frozen snapshot and reproduce descriptive results without API calls."""
-import argparse,gzip,hashlib,json
+import argparse,gzip,hashlib,json,tempfile,zipfile
 from collections import Counter
 from pathlib import Path
 
 def read(p):return json.loads(gzip.decompress(p.read_bytes()))
 
 def reproduce(root):
+ if (root/'archive.json').exists():
+  metadata=json.loads((root/'archive.json').read_text());archive=root/metadata['archive']
+  if hashlib.sha256(archive.read_bytes()).hexdigest()!=metadata['sha256']:raise ValueError('Archive hash mismatch')
+  with tempfile.TemporaryDirectory() as temp:
+   target=Path(temp)
+   with zipfile.ZipFile(archive) as z:
+    for member in z.infolist():
+     if member.is_dir():continue
+     path=target/member.filename
+     if not path.resolve().is_relative_to(target.resolve()):raise ValueError('Unsafe archive path')
+     path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(z.read(member))
+   return reproduce(target)
+
  m=json.loads((root/'manifest.json').read_text())
  for path,digest in m['files'].items():
   if hashlib.sha256((root/path).read_bytes()).hexdigest()!=digest:raise ValueError('Hash mismatch: '+path)

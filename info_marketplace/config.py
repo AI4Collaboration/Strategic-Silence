@@ -28,8 +28,3 @@ STARTING_RESOURCES = {
 NUM_AGENTS = 4
 NUM_ROUNDS = 10
 STARTING_REGIONS = ["Forest", "River", "Plains", "Mines"]
-
-# Environment-wide terminal objective. The settlement must survive the full
-# configured horizon before this ranking becomes active.
-TERMINAL_RANKING_RESOURCE = "gold"
-TERMINAL_RANKING_METRIC = "personal_gold"

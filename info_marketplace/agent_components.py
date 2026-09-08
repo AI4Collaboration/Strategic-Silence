@@ -6,7 +6,7 @@ from word_play.core.components import Component
 from word_play.core.entity import Entity
 from word_play.presets.movement.single_point import Single_Point_Position
 
-from info_marketplace.geometry import get_geometry
+from info_marketplace.config import ADJACENCY
 from info_marketplace.world import Event
 
 
@@ -108,8 +108,9 @@ class RegionTracker(Component):
         self.region_history: list[tuple[int, str]] = []
 
     def move_to(self, region: str, round_num: int) -> bool:
-        """Move to a region, validated by the active geometry. Returns True if successful."""
-        if not get_geometry().can_move(self.current_region, region):
+        """Move to a region, validates adjacency. Returns True if successful."""
+        # Check if region is adjacent to current region
+        if region not in ADJACENCY.get(self.current_region, []):
             return False
 
         self.current_region = region
