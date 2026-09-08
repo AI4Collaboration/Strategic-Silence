@@ -1,18 +1,51 @@
 """Robust parser for LLM outputs in the Information Marketplace."""
 
+from __future__ import annotations
+
 import re
 import logging
-from info_marketplace.messages import Report, Promise
+from info_marketplace.messages import CommunicationChoice, CommunicationType, Report, Promise
 from info_marketplace.marketplace_actions import ScoutAction
 from info_marketplace.config import REGION_NAMES
+
+# Capture a complete, consistently quoted message, preserving contractions and
+# opposite quote characters inside its body. One capture keeps existing indices.
+_QUOTED_MESSAGE = r'''("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')'''
 
 logger = logging.getLogger(__name__)
 
 
-def parse_phase1(raw_output: str, agent_name: str, round_num: int) -> tuple[str, list]:
-    """Parse Phase 1 LLM output into plan and messages with robust fallbacks.
+def classify_communication_type(text: str | None) -> CommunicationType:
+    """Classify a raw message text as REPORT, PROMISE, or NONE.
 
-from __future__ import annotations
+    Used to classify both public and private message choices before full parsing,
+    so that silence (NONE) is captured even when no Report/Promise object is created.
+    """
+    if not text or not text.strip():
+        return CommunicationType.NONE
+    text = text.strip()
+    if re.match(r'^NONE\s*$', text, re.IGNORECASE):
+        return CommunicationType.NONE
+    if re.search(r'\bREPORT\b', text, re.IGNORECASE):
+        return CommunicationType.REPORT
+    if re.search(r'\bPROMISE\b', text, re.IGNORECASE):
+        return CommunicationType.PROMISE
+    return CommunicationType.NONE
+
+
+def _silent_choice(agent_name: str, round_num: int) -> CommunicationChoice:
+    """Default choice when nothing parseable was communicated."""
+    return CommunicationChoice(
+        agent_name=agent_name,
+        round_num=round_num,
+        public_type=CommunicationType.NONE,
+        private_type=CommunicationType.NONE,
+        private_recipient=None,
+    )
+
+
+def parse_phase1(raw_output: str, agent_name: str, round_num: int) -> tuple[str, list, CommunicationChoice]:
+    """Parse Phase 1 LLM output into plan and messages with robust fallbacks.
 
     Expected format:
     PRIVATE PLAN: <strategy text>
@@ -26,14 +59,14 @@ from __future__ import annotations
     - >1 public → first only
 
     Returns:
-        tuple of (plan_text, list of Report/Promise objects)
+        tuple of (plan_text, list of Report/Promise objects, CommunicationChoice)
     """
     try:
         messages = []
         raw_output = raw_output.strip()
 
         if not raw_output:
-            return "No output received", []
+            return "No output received", [], _silent_choice(agent_name, round_num)
 
         # Try structured parsing first
         plan, pub_msg, priv_msg = _extract_sections(raw_output)
@@ -41,11 +74,24 @@ from __future__ import annotations
         # If no clear structure, treat entire output as plan
         if plan is None and pub_msg is None and priv_msg is None:
             logger.warning(f"No clear sections found in Phase 1 output for {agent_name}")
-            return raw_output[:200] if len(raw_output) > 200 else raw_output, []
+            return raw_output[:200] if len(raw_output) > 200 else raw_output, [], _silent_choice(agent_name, round_num)
 
         # Extract plan
         if plan is None:
             plan = "No plan specified"
+
+        # Classify communication types BEFORE parsing (captures silence)
+        public_type = classify_communication_type(pub_msg)
+        private_type = classify_communication_type(priv_msg)
+        private_recipient = _extract_recipient(priv_msg) if priv_msg else None
+
+        comm_choice = CommunicationChoice(
+            agent_name=agent_name,
+            round_num=round_num,
+            public_type=public_type,
+            private_type=private_type,
+            private_recipient=private_recipient,
+        )
 
         # Parse public message
         if pub_msg:
@@ -55,17 +101,16 @@ from __future__ import annotations
 
         # Parse private message
         if priv_msg:
-            # Extract recipient
-            recipient = _extract_recipient(priv_msg)
+            recipient = private_recipient
             msg = _parse_message(priv_msg, agent_name, round_num, is_public=False, recipient=recipient)
             if msg:
                 messages.append(msg)
 
-        return plan.strip(), messages
+        return plan.strip(), messages, comm_choice
 
     except Exception as e:
         logger.error(f"Failed to parse Phase 1 output for {agent_name}: {e}")
-        return f"PARSE_FAILED: {raw_output[:200]}", []
+        return f"PARSE_FAILED: {raw_output[:200]}", [], _silent_choice(agent_name, round_num)
 
 
 def parse_phase2(raw_output: str, agent_name: str, round_num: int) -> ScoutAction:
@@ -192,7 +237,7 @@ def _parse_report(text: str, sender: str, round_num: int, is_public: bool, recip
     """
     # Standard format - capture multi-word regions like "the Forest"
     report_match = re.search(
-        r'REPORTS?\s+(?:about\s+)?([^:]+?)\s*:\s*["\'](.+?)["\']',
+        rf'REPORTS?\s+(?:about\s+)?([^:]+?)\s*:\s*{_QUOTED_MESSAGE}',
         text,
         re.IGNORECASE
     )
@@ -239,14 +284,14 @@ def _parse_promise(text: str, sender: str, round_num: int, is_public: bool, reci
     # Format 1: Standard format with deadline
     # PROMISE [to] Agent_X: "text" by round N
     promise_match = re.search(
-        r'PROMISES?\s+(?:to\s+)?(Agent_\d+)\s*:\s*["\'](.+?)["\'].*?by\s+round\s+(\d+)',
+        rf'PROMISES?\s+(?:to\s+)?(Agent_\d+)\s*:\s*{_QUOTED_MESSAGE}.*?by\s+round\s+(\d+)',
         text,
         re.IGNORECASE
     )
 
     if promise_match:
         target = promise_match.group(1)
-        commitment = promise_match.group(2).strip()
+        commitment = promise_match.group(2)[1:-1].strip()
         by_round = int(promise_match.group(3))
 
         return Promise(
@@ -261,14 +306,14 @@ def _parse_promise(text: str, sender: str, round_num: int, is_public: bool, reci
     # Format 2: Reversed format with deadline (LLM sometimes produces this)
     # to Agent_X: PROMISE "text" by round N
     promise_match = re.search(
-        r'(?:to\s+)?(Agent_\d+)\s*:\s*PROMISES?\s+["\'](.+?)["\'].*?by\s+round\s+(\d+)',
+        rf'(?:to\s+)?(Agent_\d+)\s*:\s*PROMISES?\s+{_QUOTED_MESSAGE}.*?by\s+round\s+(\d+)',
         text,
         re.IGNORECASE
     )
 
     if promise_match:
         target = promise_match.group(1)
-        commitment = promise_match.group(2).strip()
+        commitment = promise_match.group(2)[1:-1].strip()
         by_round = int(promise_match.group(3))
 
         return Promise(
@@ -282,14 +327,14 @@ def _parse_promise(text: str, sender: str, round_num: int, is_public: bool, reci
 
     # Format 3: Standard without deadline (default to +3 rounds)
     promise_match = re.search(
-        r'PROMISES?\s+(?:to\s+)?(Agent_\d+)\s*:\s*["\'](.+?)["\']',
+        rf'PROMISES?\s+(?:to\s+)?(Agent_\d+)\s*:\s*{_QUOTED_MESSAGE}',
         text,
         re.IGNORECASE
     )
 
     if promise_match:
         target = promise_match.group(1)
-        commitment = promise_match.group(2).strip()
+        commitment = promise_match.group(2)[1:-1].strip()
 
         return Promise(
             sender=sender,
@@ -303,14 +348,14 @@ def _parse_promise(text: str, sender: str, round_num: int, is_public: bool, reci
     # Format 4: Reversed without deadline
     # to Agent_X: PROMISE "text"
     promise_match = re.search(
-        r'(?:to\s+)?(Agent_\d+)\s*:\s*PROMISES?\s+["\'](.+?)["\']',
+        rf'(?:to\s+)?(Agent_\d+)\s*:\s*PROMISES?\s+{_QUOTED_MESSAGE}',
         text,
         re.IGNORECASE
     )
 
     if promise_match:
         target = promise_match.group(1)
-        commitment = promise_match.group(2).strip()
+        commitment = promise_match.group(2)[1:-1].strip()
 
         return Promise(
             sender=sender,
@@ -320,6 +365,32 @@ def _parse_promise(text: str, sender: str, round_num: int, is_public: bool, reci
             round_sent=round_num,
             is_public=is_public,
         )
+
+    # Format 5: common compact variants from smaller instruction models:
+    #   [PROMISE] Agent_0: "I will gather food"
+    #   [PROMISE] Agent_0, I will gather food
+    #   [PROMISE] Agent_0 will gather food
+    promise_match = re.search(
+        r'PROMISES?\]?\s+(?:to\s+)?(Agent_\d+)(?:\s*[:,]\s*|\s+)(.+)$',
+        text,
+        re.IGNORECASE,
+    )
+    if promise_match:
+        target = promise_match.group(1)
+        commitment = promise_match.group(2).strip().strip('"\'')
+        deadline = re.search(r'\bby\s+round\s+(\d+)\b', commitment, re.IGNORECASE)
+        by_round = int(deadline.group(1)) if deadline else round_num + 3
+        if deadline:
+            commitment = commitment[: deadline.start()].rstrip(" ,.;")
+        if commitment:
+            return Promise(
+                sender=sender,
+                target=target,
+                commitment=commitment,
+                by_round=by_round,
+                round_sent=round_num,
+                is_public=is_public,
+            )
 
     return None
 
@@ -358,6 +429,26 @@ def _parse_structured_action(text: str) -> ScoutAction | None:
         resource = normalize_resource(resource_raw)
         if resource:
             return ScoutAction(action_type="deposit", details={"resource": resource, "amount": amount})
+
+    # Parse TRADE
+    trade_match = re.match(
+        r'TRADE\s+(\w+)\s+(\d+)\s+FOR\s+(\w+)\s+(\d+)\s+WITH\s+(Agent_\d+)',
+        action_text, re.IGNORECASE
+    )
+    if trade_match:
+        give_resource = normalize_resource(trade_match.group(1))
+        give_amount = int(trade_match.group(2))
+        receive_resource = normalize_resource(trade_match.group(3))
+        receive_amount = int(trade_match.group(4))
+        partner = trade_match.group(5)
+        if give_resource and receive_resource:
+            return ScoutAction(action_type="trade", details={
+                "give_resource": give_resource,
+                "give_amount": give_amount,
+                "receive_resource": receive_resource,
+                "receive_amount": receive_amount,
+                "partner": partner,
+            })
 
     # Parse STAY
     if re.match(r'STAY', action_text, re.IGNORECASE):
@@ -479,7 +570,7 @@ if __name__ == "__main__":
 PUBLIC MESSAGE: REPORT Forest: "Found 3 food and 2 water"
 PRIVATE MESSAGE: NONE"""
 
-    plan1, msgs1 = parse_phase1(test1, "Agent_0", 1)
+    plan1, msgs1, _ = parse_phase1(test1, "Agent_0", 1)
     print(f"Test 1 (perfect format):")
     print(f"  Plan: {plan1}")
     print(f"  Messages: {len(msgs1)}")
@@ -491,7 +582,7 @@ PRIVATE MESSAGE: NONE"""
 public message: report River: "water available"
 private message: none"""
 
-    plan2, msgs2 = parse_phase1(test2, "Agent_0", 2)
+    plan2, msgs2, _ = parse_phase1(test2, "Agent_0", 2)
     print(f"\nTest 2 (lowercase):")
     print(f"  Plan: {plan2}")
     print(f"  Messages: {len(msgs2)}")
@@ -501,7 +592,7 @@ private message: none"""
 PUBLIC MESSAGE: REPORT InvalidPlace: "nothing here"
 PRIVATE MESSAGE: NONE"""
 
-    plan3, msgs3 = parse_phase1(test3, "Agent_0", 3)
+    plan3, msgs3, _ = parse_phase1(test3, "Agent_0", 3)
     print(f"\nTest 3 (invalid region):")
     print(f"  Plan: {plan3}")
     print(f"  Messages: {len(msgs3)} (should be 0)")

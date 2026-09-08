@@ -8,7 +8,7 @@ from .actions import Action_Selection
 
 # NOTE: We delibrately exclude a default __str__ method to force env creators to think about it
 # 	(We may rethink this decision at some point)
-@dataclass
+@dataclass(slots=True)
 class Observation(ABC):
     possible_actions: list[Action_Selection]
 

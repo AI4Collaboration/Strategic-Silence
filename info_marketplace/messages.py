@@ -2,6 +2,57 @@
 
 from __future__ import annotations
 from dataclasses import dataclass, field
+from enum import Enum
+
+
+class CommunicationType(Enum):
+    REPORT = "REPORT"
+    PROMISE = "PROMISE"
+    NONE = "NONE"
+
+
+@dataclass
+class CommunicationChoice:
+    """Records an agent's communication decision for a round — including silence.
+
+    This captures the *choice* of whether to communicate, not just the content
+    of messages that were sent. Silence (NONE) is a first-class signal here.
+    """
+
+    agent_name: str
+    round_num: int
+    public_type: CommunicationType
+    private_type: CommunicationType
+    private_recipient: str | None = None
+
+    @property
+    def sent_any(self) -> bool:
+        return self.public_type != CommunicationType.NONE or self.private_type != CommunicationType.NONE
+
+    @property
+    def fully_silent(self) -> bool:
+        return self.public_type == CommunicationType.NONE and self.private_type == CommunicationType.NONE
+
+    @property
+    def silent_in_public(self) -> bool:
+        return self.public_type == CommunicationType.NONE
+
+    @property
+    def only_whispered(self) -> bool:
+        return self.public_type == CommunicationType.NONE and self.private_type != CommunicationType.NONE
+
+    def to_dict(self) -> dict:
+        return {
+            "agent": self.agent_name,
+            "round": self.round_num,
+            "public_type": self.public_type.value,
+            "private_type": self.private_type.value,
+            "private_recipient": self.private_recipient,
+            "sent_any": self.sent_any,
+            "fully_silent": self.fully_silent,
+            "silent_in_public": self.silent_in_public,
+            "only_whispered": self.only_whispered,
+        }
 
 
 @dataclass
@@ -15,6 +66,9 @@ class Report:
     recipient: str | None
     round_sent: int
     message_id: str = ""
+    # Agents able to hear this message (None = everyone). Set by the env in
+    # geometry variants where talking is range-limited (e.g. grid).
+    audible_to: list[str] | None = None
 
 
 @dataclass
@@ -29,6 +83,9 @@ class Promise:
     is_public: bool
     message_id: str = ""
     fulfilled: bool | None = None
+    # Agents able to hear this message (None = everyone). Set by the env in
+    # geometry variants where talking is range-limited (e.g. grid).
+    audible_to: list[str] | None = None
 
 
 class MessageLog:
@@ -54,6 +111,8 @@ class MessageLog:
         result = []
         for msg in self.messages:
             if msg.round_sent != round_num:
+                continue
+            if msg.audible_to is not None and agent_name not in msg.audible_to:
                 continue
             if msg.is_public:
                 result.append(msg)

@@ -1,5 +1,16 @@
 # Information Marketplace: LLM Agent Deception Study
 
+## Craft/trade paper development snapshot (2026-09-08)
+
+The latest resource-game extension and a frozen **26-game development snapshot** are now available. Start with [results and reproduction](results/craft_trade/README.md), [environment and running instructions](results/craft_trade/ENVIRONMENT.md), and [taxonomy/evidence boundaries](results/craft_trade/TAXONOMY.md).
+
+```sh
+python scripts/reproduce_craft_trade.py
+```
+
+This verifies archived input hashes and recomputes completed-game results without an API key. Collection was still in progress at the snapshot cutoff; partial games are excluded. Taxonomy labels remain exploratory, and the legacy message classifier has documented errors on crafting descriptions. Do not interpret its flags as verified deception.
+
+
 An AI agent simulation studying emergent deception in resource-gathering games. This project investigates how LLM-based agents deceive under different goal structures (aligned, mixed, competitive) in a multi-agent survival environment.
 
 ## Project Overview

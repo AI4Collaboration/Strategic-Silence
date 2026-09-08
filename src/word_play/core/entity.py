@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 from .actions import Action
 from .components import Agent_Policy, Component, Non_Agent_Policy
 from .movement import Position
-
-T = TypeVar('T', bound=Component)
 
 if TYPE_CHECKING:
     from .environment import Environment
@@ -54,7 +52,7 @@ class Entity:
         for component in self.components.values():
             self.tags += component.tags
 
-    def get_component(self, component_type: type[T]) -> T | None:
+    def get_component[T: Component](self, component_type: type[T]) -> T | None:
         """
         If multiple components match the specified component type (e.g., in the case where you have two components
         inheriting from component_type), this method simply returns the first component. Use get_all_components if you
