@@ -6,7 +6,7 @@ from typing import Callable
 
 
 # TODO: do we need to add an abstract __eq__ method? tbd as needs arise
-@dataclass
+@dataclass(slots=True)
 class Position(ABC):
     # We keep Position as an ABC with no assumption because environments may have non-coordinate based positions.
     # For example, consider the enum based location-wise (ie., graph-based) positions: 'market', 'office', 'home', etc.
@@ -17,7 +17,7 @@ class Position(ABC):
 
 
 # TODO: maybe this can be made simpler and more effecient (we can likely sacrifice some generality)
-@dataclass
+@dataclass(slots=True)
 class Movement_System:
     position_type: Position
     # TODO: ANDREI: currently movement_options is unused. I like the idea of clearly defining what the movement actions

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable
 
 from .actions import Action_Selection, Target_Is_Nearby, Target_Is_Self, Target_Not_Self
@@ -9,9 +9,10 @@ from .components import Non_Agent_Policy
 from .entity import Entity
 from .movement import Movement_System, Position
 from .observation import Observation
+from .rendering import Render_Result, Renderer, Renderer_State
 
 
-@dataclass
+@dataclass(slots=True)
 class Environment_State:
     """
     Environments can inherit from the this class to track more complex states.
@@ -20,6 +21,7 @@ class Environment_State:
     """
 
     entities: list[Entity]
+    renderer_state: Renderer_State = field(default_factory=Renderer_State)
 
 
 # TODO: need to make agent_id more general then an int. This way we can make a general last() method which returns
@@ -52,6 +54,7 @@ class Environment(ABC):
         movement_system: Movement_System,
         reward_func: Callable[[list[Action_Selection, Environment]], list[float]],
         entity_order: Callable[[list[Entity], Environment], list[int]],
+        renderer: Renderer | None = None,
     ) -> None:
         """
         entity_order defines how the ordering of state.entities is changed each step. The order of state.entities
@@ -63,12 +66,23 @@ class Environment(ABC):
               reordering rules. E.g., reordering based on an entity's initiative stat.
         """
         self.description = description
-        self.state = Environment_State(entities)
+        self.renderer = renderer
+        self.state = Environment_State(entities, renderer_state=self._create_renderer_state())
+        self.cur_step = 0
         self.movement_system = movement_system
         self.reward_func = reward_func
         self.entity_order = entity_order
         self.reset()
         self.post_init()
+
+    def _create_renderer_state(self) -> Renderer_State:
+        if self.renderer is None:
+            return Renderer_State()
+        return self.renderer.create_renderer_state()
+
+    @property
+    def render_state(self) -> Renderer_State:
+        return self.state.renderer_state
 
     def post_init(self) -> None:
         """This method is called at the end of the __init__ method. It can be overwritten to provide more complex logic."""
@@ -107,19 +121,27 @@ class Environment(ABC):
         """This method is used by the reset() method to reset environment specific state."""
         pass
 
-    def render(self) -> None:
-        """This is for visualizing the environment. It is not required to be implemented."""
-        raise NotImplementedError("This environment does not support rendering.")
+    def render(self) -> Render_Result:
+        """Render via the environment's optional active renderer."""
+        if self.renderer is None:
+            raise NotImplementedError("This environment does not support rendering.")
+        result = self.renderer.render(self)
+        self.render_state.clear_events()
+        return result
 
     def reset(self, seed=None) -> None:
         self.cur_episode_seed = seed
         self._reset(seed=seed)
+        self.state.renderer_state = self._create_renderer_state()
+        self.cur_step = 0
         self._init_agent_list()
         self._init_agent_idx_dict()
         self.last_rewards = [None] * len(self.agents)
         self.terminations = [False] * len(self.agents)
         self.truncations = [False] * len(self.agents)
         self.infos = [{} for _ in self.agents]
+        self.current_action_selections = None
+        self._current_action_selections_step = None
 
         self._reorder_entities()
 
@@ -171,6 +193,8 @@ class Environment(ABC):
         agent_to_action_selection = {
             agent: action_selection for agent, action_selection in zip(self.agents, action_selections)
         }
+        self.current_action_selections = action_selections
+        self._current_action_selections_step = self.cur_step
 
         self.environment_start_of_step(action_selections)
 
@@ -195,8 +219,9 @@ class Environment(ABC):
             entity.post_actions_step(env=self)
 
         self.environment_end_of_step(action_selections)
-        self.last_rewards = self.reward_func(action_selections, self)
 
+        self.last_rewards = self.reward_func(action_selections, self)
+        self.cur_step += 1
         self._reorder_entities()
 
     def last(self, agent_id: int) -> tuple[Observation, float, bool, bool, dict]:
@@ -238,10 +263,15 @@ class Environment(ABC):
         for action in entity.actions:
             if any(isinstance(rule, Target_Is_Self) for rule in action.validation_rules):
                 possible_targets = [entity]
+            elif any(
+                isinstance(rule, Target_Is_Nearby) and rule.target_is_nearby is not None
+                for rule in action.validation_rules
+            ):
+                possible_targets = self.state.entities.copy()
             elif any(isinstance(rule, Target_Is_Nearby) for rule in action.validation_rules):
                 possible_targets = nearby_entities.copy()
             else:
-                possible_targets = self.state.entities
+                possible_targets = self.state.entities.copy()
 
             if any(isinstance(rule, Target_Not_Self) for rule in action.validation_rules):
                 possible_targets.remove(entity)
