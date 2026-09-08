@@ -1,6 +1,6 @@
 # Paper-compatible craft/trade extension
 
-The native Word_Play implementation is [craft_trade.py](../src/word_play/benchmarks/text_mp/substrates/strategic_silence/craft_trade.py). This is a resource/survival extension, not evidence of generalization beyond that family.
+The native Word_Play implementation is [craft_trade.py](../../src/word_play/benchmarks/text_mp/substrates/strategic_silence/craft_trade.py). This is a resource/survival extension, not evidence of generalization beyond that family.
 
 ## Protocol
 

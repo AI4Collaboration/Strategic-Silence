@@ -1,5 +1,13 @@
 # Project-specific
-results/
+results/*
+!results/craft_trade/
+results/craft_trade/*
+!results/craft_trade/README.md
+!results/craft_trade/ENVIRONMENT.md
+!results/craft_trade/TAXONOMY.md
+!results/craft_trade/archive.json
+!results/craft_trade/summary.json
+!results/craft_trade/raw_snapshot.zip
 output/
 .DS_Store
 *.txt

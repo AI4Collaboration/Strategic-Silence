@@ -2,7 +2,7 @@
 
 ## Craft/trade paper development snapshot (2026-09-08)
 
-The latest resource-game extension and a frozen **26-game development snapshot** are now available. Start with [results and reproduction](docs/CRAFT_TRADE_RESULTS.md), [environment and running instructions](docs/CRAFT_TRADE_ENVIRONMENT.md), and [taxonomy/evidence boundaries](docs/CRAFT_TRADE_TAXONOMY.md).
+The latest resource-game extension and a frozen **26-game development snapshot** are now available. Start with [results and reproduction](results/craft_trade/README.md), [environment and running instructions](results/craft_trade/ENVIRONMENT.md), and [taxonomy/evidence boundaries](results/craft_trade/TAXONOMY.md).
 
 ```sh
 python scripts/reproduce_craft_trade.py

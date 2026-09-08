@@ -47,6 +47,6 @@ def reproduce(root):
  return result
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--snapshot',type=Path,default=Path(__file__).resolve().parents[1]/'data/craft_trade/2026-09-08');p.add_argument('--output',type=Path);a=p.parse_args();r=reproduce(a.snapshot);text=json.dumps(r,indent=2)+'\n'
+ p=argparse.ArgumentParser();p.add_argument('--snapshot',type=Path,default=Path(__file__).resolve().parents[1]/'results/craft_trade');p.add_argument('--output',type=Path);a=p.parse_args();r=reproduce(a.snapshot);text=json.dumps(r,indent=2)+'\n'
  if a.output:a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(text)
  print(text)

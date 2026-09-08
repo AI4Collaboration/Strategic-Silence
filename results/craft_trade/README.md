@@ -8,7 +8,7 @@ Snapshot: **2026-09-08 20:23 UTC**, while collection was in progress. This is a 
 python scripts/reproduce_craft_trade.py
 ```
 
-This standard-library-only command verifies SHA-256 hashes for the archived inputs and recomputes results from completed games. [Machine-readable results](../data/craft_trade/2026-09-08/derived_summary.json) and [input manifest](../data/craft_trade/2026-09-08/archive.json) accompany it. The checksummed `raw_snapshot.zip` contains the per-file manifest, source provenance, and raw games/request journals as gzip-compressed JSON/JSONL; Python's `gzip` module reads them directly. No credentials are included. Opaque provider `reasoning_details.data` payloads were omitted for publication; actual actor prompts, explicit plans/messages, usage and costs are retained. This transformation is recorded in the manifest.
+This standard-library-only command verifies SHA-256 hashes for the archived inputs and recomputes results from completed games. [Machine-readable results](summary.json) and [input manifest](archive.json) accompany it. The checksummed `raw_snapshot.zip` contains the per-file manifest, source provenance, and raw games/request journals as gzip-compressed JSON/JSONL; Python's `gzip` module reads them directly. No credentials are included. Opaque provider `reasoning_details.data` payloads were omitted for publication; actual actor prompts, explicit plans/messages, usage and costs are retained. This transformation is recorded in the manifest.
 
 ## Descriptive results
 
@@ -46,4 +46,8 @@ These examples were inspected during development and must not later be represent
 5. The environment is an extension of the original resource/survival game, not an independent non-resource environment.
 6. Source snapshots retain the original collection runner and hashes. The public runner changes portability/budget configuration only; it does not rewrite archived prompts, model outputs, or labels.
 
-See [environment](CRAFT_TRADE_ENVIRONMENT.md) and [annotation scope](CRAFT_TRADE_TAXONOMY.md).
+See [environment](ENVIRONMENT.md) and [annotation scope](TAXONOMY.md).
+
+## Folder contents
+
+This is the single publication folder for the craft/trade study: `summary.json` contains reproducible counts, `archive.json` identifies and hashes `raw_snapshot.zip`, and the three Markdown files describe findings, environment and taxonomy. Raw games, API journals, partial runs and collection sources stay inside the archive rather than appearing as individual repository files. Active local collection directories remain ignored and are not moved while the experiment runs.

@@ -6,7 +6,7 @@ from word_play.benchmarks.text_mp.substrates.strategic_silence.craft_trade impor
 ROOT=Path(__file__).resolve().parents[1]
 
 def test_completed_games_replay_exactly():
- with zipfile.ZipFile(ROOT/'data/craft_trade/2026-09-08/raw_snapshot.zip') as z:
+ with zipfile.ZipFile(ROOT/'results/craft_trade/raw_snapshot.zip') as z:
   manifest=json.loads(z.read('manifest.json'))
   for batch in manifest['batches']:
    for gid in batch['completed_game_ids']:
@@ -26,6 +26,6 @@ def test_original_judge_prompt_unchanged():
  def prompt(source):
   tree=ast.parse(source);fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='classify_premeditation_llm')
   return ast.dump(next(n.value for n in fn.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='prompt' for t in n.targets)))
- with zipfile.ZipFile(ROOT/'data/craft_trade/2026-09-08/raw_snapshot.zip') as z:
+ with zipfile.ZipFile(ROOT/'results/craft_trade/raw_snapshot.zip') as z:
   original=z.read('collection_sources/craft_trade_paper_v2_2026_09_08/info_marketplace/classifier.py').decode()
  assert prompt(original)==prompt((ROOT/'info_marketplace/classifier.py').read_text())
