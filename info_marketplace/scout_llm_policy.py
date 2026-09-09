@@ -1,15 +1,18 @@
 """LLM-powered scout policy using OpenAI Responses API with reasoning models."""
 
+from __future__ import annotations
+
 import os
 import time
-from openai import OpenAI
 
 from word_play.core.components import Agent_Policy
 
-from info_marketplace.prompts import INSTRUCTIONS, build_phase1_input, build_phase2_input
+from info_marketplace.prompts import build_instructions, build_phase1_input, build_phase2_input
 from info_marketplace.parser import parse_phase1, parse_phase2
 from info_marketplace.agent_components import PrivateGoal, MemorySummary, PlanLog
 from info_marketplace.marketplace_actions import ScoutAction
+from info_marketplace.messages import CommunicationChoice
+from info_marketplace.llm_client import call_llm
 from info_marketplace.load_env import load_env
 
 # Load environment variables from .env file
@@ -18,8 +21,6 @@ load_env()
 
 class ScoutLLMPolicy(Agent_Policy):
     """LLM-powered scout using OpenAI Responses API with reasoning models.
-
-from __future__ import annotations
 
     Uses the Responses API (responses.create) which differs from Chat Completions:
     - Uses `input` (not `messages`) and `instructions` (not `system`)
@@ -36,7 +37,7 @@ from __future__ import annotations
         super().__init__()
         self.model_name = model_name
         self.reasoning_effort = reasoning_effort
-        self.client = OpenAI(api_key=api_key or os.environ.get("OPENAI_API_KEY"))
+        self.api_key = api_key
         self.call_log: list[dict] = []  # log all inputs/outputs for analysis
 
     def select_action(self, observation):
@@ -45,7 +46,7 @@ from __future__ import annotations
 
     def plan_and_communicate(
         self, observation: str, received_messages: str, round_num: int
-    ) -> tuple[str, list]:
+    ) -> tuple[str, list, CommunicationChoice]:
         """Phase 1: call LLM for private plan + messages."""
         agent = self.entity
         goal = agent.get_component(PrivateGoal).description
@@ -64,15 +65,15 @@ from __future__ import annotations
             }
         )
 
-        plan, messages = parse_phase1(raw, agent.name, round_num)
-        return plan, messages
+        plan, messages, comm_choice = parse_phase1(raw, agent.name, round_num)
+        return plan, messages, comm_choice
 
-    def act(self, all_messages: str, observation: str, round_num: int) -> ScoutAction:
+    def act(self, all_messages: str, observation: str, round_num: int, market_prices: str = "") -> ScoutAction:
         """Phase 2: call LLM for action choice."""
         agent = self.entity
         plan = agent.get_component(PlanLog).get_plan(round_num) or ""
 
-        input_text = build_phase2_input(all_messages, observation, plan)
+        input_text = build_phase2_input(all_messages, observation, plan, market_prices)
         raw = self._call_llm(input_text)
 
         self.call_log.append(
@@ -102,14 +103,14 @@ from __future__ import annotations
         """
         for attempt in range(3):
             try:
-                response = self.client.responses.create(
-                    model=self.model_name,
-                    instructions=INSTRUCTIONS,
-                    input=input_text,
-                    reasoning={"effort": self.reasoning_effort},
+                return call_llm(
+                    model_name=self.model_name,
+                    instructions=build_instructions(),
+                    input_text=input_text,
+                    reasoning_effort=self.reasoning_effort,
                     max_output_tokens=3000,  # Large budget to avoid truncation with reasoning
+                    api_key=self.api_key,
                 )
-                return response.output_text
             except Exception as e:
                 if attempt == 2:
                     return f"API_ERROR: {str(e)}"
@@ -185,7 +186,7 @@ Settlement: 8 food, 7 water remaining."""
     print(sample_received)
     print("\n--- Calling LLM for Phase 1 ---")
 
-    plan, messages = policy.plan_and_communicate(sample_observation, sample_received, 1)
+    plan, messages, comm_choice = policy.plan_and_communicate(sample_observation, sample_received, 1)
 
     print("\n=== Phase 1 Results ===")
     print(f"\nPlan: {plan}")

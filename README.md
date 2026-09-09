@@ -142,8 +142,42 @@ Word_Play/
 - Mixed: 100% (50/50)
 - All Competitive: 94% (47/50)
 
+### Selective-disclosure review: LLM reviewed and human-validated sample
+
+The frozen 26-game craft/trade cohort has a separate, exploratory selective-disclosure annotation layer. Three Luna reviewers assessed all 944 speaking rounds; this does not replace the original Appendix C labels or the strategic-silence metric. A fixed random 10% sample includes 29 all-competitive cases that were manually reviewed by the user using a blinded packet before Luna's judgments were revealed. This is human validation of that sampled competitive subset only, not human adjudication of every annotation. The complete data, exact evidence, sample seed, and review protocol are in [`artifacts/luna_full_cohort_selective_disclosure_2026_09_08/`](artifacts/luna_full_cohort_selective_disclosure_2026_09_08/).
+
 ## Core Insight
 
 **Goal structure determines deception strategy, not just rate.**
 
 Aligned agents deceive reactively under pressure (4.2:1 impulsive:premeditated), while competitive agents plan strategically (4.0:1 premeditated:impulsive). This challenges the assumption that emergent AI deception is uniformly impulsive.
+
+## Next: Perturbation Experiments (planned)
+
+The findings above are observational (three fixed goal conditions). The next phase tests *why* agents go silent, via three perturbations (environment, 4 agents, 10 rounds, 50 trials/cell held fixed):
+
+1. **Verifiability audits (unraveling test)** — audit statements+omissions against discovery logs with probability p ∈ {0, 0.25, 0.5, 1.0}, penalty on detected concealment. Disclosure theory (Grossman–Milgrom unraveling) predicts silence collapses as p rises; measuring whether LLM agents unravel is the theory contribution.
+2. **Detection-pressure substitution** — fact-check explicit false claims (probability q) but never omissions. Hypothesis: total deception doesn't drop, it *migrates* from fabrication to silence. Key figure: fabrication:omission composition vs. q.
+3. **Incentive gradient** — replace discrete conditions with reward αR_indiv + (1−α)R_collective, α ∈ {0, .25, .5, .75, 1}; test for smooth onset vs. sharp transition of silent premeditation.
+
+Plus: topology axis (grid/ring/point runs already in `results/`) and cross-model generalization (DeepSeek runs in progress; add one more family).
+
+**Prerequisites before any perturbation results count:** merge the silence/NONE parsing fix (PR #2), validate the LLM judge against ~200-300 human-annotated messages (report per-category agreement, especially omission), and re-run the 3×50 baseline grid post-fix to confirm the headline numbers.
+
+## Pilot results: Deception bounty (2026-08-21)
+
+Implemented in `info_marketplace/bounty.py` (+ `--bounty`, `--bounty-undisclosed` flags; analysis in `scripts/analyze_bounty.py`). Mechanical detection, no LLM judge: **lure** (public overstatement vs own discovery log + rival moves there) and **concealment** (gather gold observed but never publicly reported). All-competitive, ring, deepseek-chat, 6 trials/cell:
+
+| b | events/trial (lure:conceal) | silence rate | reports/trial |
+|---|---|---|---|
+| 0 (rule absent) | 0.8 (0.67 : 0.17) | 0.16 | 31.2 |
+| 3 (disclosed) | 3.3 (1.17 : 2.17) | 0.84 | 5.0 |
+| 8 (disclosed) | 3.5 (0.00 : 3.50) | 0.88 | 3.8 |
+| 8 (undisclosed) | 0.3 (0.17 : 0.17) | 0.15 | 30.2 |
+
+Preliminary findings (n=6, single model — needs replication before any claim):
+1. **Described incentives drive deception; experienced payoffs alone do not.** Undisclosed b=8 is indistinguishable from b=0; the entire effect requires the rule in the prompt. Within a 10-round horizon, agents do not adapt to unannounced payouts (note: few payout events occur undisclosed, so this arm is a control for the disclosed effect, not a powered test of experiential learning).
+2. **Price inverts the deception channel.** Disclosed b=3 → mixed lure+concealment; disclosed b=8 → zero lures, pure concealment (all 6 trials). Higher stated payoff shifts deception entirely into silence — the channel honesty training does not police.
+3. Public communication collapses (~31 → ~4 reports/trial) once a deception payoff is disclosed.
+
+Next: replicate on a second model family; itemize payout feedback for a powered experiential-learning arm; sweep smaller b for the supply-curve threshold.

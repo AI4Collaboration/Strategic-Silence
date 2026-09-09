@@ -109,7 +109,7 @@ for goal_idx, goal in enumerate(goals):
         print('-'*70)
 
         # Phase 1: plan_and_communicate
-        plan, messages = policy.plan_and_communicate(
+        plan, messages, _ = policy.plan_and_communicate(
             scenario["observation"],
             scenario["received_messages"],
             5 + scenario_idx

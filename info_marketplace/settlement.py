@@ -1,14 +1,45 @@
 """Settlement components for the Information Marketplace simulation."""
 
+from __future__ import annotations
+
 from word_play.core.components import Component
 from word_play.core.entity import Entity
 from word_play.presets.movement.single_point import Single_Point_Position
 
 
+class MarketState(Component):
+    """Tracks dynamic resource prices and trade activity at the settlement level.
+
+    Prices respond to supply/demand: when the settlement is low on a resource,
+    its price rises. Base prices are initialized from config constants.
+    """
+
+    BASE_PRICES = {"food": 5, "water": 3, "gold": 10}
+
+    def __init__(self):
+        super().__init__()
+        self.prices: dict[str, float] = self.BASE_PRICES.copy()
+
+    def update_prices(self, settlement_food: int, settlement_water: int):
+        """Update prices based on current settlement supply.
+
+        Lower supply increases price. Gold price is fixed (numeraire).
+        """
+        self.prices["food"] = round(self.BASE_PRICES["food"] * max(0.5, 10.0 / max(1, settlement_food + 5)), 1)
+        self.prices["water"] = round(self.BASE_PRICES["water"] * max(0.5, 10.0 / max(1, settlement_water + 3)), 1)
+        self.prices["gold"] = self.BASE_PRICES["gold"]
+
+    def describe(self) -> str:
+        """Single agent-facing rendering of current prices."""
+        return (
+            f"food: {self.prices['food']}g, "
+            f"water: {self.prices['water']}g, "
+            f"gold: {self.prices['gold']}g (numeraire)"
+        )
+
+
 class SettlementState(Component):
     """Word_Play Component tracking the shared settlement's resources."""
-
-from __future__ import annotations
 
     def __init__(
         self,
@@ -90,6 +121,7 @@ def create_settlement_entity(starting_food: int = 20, starting_water: int = 15) 
         position=Single_Point_Position(),
         components=[
             SettlementState(food=starting_food, water=starting_water),
+            MarketState(),
         ],
         tags=["settlement"],
     )

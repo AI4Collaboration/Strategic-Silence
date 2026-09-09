@@ -1,6 +1,9 @@
 """Results aggregation and analysis for Information Marketplace experiments."""
 
+from __future__ import annotations
+
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Any
 import logging
@@ -8,10 +11,95 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def compute_silence_market_stats(trials: List[Dict]) -> Dict[str, Any]:
+    """Compute the silence and market summary blocks from raw trial dicts.
+
+    Shared by aggregate_results and scripts/analyze_experiment.py so the two
+    reports can't drift apart.
+    """
+    total_agent_rounds = 0
+    total_fully_silent = 0
+    total_silent_public = 0
+    total_only_whispered = 0
+    total_communicated = 0
+    total_trade_actions = 0
+    total_trade_successes = 0
+
+    silence_by_round: Dict[int, Dict[str, int]] = defaultdict(lambda: {"silent": 0, "total": 0})
+    silence_by_tier = {
+        "ALIGNED": {"silent": 0, "total": 0},
+        "ORTHOGONAL": {"silent": 0, "total": 0},
+        "COMPETITIVE": {"silent": 0, "total": 0},
+    }
+
+    for trial in trials:
+        goals = trial.get("goals", [])
+        for round_data in trial.get("game_log", {}).get("rounds", []):
+            round_num = round_data["round"]
+
+            for choice in round_data.get("communication_choices", []):
+                total_agent_rounds += 1
+                if choice.get("fully_silent"):
+                    total_fully_silent += 1
+                    silence_by_round[round_num]["silent"] += 1
+                if choice.get("sent_any"):
+                    total_communicated += 1
+                if choice.get("silent_in_public"):
+                    total_silent_public += 1
+                if choice.get("only_whispered"):
+                    total_only_whispered += 1
+                silence_by_round[round_num]["total"] += 1
+
+                goal_tier = _get_goal_tier(goals, choice.get("agent", ""))
+                if goal_tier:
+                    silence_by_tier[goal_tier]["total"] += 1
+                    if choice.get("fully_silent"):
+                        silence_by_tier[goal_tier]["silent"] += 1
+
+            # Count trades from the structured action type, not the description
+            # string, and only count successes the env actually resolved
+            action_results = round_data.get("action_results", {})
+            for agent_name, action_info in round_data.get("actions", {}).items():
+                if action_info.get("type") == "trade":
+                    total_trade_actions += 1
+                    if action_results.get(agent_name, {}).get("success"):
+                        total_trade_successes += 1
+
+    silence_rate = total_fully_silent / total_agent_rounds if total_agent_rounds > 0 else 0.0
+    partial_silence_rate = total_silent_public / total_agent_rounds if total_agent_rounds > 0 else 0.0
+    whisper_rate = total_only_whispered / total_agent_rounds if total_agent_rounds > 0 else 0.0
+
+    silence_rate_by_round = {
+        round_num: (counts["silent"] / counts["total"] if counts["total"] > 0 else 0.0)
+        for round_num, counts in silence_by_round.items()
+    }
+    silence_rate_by_tier = {
+        tier: (counts["silent"] / counts["total"] if counts["total"] > 0 else 0.0)
+        for tier, counts in silence_by_tier.items()
+    }
+
+    return {
+        "silence": {
+            "total_agent_rounds": total_agent_rounds,
+            "fully_silent": total_fully_silent,
+            "silence_rate": silence_rate,
+            "communicated": total_communicated,
+            "silent_in_public": total_silent_public,
+            "partial_silence_rate": partial_silence_rate,
+            "only_whispered": total_only_whispered,
+            "whisper_rate": whisper_rate,
+            "silence_rate_by_round": silence_rate_by_round,
+            "silence_rate_by_tier": silence_rate_by_tier,
+        },
+        "market": {
+            "total_trade_actions": total_trade_actions,
+            "total_trade_successes": total_trade_successes,
+        },
+    }
+
+
 def aggregate_results(experiment_dir: str | Path) -> Dict[str, Any]:
     """Aggregate results from all trial JSON files in an experiment directory.
-
-from __future__ import annotations
 
     Computes summary statistics across all successful trials:
     - Overall deception rate
@@ -63,7 +151,7 @@ from __future__ import annotations
     promises_broken = 0
     settlements_survived = 0
 
-    deception_by_round = {i: {"deceptive": 0, "total": 0} for i in range(10)}
+    deception_by_round = defaultdict(lambda: {"deceptive": 0, "total": 0})
     deception_by_tier = {
         "ALIGNED": {"deceptive": 0, "total": 0},
         "ORTHOGONAL": {"deceptive": 0, "total": 0},
@@ -134,6 +222,9 @@ from __future__ import annotations
             elif promise["label"] == "broken":
                 promises_broken += 1
 
+    # Silence and market stats from raw game logs (shared helper)
+    silence_market = compute_silence_market_stats(trials)
+
     # Compute rates
     overall_deception_rate = total_deceptive / total_reports if total_reports > 0 else 0.0
     premeditation_rate = total_premeditated / total_deceptive if total_deceptive > 0 else 0.0
@@ -183,6 +274,8 @@ from __future__ import annotations
         "mean_final_water": final_water_sum / num_trials,
         "deception_rate_by_round": deception_rate_by_round,
         "deception_rate_by_tier": deception_rate_by_tier,
+        "silence": silence_market["silence"],
+        "market": silence_market["market"],
     }
 
     return summary
@@ -326,6 +419,27 @@ def print_summary(summary: Dict[str, Any]):
     print(f"\n--- DECEPTION BY GOAL TIER ---")
     for tier, rate in summary['deception_rate_by_tier'].items():
         print(f"  {tier}: {rate:.2%}")
+
+    if "silence" in summary:
+        s = summary["silence"]
+        print(f"\n--- STRATEGIC SILENCE METRICS ---")
+        print(f"Total Agent-Rounds: {s['total_agent_rounds']}")
+        print(f"Fully Silent: {s['fully_silent']} ({s['silence_rate']:.2%})")
+        print(f"Communicated: {s['communicated']}")
+        print(f"Silent in Public: {s['silent_in_public']} ({s['partial_silence_rate']:.2%})")
+        print(f"Only Whispered: {s['only_whispered']} ({s['whisper_rate']:.2%})")
+        print(f"\nSilence Rate by Round:")
+        for rn in sorted(s['silence_rate_by_round'].keys()):
+            print(f"  Round {rn}: {s['silence_rate_by_round'][rn]:.2%}")
+        print(f"\nSilence Rate by Goal Tier:")
+        for tier, rate in s['silence_rate_by_tier'].items():
+            print(f"  {tier}: {rate:.2%}")
+
+    if "market" in summary:
+        m = summary["market"]
+        print(f"\n--- MARKET METRICS ---")
+        print(f"Trade Actions: {m['total_trade_actions']}")
+        print(f"Trade Successes: {m['total_trade_successes']}")
 
     print(f"\n{'='*60}\n")
 

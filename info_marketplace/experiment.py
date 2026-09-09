@@ -1,5 +1,7 @@
 """Experiment orchestration for the Information Marketplace simulation."""
 
+from __future__ import annotations
+
 import argparse
 import json
 import logging
@@ -14,6 +16,7 @@ from tqdm import tqdm
 
 from info_marketplace.config import NUM_AGENTS, NUM_ROUNDS, STARTING_REGIONS
 from info_marketplace.conditions import assign_goals, CONDITIONS
+from info_marketplace.geometry import GEOMETRIES, set_geometry
 from info_marketplace.world import create_region_entities, EventGenerator
 from info_marketplace.settlement import create_settlement_entity
 from info_marketplace.agent_components import create_scout_entity
@@ -37,8 +40,6 @@ logging.getLogger("httpcore").setLevel(logging.WARNING)
 class ExperimentConfig:
     """Configuration for an experiment run."""
     experiment_name: str
-from __future__ import annotations
-
     condition_name: str
     model_name: str = "gpt-5.4-mini"
     num_trials: int = 20
@@ -50,6 +51,12 @@ from __future__ import annotations
     reasoning_effort: str = "low"
     dry_run: bool = False  # If True, use scripted agents instead of LLM
     max_workers: int = 1  # Number of parallel workers (1 = sequential)
+    env_variant: str = "ring"  # Geometry: ring (baseline), point, or grid
+    bounty_gold: int = 0  # Deception bounty b in gold (0 = off)
+    bounty_undisclosed: bool = False  # Pay bounties without telling agents (awareness ablation)
+    bounty_feedback: str = "none"  # none | itemized | attributed (credit-assignment gradient)
+    settlement_food: int = 10  # Settlement starting food (scale up for long games)
+    settlement_water: int = 8  # Settlement starting water
 
 
 def run_trial(
@@ -68,11 +75,24 @@ def run_trial(
         Trial results dict, or None if trial failed
     """
     try:
+        # Activate the geometry variant for this trial (process-global; runs
+        # inside the worker process under ProcessPoolExecutor)
+        set_geometry(config.env_variant)
+
+        # Activate the deception bounty (process-global for the same reason;
+        # prompts.build_instructions() reads it to disclose the rule)
+        from info_marketplace.bounty import BountyConfig, set_bounty
+        set_bounty(BountyConfig(
+            bounty_gold=config.bounty_gold,
+            disclosed=not config.bounty_undisclosed,
+            feedback=config.bounty_feedback,
+        ))
+
         # Create RNG for reproducibility
         rng = random.Random(seed)
 
         # Assign goals
-        goals = assign_goals(config.condition_name, NUM_AGENTS, rng)
+        goals = assign_goals(config.condition_name, NUM_AGENTS, rng, env_variant=config.env_variant)
 
         # Create agents
         agents = []
@@ -103,8 +123,8 @@ def run_trial(
         # Create regions and settlement
         regions = create_region_entities()
         settlement = create_settlement_entity(
-            starting_food=10,
-            starting_water=8
+            starting_food=config.settlement_food,
+            starting_water=config.settlement_water
         )
 
         # Create game config
@@ -113,6 +133,9 @@ def run_trial(
             num_agents=NUM_AGENTS,
             random_seed=seed,
             condition_name=config.condition_name,
+            env_variant=config.env_variant,
+            bounty_gold=config.bounty_gold,
+            bounty_feedback=config.bounty_feedback,
         )
 
         # Create environment
@@ -154,6 +177,8 @@ def run_trial(
             "trial_id": trial_id,
             "seed": seed,
             "condition": config.condition_name,
+            "env_variant": config.env_variant,
+            "bounty_gold": config.bounty_gold,
             "model": config.model_name,
             "reasoning_effort": config.reasoning_effort,
             "timestamp": datetime.now().isoformat(),
@@ -199,10 +224,34 @@ def run_experiment(config: ExperimentConfig) -> dict:
     output_path = Path(config.output_dir) / config.experiment_name
     output_path.mkdir(parents=True, exist_ok=True)
 
+    # Resume support: trials already on disk are loaded, not re-run. Combined
+    # with a stable --name, re-running the same command continues the
+    # experiment from wherever it stopped.
+    completed_ids = set()
+    resumed_trials = []
+    for trial_id in range(config.num_trials):
+        trial_file = output_path / f"trial_{trial_id:03d}.json"
+        if trial_file.exists():
+            try:
+                with open(trial_file) as f:
+                    resumed_trials.append(json.load(f))
+                completed_ids.add(trial_id)
+            except (json.JSONDecodeError, OSError):
+                # Partial/corrupt file (e.g. killed mid-write): re-run it
+                trial_file.unlink(missing_ok=True)
+    if completed_ids:
+        logger.info(f"Resuming: {len(completed_ids)}/{config.num_trials} trials already on disk, running the rest")
+
     # Save experiment config
     config_dict = {
         "experiment_name": config.experiment_name,
         "condition_name": config.condition_name,
+        "env_variant": config.env_variant,
+        "bounty_gold": config.bounty_gold,
+        "bounty_undisclosed": config.bounty_undisclosed,
+        "bounty_feedback": config.bounty_feedback,
+        "settlement_food": config.settlement_food,
+        "settlement_water": config.settlement_water,
         "model_name": config.model_name,
         "num_trials": config.num_trials,
         "num_rounds": config.num_rounds,
@@ -217,17 +266,18 @@ def run_experiment(config: ExperimentConfig) -> dict:
         json.dump(config_dict, f, indent=2)
 
     # Run trials (parallel or sequential based on max_workers)
-    successful_trials = []
+    successful_trials = list(resumed_trials)
     failed_trials = []
+    pending_ids = [t for t in range(config.num_trials) if t not in completed_ids]
 
     if config.max_workers > 1:
         # Parallel execution
-        logger.info(f"Running {config.num_trials} trials in parallel with {config.max_workers} workers\n")
+        logger.info(f"Running {len(pending_ids)} trials in parallel with {config.max_workers} workers\n")
 
         with ProcessPoolExecutor(max_workers=config.max_workers) as executor:
-            # Submit all trials
+            # Submit all pending trials
             future_to_trial = {}
-            for trial_id in range(config.num_trials):
+            for trial_id in pending_ids:
                 seed = config.base_seed + trial_id
                 future = executor.submit(run_trial, trial_id, config, seed)
                 future_to_trial[future] = trial_id
@@ -262,10 +312,10 @@ def run_experiment(config: ExperimentConfig) -> dict:
 
     else:
         # Sequential execution with progress bar
-        logger.info(f"Running {config.num_trials} trials sequentially\n")
+        logger.info(f"Running {len(pending_ids)} trials sequentially\n")
 
-        with tqdm(total=config.num_trials, desc="Trials", unit="trial", ncols=80) as pbar:
-            for trial_id in range(config.num_trials):
+        with tqdm(total=len(pending_ids), desc="Trials", unit="trial", ncols=80) as pbar:
+            for trial_id in pending_ids:
                 seed = config.base_seed + trial_id
                 trial_results = run_trial(trial_id, config, seed)
 
@@ -345,6 +395,13 @@ Examples:
     )
 
     parser.add_argument(
+        "--env-variant",
+        choices=list(GEOMETRIES.keys()),
+        default="ring",
+        help="Environment geometry: ring (baseline), point (co-located, always in contact), grid (talk/trade require co-location)"
+    )
+
+    parser.add_argument(
         "--trials",
         type=int,
         default=20,
@@ -391,11 +448,64 @@ Examples:
         help="Number of parallel workers for trials (default: 1, max recommended: 8)"
     )
 
+    parser.add_argument(
+        "--bounty",
+        type=int,
+        default=0,
+        help="Deception bounty b in gold per successful deception event (default: 0 = off)"
+    )
+
+    parser.add_argument(
+        "--bounty-undisclosed",
+        action="store_true",
+        help="Pay bounties without disclosing the rule to agents (awareness ablation)"
+    )
+
+    parser.add_argument(
+        "--bounty-feedback",
+        choices=["none", "itemized", "attributed"],
+        default="none",
+        help="Payout feedback in next observation: none (silent), itemized (amount only), attributed (cause named)"
+    )
+
+    parser.add_argument(
+        "--name",
+        default=None,
+        help="Stable experiment name (no timestamp). Re-running the same command resumes: completed trials on disk are skipped."
+    )
+
+    parser.add_argument(
+        "--settlement-food",
+        type=int,
+        default=None,
+        help="Settlement starting food (default: scales with rounds, 10 per 10 rounds)"
+    )
+
+    parser.add_argument(
+        "--settlement-water",
+        type=int,
+        default=None,
+        help="Settlement starting water (default: scales with rounds, 8 per 10 rounds)"
+    )
+
     args = parser.parse_args()
 
-    # Generate experiment name
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    experiment_name = f"{args.condition}_{args.model}_{timestamp}"
+    # Long games starve the settlement under the 10-round default stock;
+    # scale linearly unless explicitly overridden
+    settlement_food = args.settlement_food if args.settlement_food is not None else max(10, round(10 * args.rounds / 10))
+    settlement_water = args.settlement_water if args.settlement_water is not None else max(8, round(8 * args.rounds / 10))
+
+    # Generate experiment name (stable --name resumes; otherwise timestamped)
+    if args.name:
+        experiment_name = args.name
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        experiment_name = f"{args.condition}_{args.env_variant}_{args.model}_{timestamp}"
+        if args.bounty > 0:
+            disclosure_tag = "u" if args.bounty_undisclosed else ""
+            feedback_tag = {"none": "", "itemized": "_fi", "attributed": "_fa"}[args.bounty_feedback]
+            rounds_tag = f"_r{args.rounds}" if args.rounds != 10 else ""
+            experiment_name = f"{args.condition}_b{args.bounty}{disclosure_tag}{feedback_tag}{rounds_tag}_{args.env_variant}_{args.model}_{timestamp}"
     if args.dry_run:
         experiment_name = f"dryrun_{experiment_name}"
 
@@ -411,6 +521,12 @@ Examples:
         reasoning_effort=args.reasoning_effort,
         dry_run=args.dry_run,
         max_workers=args.workers,
+        env_variant=args.env_variant,
+        bounty_gold=args.bounty,
+        bounty_undisclosed=args.bounty_undisclosed,
+        bounty_feedback=args.bounty_feedback,
+        settlement_food=settlement_food,
+        settlement_water=settlement_water,
     )
 
     # Run experiment
