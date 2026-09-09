@@ -7,6 +7,7 @@
   "selective_disclosure_editorial.png": {
     "source": "../examples.json",
     "case_id": "609081_all_competitive/0/Agent_1",
-    "checks": "Recipe, stock amounts, exact plan excerpt and message checked against source; observation condensed."
-  }
+    "checks": "Both plan excerpts, recipe, stock amounts and message checked against source; observation condensed."
+  },
+  "style_reference": "Original paper figures/methodology.png: lettered panels, condensed sans-serif, slate-blue headers, green/amber/red condition colors"
 }

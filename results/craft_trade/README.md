@@ -8,7 +8,8 @@ Start with the [data guide and observations](DATA.md), [per-game index](games.cs
 
 ![Disclosure patterns by goal composition](figures/disclosure_patterns_editorial.png)
 
-Image-generated editorial overview; printed values match the frozen summary.
+Image-generated overview styled after the original paper’s methodology figure;
+printed values match the frozen summary.
 Speaking with judge-coded omission intent identifies review candidates, not verified
 omissions. The deterministic exports below include individual-game points.
 [Per-game chart](figures/disclosure_patterns.png) · [SVG](figures/disclosure_patterns.svg) · [PDF](figures/disclosure_patterns.pdf)
@@ -33,7 +34,7 @@ mechanical counts, not evidence of an effect caused by withholding.
 ![Observed plan and message that leave a recipe unshared](figures/selective_disclosure_editorial.png)
 
 Image-generated layout of an observed record, `609081_all_competitive/0/Agent_1`.
-The observation is condensed and the private plan is an exact excerpt.
+The observation is condensed and the private-plan passages are exact excerpts.
 The stock report matches the local observation; the plan explicitly says to keep
 the recipe private. Recipient prior knowledge and downstream consequences remain
 separate questions. [Source records](examples.json) ·
