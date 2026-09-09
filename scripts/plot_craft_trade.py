@@ -28,6 +28,8 @@ plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 11,
 def save(fig, name):
     for ext in ('png', 'svg', 'pdf'):
         fig.savefig(OUT / f'{name}.{ext}', dpi=180, bbox_inches='tight')
+    svg = OUT / f'{name}.svg'
+    svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines()) + '\n')
     plt.close(fig)
 
 
