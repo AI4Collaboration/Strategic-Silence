@@ -1,0 +1,17 @@
+{
+  "purpose": "Manual validation packet for exploratory Luna full-cohort selective-disclosure review",
+  "source": "frozen 26-game speaking-round cohort",
+  "seed": "luna-selective-disclosure-audit-2026-09-08-v1",
+  "sampling": "10% simple random sample within each condition; no endpoint stratification",
+  "condition_counts": {
+    "all_aligned": 40,
+    "mixed": 26,
+    "all_competitive": 29
+  },
+  "endpoint_counts": {
+    "False": 66,
+    "True": 24,
+    "None": 5
+  },
+  "cases": 95
+}

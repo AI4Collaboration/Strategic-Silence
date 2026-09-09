@@ -142,6 +142,10 @@ Word_Play/
 - Mixed: 100% (50/50)
 - All Competitive: 94% (47/50)
 
+### Selective-disclosure review: LLM reviewed and human-validated sample
+
+The frozen 26-game craft/trade cohort has a separate, exploratory selective-disclosure annotation layer. Three Luna reviewers assessed all 944 speaking rounds; this does not replace the original Appendix C labels or the strategic-silence metric. A fixed random 10% sample includes 29 all-competitive cases that were manually reviewed by the user using a blinded packet before Luna's judgments were revealed. This is human validation of that sampled competitive subset only, not human adjudication of every annotation. The complete data, exact evidence, sample seed, and review protocol are in [`artifacts/luna_full_cohort_selective_disclosure_2026_09_08/`](artifacts/luna_full_cohort_selective_disclosure_2026_09_08/).
+
 ## Core Insight
 
 **Goal structure determines deception strategy, not just rate.**
