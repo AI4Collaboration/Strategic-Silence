@@ -1,0 +1,12 @@
+{
+  "method": "Built-in image generation; editorial raster figures",
+  "disclosure_patterns_editorial.png": {
+    "source": "../summary.json",
+    "checks": "All six percentages and fractions, condition labels and 512 total checked against source; bar geometry is illustrative."
+  },
+  "selective_disclosure_editorial.png": {
+    "source": "../examples.json",
+    "case_id": "609081_all_competitive/0/Agent_1",
+    "checks": "Recipe, stock amounts, exact plan excerpt and message checked against source; observation condensed."
+  }
+}

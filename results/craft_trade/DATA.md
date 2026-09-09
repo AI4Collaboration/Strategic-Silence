@@ -136,7 +136,11 @@ not an invoice. No API key is needed to inspect any of this data.
 
 ## Rebuild the charts
 
-The three generated figures are available as PNG, editable SVG and vector PDF.
+The three deterministic figures are available as PNG, editable SVG and vector PDF.
+Two image-generated editorial PNGs are used in the overview: their printed values
+and quoted excerpt were checked against the source data. They are designed raster
+illustrations, not outputs of the plotting script. The original deterministic
+charts remain linked for exact plotted geometry and individual-game detail.
 They use the existing summary, game index and exact example records; input hashes
 are recorded in `figures/sources.json`. The supplied illustration is a separate,
 unchanged image and is not generated from data.

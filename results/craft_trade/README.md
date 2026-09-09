@@ -6,11 +6,12 @@ Start with the [data guide and observations](DATA.md), [per-game index](games.cs
 
 ## Visual overview
 
-![Disclosure patterns by goal composition](figures/disclosure_patterns.png)
+![Disclosure patterns by goal composition](figures/disclosure_patterns_editorial.png)
 
-Each dot is one completed game; bars show pooled agent-round rates. Speaking with
-judge-coded omission intent identifies review candidates, not verified omissions.
-[SVG](figures/disclosure_patterns.svg) · [PDF](figures/disclosure_patterns.pdf)
+Image-generated editorial overview; printed values match the frozen summary.
+Speaking with judge-coded omission intent identifies review candidates, not verified
+omissions. The deterministic exports below include individual-game points.
+[Per-game chart](figures/disclosure_patterns.png) · [SVG](figures/disclosure_patterns.svg) · [PDF](figures/disclosure_patterns.pdf)
 
 ![Per-seed condition coverage and operational silence counts](figures/game_coverage.png)
 
@@ -29,9 +30,10 @@ mechanical counts, not evidence of an effect caused by withholding.
 
 ## An observed example
 
-![Observed plan and message that leave a recipe unshared](figures/observed_selective_disclosure.png)
+![Observed plan and message that leave a recipe unshared](figures/selective_disclosure_editorial.png)
 
-Exact saved observation and output from `609081_all_competitive/0/Agent_1`.
+Image-generated layout of an observed record, `609081_all_competitive/0/Agent_1`.
+The observation is condensed and the private plan is an exact excerpt.
 The stock report matches the local observation; the plan explicitly says to keep
 the recipe private. Recipient prior knowledge and downstream consequences remain
 separate questions. [Source records](examples.json) ·
