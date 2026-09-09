@@ -1,6 +1,55 @@
-# Craft/trade evidence for the paper
+# Craft/trade data release
 
 Snapshot: **2026-09-08 20:23 UTC**, while collection was in progress. This is a development cohort, not a completed 150-game replication or held-out taxonomy benchmark. The snapshot is immutable; later collection must be published as a new snapshot.
+
+Start with the [data guide and observations](DATA.md), [per-game index](games.csv), or [selected raw examples](examples.json).
+
+## Visual overview
+
+![Disclosure patterns by goal composition](figures/disclosure_patterns_editorial.png)
+
+Image-generated overview styled after the original paper’s methodology figure;
+printed values match the frozen summary.
+Speaking with judge-coded omission intent identifies review candidates, not verified
+omissions. The deterministic exports below include individual-game points.
+[Per-game chart](figures/disclosure_patterns.png) · [SVG](figures/disclosure_patterns.svg) · [PDF](figures/disclosure_patterns.pdf)
+
+![Per-seed condition coverage and operational silence counts](figures/game_coverage.png)
+
+Gray cells have no completed game in this snapshot. They are not zero observations.
+[SVG](figures/game_coverage.svg) · [PDF](figures/game_coverage.pdf) · [Full CSV](games.csv)
+
+| Physical outcome | Aligned | Mixed | Competitive |
+| --- | ---: | ---: | ---: |
+| Games surviving | 10 / 10 | 6 / 7 | 7 / 9 |
+| Successful crafts / attempts | 7 / 7 | 3 / 3 | 13 / 13 |
+| Trade action choices | 9 | 1 | 5 |
+| Settled reciprocal exchanges | 3 | 0 | 0 |
+
+Two matching trade choices are required per exchange. These outcomes are
+mechanical counts, not evidence of an effect caused by withholding.
+
+## An observed example
+
+![Observed plan and message that leave a recipe unshared](figures/selective_disclosure_editorial.png)
+
+Image-generated layout of an observed record, `609081_all_competitive/0/Agent_1`.
+The observation is condensed and the private-plan passages are exact excerpts.
+The stock report matches the local observation; the plan explicitly says to keep
+the recipe private. Recipient prior knowledge and downstream consequences remain
+separate questions. [Source records](examples.json) ·
+[SVG](figures/observed_selective_disclosure.svg) · [PDF](figures/observed_selective_disclosure.pdf)
+
+<details>
+<summary>Conceptual illustration supplied alongside the data</summary>
+
+![User-supplied illustrative response, not observed model output](figures/illustrative_reference.png)
+
+This supplied illustration is preserved unchanged. Its Agent_2 response is
+hypothetical and is not a record in the dataset, an annotation, or a measured result.
+The observed example above uses a different, actual Agent_1 record.
+
+</details>
 
 ## Reproduce without an API key
 
@@ -50,4 +99,4 @@ See [environment](ENVIRONMENT.md) and [annotation scope](TAXONOMY.md).
 
 ## Folder contents
 
-This is the single publication folder for the craft/trade study: `summary.json` contains reproducible counts, `archive.json` identifies and hashes `raw_snapshot.zip`, and the three Markdown files describe findings, environment and taxonomy. Raw games, API journals, partial runs and collection sources stay inside the archive rather than appearing as individual repository files. Active local collection directories remain ignored and are not moved while the experiment runs.
+This is the single publication folder for the craft/trade study: `summary.json` contains reproducible counts, `archive.json` identifies and hashes `raw_snapshot.zip`, and the Markdown files describe the data, findings, environment and taxonomy. `games.csv` and `examples.json` are small inspection views derived from the archive. Raw games, API journals, partial runs and collection sources stay inside the archive rather than appearing as individual repository files. Active local collection directories remain ignored and are not moved while the experiment runs.
