@@ -142,4 +142,3 @@ The three PRs contain **101 changed-file entries across 95 distinct paths**: 68 
 | [scripts/validate_luna_selective_disclosure.py](https://github.com/AI4Collaboration/Strategic-Silence/blob/bb9523f043a7f6897019b0f332c877f67009ebd4/scripts%2Fvalidate_luna_selective_disclosure.py) | added | Checks coverage, label consistency, allowed audiences and exact evidence provenance; not semantic accuracy. |
 | [tests/test_distributed_threshold.py](https://github.com/AI4Collaboration/Strategic-Silence/blob/bb9523f043a7f6897019b0f332c877f67009ebd4/tests%2Ftest_distributed_threshold.py) | added | Tests pivotal disclosure counterfactuals, treatment exposure and invalid-output handling. |
 | [tests/test_llm_client_routing.py](https://github.com/AI4Collaboration/Strategic-Silence/blob/bb9523f043a7f6897019b0f332c877f67009ebd4/tests%2Ftest_llm_client_routing.py) | added | Tests model/provider routing, including OpenRouter-qualified names. |
-
