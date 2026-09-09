@@ -1,0 +1,10 @@
+{
+  "snapshot_utc": "2026-09-08T20:23:12.098916+00:00",
+  "inputs": {
+    "summary.json": "be8719d864fc8193a72b0751ed9d348aa7af24c29351f690cf06ad059cddb1c6",
+    "games.csv": "39ab6a5ba32eb53d80120a2ee2fa1d6fe4b0c9019f40eef9b040199341381d42",
+    "examples.json": "4078a3239b254b34c2bc8e0feff6c54121c6c1028fabe9d6a7ac486b34d15140"
+  },
+  "generator": "scripts/plot_craft_trade.py",
+  "matplotlib": "3.9.4"
+}

@@ -133,3 +133,19 @@ Read a journal with `gzip.decompress(archive.read(member)).splitlines()` followe
 by `json.loads` for each line. Reservation/response records document accounting;
 failed or pending reservations are retained, so accounted cost is an upper bound,
 not an invoice. No API key is needed to inspect any of this data.
+
+## Rebuild the charts
+
+The three generated figures are available as PNG, editable SVG and vector PDF.
+They use the existing summary, game index and exact example records; input hashes
+are recorded in `figures/sources.json`. The supplied illustration is a separate,
+unchanged image and is not generated from data.
+
+```sh
+python -m pip install matplotlib==3.9.4
+python scripts/plot_craft_trade.py
+```
+
+The generator verifies per-condition CSV totals against the summary before
+plotting. Charts show descriptive values without confidence intervals or claims
+of independent agent-round observations. No API calls are made.
