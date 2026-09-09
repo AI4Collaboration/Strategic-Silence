@@ -1,6 +1,8 @@
-# Craft/trade evidence for the paper
+# Craft/trade data release
 
 Snapshot: **2026-09-08 20:23 UTC**, while collection was in progress. This is a development cohort, not a completed 150-game replication or held-out taxonomy benchmark. The snapshot is immutable; later collection must be published as a new snapshot.
+
+Start with the [data guide and observations](DATA.md), [per-game index](games.csv), or [selected raw examples](examples.json).
 
 ## Reproduce without an API key
 
@@ -50,4 +52,4 @@ See [environment](ENVIRONMENT.md) and [annotation scope](TAXONOMY.md).
 
 ## Folder contents
 
-This is the single publication folder for the craft/trade study: `summary.json` contains reproducible counts, `archive.json` identifies and hashes `raw_snapshot.zip`, and the three Markdown files describe findings, environment and taxonomy. Raw games, API journals, partial runs and collection sources stay inside the archive rather than appearing as individual repository files. Active local collection directories remain ignored and are not moved while the experiment runs.
+This is the single publication folder for the craft/trade study: `summary.json` contains reproducible counts, `archive.json` identifies and hashes `raw_snapshot.zip`, and the Markdown files describe the data, findings, environment and taxonomy. `games.csv` and `examples.json` are small inspection views derived from the archive. Raw games, API journals, partial runs and collection sources stay inside the archive rather than appearing as individual repository files. Active local collection directories remain ignored and are not moved while the experiment runs.
