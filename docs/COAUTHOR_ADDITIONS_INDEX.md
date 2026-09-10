@@ -16,6 +16,18 @@ The withholding is **content omission while communicating**. Important caveat: s
 
 Start with the [results and limitations](../results/service_objectives/README.md), [per-cohort summary](../results/service_objectives/reproduced_summary.json), and [offline reproduction script](../scripts/reproduce_service_objectives.py). The archive contains raw trajectories, annotations and budget provenance. **224 requests replayed; 47 focused tests passed.** The follow-up cost $0.80; cumulative accounted service spend remains within the original $5 cap at $4.44.
 
+## Wider descriptive generalization of the withholding taxonomy
+
+**The frozen taxonomy now has supporting examples across more environments.** Four new stateful tasks—negotiation, project allocation, evidence investigation and incident relay—produced **48 completed episodes / 252 agent turns**, using GPT-5.4-mini and GPT-5.4, two seeds, and aligned/mixed/competitive incentives. All fresh traces replay exactly. We also replayed **471 valid retained document-delivery cases** (9 invalid retained separately) and prepared a **240-turn, six-game craft/trade sample** with bounded semantic example review.
+
+The strongest transfer evidence comes from investigation and incident response: advisors intentionally omitted negative evidence while communicating; incident senders withheld authenticated updates through silence or replaced them with false claims. Craft/trade adds explicit refusal, reduced specificity and selective audience disclosure. The same frozen distinctions accommodate these examples without adding categories. Negotiation and allocation did not supply clear new withholding examples, so this is not six positive replications. Investigation remained correct in **12/12**, because recipients had independent evidence access; incident response was correct in **11/12**, with one wrong decision following explicit silence.
+
+**Why the distinctions matter:** message presence misses content omission; content alone misses recipient and timing failures; truthfulness alone misses truthful selective disclosure. Recipient knowledge also matters: an omitted fact already learned independently is not a new information gap. These are reasons to retain distinct measurements and test different repairs, not proof that separate monitor agents are necessary.
+
+**Claim for the paper:** this supports **wider descriptive generalization**, not full taxonomy coverage, universal applicability, or demonstrated superiority over simpler equally informed monitors. The new tasks are short and deliberately selected. The craft semantic census remains unfinished, the nine checked examples are not prevalence estimates, and private plans plus assistant/Luna review are not independent human or causal validation.
+
+Start with the [results and claim boundary](../results/taxonomy_transfer/README.md), [full coverage table](../results/taxonomy_transfer/COVERAGE.md), [checked examples](../results/taxonomy_transfer/examples.json), and [reproduced summary](../results/taxonomy_transfer/reproduced_summary.json). The [archive manifest](../results/taxonomy_transfer/archive.json) indexes frozen code, raw data, review/recovery records and cost provenance. Run the [offline reproduction script](../scripts/reproduce_taxonomy_transfer.py); **11 environment tests passed**, and no API calls are needed for reproduction. Cumulative pilot accounted spend: **$2.04 of $3**.
+
 ## How these additions fit the paper
 
 - **Methods:** use the environment description and native game implementation for communication timing, private recipes, crafting, reciprocal trades and settlement survival.

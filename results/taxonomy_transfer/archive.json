@@ -1,0 +1,423 @@
+{
+  "archive": "raw_snapshot.zip",
+  "sha256": "f10a2284831fb22abb158d16f10ed826674b4059ff7b8d9dce818b0d736cf6ec",
+  "members": {
+    "docs/CRAFT_TRADE_PAPER_PROTOCOL_2026-09-08.md": {
+      "sha256": "a97c4cc13c91f1bf19f43f1ae54fda41edfcaf7a35a7d27f58c398e2a727f9e5",
+      "bytes": 10272
+    },
+    "docs/EMPIRICAL_WITHHOLDING_TREE.md": {
+      "sha256": "5248757ec415956a53bc8443c86b460e1de7dacafde5304525cb31911e5decb4",
+      "bytes": 33642
+    },
+    "docs/SELECTIVE_DISCLOSURE_EVALUATION.md": {
+      "sha256": "879cbe6bf96be2f2c2b6a00cc1189daf55d827d6f480ff573f82fc11ec46bc72",
+      "bytes": 4871
+    },
+    "experiments/taxonomy_six_env_20260910/EXEMPLARS_B.json": {
+      "sha256": "02795655c0da88afd7c5fa031bfe666edf3f1fd4fe59558b617af16230e771cc",
+      "bytes": 3201
+    },
+    "experiments/taxonomy_six_env_20260910/FROZEN_CODEBOOK.md": {
+      "sha256": "b6bf3aef4cf3cf9f2879a9ca67baf84087c34c584a0bab1b49896c785c4c09ec",
+      "bytes": 16137
+    },
+    "experiments/taxonomy_six_env_20260910/PROTOCOL.md": {
+      "sha256": "83b29a04327bc23fe4c483596bb1e826bb824f79792af82863d0615899e42595",
+      "bytes": 3679
+    },
+    "experiments/taxonomy_six_env_20260910/RESULTS.md": {
+      "sha256": "91c37ee80d73b2a0cfeebc58da8333e816779b57286df2ddeca48eecd662d4e3",
+      "bytes": 9539
+    },
+    "experiments/taxonomy_six_env_20260910/REVIEW_STATUS.md": {
+      "sha256": "c0b142bf8ba1948c97f1d79c2bcaf52bf4f4053fa7fd6510c81071b6d0a7c999",
+      "bytes": 2526
+    },
+    "experiments/taxonomy_six_env_20260910/analyze_local.py": {
+      "sha256": "e1e3762b35b57f0dd5123a1f6eb952d692b73d1137eacade34d63203793a75d2",
+      "bytes": 2594
+    },
+    "experiments/taxonomy_six_env_20260910/build_evidence.py": {
+      "sha256": "2bd7131cb3ebde554129b4b91f8a44bf7f9690625ee22b34fc14b854d1f4b55e",
+      "bytes": 4480
+    },
+    "experiments/taxonomy_six_env_20260910/craft_B_semantic.json": {
+      "sha256": "ac57bdbaa9fda6a536dbb01a8cf2b6c0ddc269932f5a3269762bfcdb4d3fa768",
+      "bytes": 71349
+    },
+    "experiments/taxonomy_six_env_20260910/envs_a.py": {
+      "sha256": "4201171cb6c377b6c708310e441cfb4be9da8a70f0257dd7bd3b4edaf46a98fc",
+      "bytes": 9497
+    },
+    "experiments/taxonomy_six_env_20260910/envs_b.py": {
+      "sha256": "0bbfea6164fe01078238fb732e14676806c2b9cc60ff16d4f71cf3146b87e51b",
+      "bytes": 11276
+    },
+    "experiments/taxonomy_six_env_20260910/existing_inventory.json": {
+      "sha256": "38a7d2e779434535e853cfd765e22edf6f4a8af6db5d3b5d8b472e29959b584c",
+      "bytes": 5712
+    },
+    "experiments/taxonomy_six_env_20260910/existing_mechanical.json": {
+      "sha256": "04e2a8169d2f0b4b82ccd5acf5853bc6ebe9c6121bdaa2a42b5860ad345cfcd6",
+      "bytes": 2047
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/packets.jsonl": {
+      "sha256": "3c53c2e32556cad236e50d8ade6368bc65607acf76a893da6dc7cb2a838807ef",
+      "bytes": 899907
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_A.json": {
+      "sha256": "c6d2d43eb8cd32f00df3f4ab862844f2edacc1d629c98a6ab330abd5b6a4fa19",
+      "bytes": 989764
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_A_semantic.json": {
+      "sha256": "de2a58b0d16290c1b06eadf6b45dab4ef2816c8c2a4d719167abc31824a9d029",
+      "bytes": 80781
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_B.json": {
+      "sha256": "148f5487268fa1cb128929085dfbd17de9fdffc0ef060daa1f9d8bc2c59fdbfc",
+      "bytes": 985941
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C.json": {
+      "sha256": "1995c450ce14cbf606e8f41ce731fe5f7d2632f43eb7d9321e91a811f466216e",
+      "bytes": 988986
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C_initial_invalid.json": {
+      "sha256": "0381dcfcce402e36413f20f2eebbbb32f4ce91ffc5bf17e274884c45c232460c",
+      "bytes": 114967
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C_part1.json": {
+      "sha256": "3a8e4127dacf9646cb0ac15c2fa3432cb4bd62911ffc44dc12076f0d65a00893",
+      "bytes": 246492
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C_part2.json": {
+      "sha256": "35363ab70f9c07d6fadfea61bd3c1a705a3c43d74abc07122f046c397e0f65e2",
+      "bytes": 275890
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C_part3.json": {
+      "sha256": "186393237e0b9db0dddba521bbeb23d3659304428582190b3e59a224963ebd1f",
+      "bytes": 222639
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C_part4.json": {
+      "sha256": "7e5d8356445529c3fb5f54c24274c0a99c1f87bad75b7fb4e1bdeabe900fe1b5",
+      "bytes": 243970
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C_review.json": {
+      "sha256": "fde8f71d0025d979288f3af7ec5c3c30137aff3040bd7989b69f129fb43d2669",
+      "bytes": 201254
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/review_batches/craft_C_semantic.json": {
+      "sha256": "fd4159daabed5384f8a50501b366f86ad2c27074771b90f77ffe8fddd4f20783",
+      "bytes": 191380
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/craft_trade/sample_manifest.json": {
+      "sha256": "d45468c918e215a468113d5deedb00261fce8bdbecb21090ed752a4018edb11b",
+      "bytes": 2347
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/document_delivery/manifest.json": {
+      "sha256": "ea1103be5aa11931cdc46820adb98a556a6cef588f833d41840785fc4e182854",
+      "bytes": 530
+    },
+    "experiments/taxonomy_six_env_20260910/existing_packets/document_delivery/packets.jsonl": {
+      "sha256": "aa8ddb21a87531268de2ee3b65734bd95527852435b3d5af615926024072ff69",
+      "bytes": 1134901
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940001_aligned_gpt-5.4-mini.json": {
+      "sha256": "9fc8f06cfc33f61fc098717250d136fbdd7b08aecf05ce6b339461b9b28fdb51",
+      "bytes": 30045
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940001_aligned_gpt-5.4.json": {
+      "sha256": "25d5a1777334f9fc30e7bbab374a232d68bb18005452b906d2f76fd02ddf9431",
+      "bytes": 30094
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940001_competitive_gpt-5.4-mini.json": {
+      "sha256": "9e4899560fd438623cf55070a4e86fe20b8b34d48475ca9673ad2a9592c6236e",
+      "bytes": 35448
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940001_competitive_gpt-5.4.json": {
+      "sha256": "c22535ccd7b93a5975704d27329adaf7e60ef2f325726d28332375460ddac98d",
+      "bytes": 36439
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940001_mixed_gpt-5.4-mini.json": {
+      "sha256": "4a929764fdbd2c77531126e2bf316a95eb9f4394f05a7caa62478743e1f756c1",
+      "bytes": 30670
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940001_mixed_gpt-5.4.json": {
+      "sha256": "f1b1ca7a666a6b37e76dbd294bcdc7b1afde2619974efdbeae47426767e2bd7f",
+      "bytes": 34783
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940002_aligned_gpt-5.4-mini.json": {
+      "sha256": "cb29f39fc9c0bebefdbb3c9dbeebe801da38bd30e75cf1cbebce9222197b309a",
+      "bytes": 31494
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940002_aligned_gpt-5.4.json": {
+      "sha256": "4c21f2658e71a8c76bc496aee498cfe0447ff5c76a6b5a50ef58a30a8e835bef",
+      "bytes": 32555
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940002_competitive_gpt-5.4-mini.json": {
+      "sha256": "31cf5d7f46b81aae58e186484343b40bbfca34556818d5a078385f9c0bae08b9",
+      "bytes": 34062
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940002_competitive_gpt-5.4.json": {
+      "sha256": "e1bbd69fbabd226a161227141db02e0cfc14013c708b2fb855c4eedc13320787",
+      "bytes": 38401
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940002_mixed_gpt-5.4-mini.json": {
+      "sha256": "bd91cc3ccc77590914154213d3aeaef8dd15637480efdd7599ecf53d9e6e4f9d",
+      "bytes": 32236
+    },
+    "experiments/taxonomy_six_env_20260910/live/allocation_940002_mixed_gpt-5.4.json": {
+      "sha256": "69887026fa585f2b4420cdacf7c81873a3bb230fd72d9cfdaaec8fdac11c71d7",
+      "bytes": 34923
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940001_aligned_gpt-5.4-mini.json": {
+      "sha256": "87a468b61fbd28ae4133ff7c75589e2ae15b741cfdf0c9fcbe9965b2a7ff63f9",
+      "bytes": 23569
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940001_aligned_gpt-5.4.json": {
+      "sha256": "f2d1646767c7c16f6232d9b1747e41563b31d1c952fecceeaada4312859e982d",
+      "bytes": 25313
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940001_competitive_gpt-5.4-mini.json": {
+      "sha256": "a95b5cb0ad415ec4eaba3d564408dd5ec7d6d79d15500fc31410b04ad49d15a7",
+      "bytes": 21547
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940001_competitive_gpt-5.4.json": {
+      "sha256": "8f9a2fb8f8e0339eac10bccbe2fa6f0b3722fc10eb262f86adc6195db03127be",
+      "bytes": 20409
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940001_mixed_gpt-5.4-mini.json": {
+      "sha256": "09b02a55eb9c267b65b338b267cb3f76ef3bbfa0036bb489ce346307ade1876b",
+      "bytes": 22112
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940001_mixed_gpt-5.4.json": {
+      "sha256": "7031a0568a7de62ee577aef1fa6205526eaf4131891ccf59266f097c940bc3e9",
+      "bytes": 20038
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940002_aligned_gpt-5.4-mini.json": {
+      "sha256": "5c59ff8e70c6087256eb711a83892c7facc79d8a21d407866ff4c313a77573da",
+      "bytes": 22614
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940002_aligned_gpt-5.4.json": {
+      "sha256": "6f49c502ce82610f7ae0d8bf1c8f0c664abaca7dc5f5d8f1a68bb6700fc8c144",
+      "bytes": 24306
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940002_competitive_gpt-5.4-mini.json": {
+      "sha256": "72dbb8ac0ca924e8acfd7108aa237e012c3a8da0726ed2b8c13225e5c3a283c8",
+      "bytes": 20502
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940002_competitive_gpt-5.4.json": {
+      "sha256": "eaaa216c7bf88ce568f3a9b4eaf2bab282cf5342537546b5058c8da0cf66edf8",
+      "bytes": 20268
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940002_mixed_gpt-5.4-mini.json": {
+      "sha256": "78b3cde56fa8eb194ae8bf8547943f888d93821345b938678e988c4dc3b1e499",
+      "bytes": 19050
+    },
+    "experiments/taxonomy_six_env_20260910/live/investigation_940002_mixed_gpt-5.4.json": {
+      "sha256": "aa3e168202ba03fd1f594a540e9736bdf69191c4b596faadcffeba39d6604664",
+      "bytes": 21983
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940001_aligned_gpt-5.4-mini.json": {
+      "sha256": "ecb518461132c0ff5b68904671d7c545a77e2877b55b3a0db7c5938b6d936395",
+      "bytes": 30423
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940001_aligned_gpt-5.4.json": {
+      "sha256": "d2c2c54a0db837677f457d77dbebe1d97be370b069269e001170a96d7da1c913",
+      "bytes": 31602
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940001_competitive_gpt-5.4-mini.json": {
+      "sha256": "42c71a02e6b366e11d3282869663cf165ecb18bdf783b4e46103ae07e81dd4e0",
+      "bytes": 29573
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940001_competitive_gpt-5.4.json": {
+      "sha256": "ff75141d86cda9d1ea3fe7133ac8d47ae26e5886c366b6e690555f7cc428add5",
+      "bytes": 31698
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940001_mixed_gpt-5.4-mini.json": {
+      "sha256": "8e83da821fde8c326bbf5ebf78a32dd3c36e83afa92d6c3608cf990fc130da8a",
+      "bytes": 29673
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940001_mixed_gpt-5.4.json": {
+      "sha256": "75aa306ae9543d4d72f96705918d3541143bc55d45fb3a8bb2566a1185b6a9d3",
+      "bytes": 31322
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940002_aligned_gpt-5.4-mini.json": {
+      "sha256": "e6cc1d47f5d4162e4ab277e6100abc34bcaf66bea713f2fefc53bb025a40f34a",
+      "bytes": 30227
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940002_aligned_gpt-5.4.json": {
+      "sha256": "bb3b93ec07420bd0e48179a251aec0e03a4a1214307447e464376b126fa8d6e1",
+      "bytes": 31640
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940002_competitive_gpt-5.4-mini.json": {
+      "sha256": "a31433a5cbe24f52a8e0fda688b6a3f9c0359226d3f50990db6c944aa74a5a46",
+      "bytes": 35961
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940002_competitive_gpt-5.4.json": {
+      "sha256": "37e4eefb60cdfcb89d90389c4dc9e476f67e5ccb2cc2602f723258223753d0d3",
+      "bytes": 31194
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940002_mixed_gpt-5.4-mini.json": {
+      "sha256": "11aec4043d93c7d57a7e8bd6dd8db0810fa194c39e56d91def08b1662172c712",
+      "bytes": 29275
+    },
+    "experiments/taxonomy_six_env_20260910/live/negotiation_940002_mixed_gpt-5.4.json": {
+      "sha256": "0e85fd21b7f708d74c36bdbaa00c355008d06047964add83645046ba7ac0ec4b",
+      "bytes": 34878
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940001_aligned_gpt-5.4-mini.json": {
+      "sha256": "940025dc0a72db032ea2df6387420ff9eb2c65658c6ef42fefad56f0a834d216",
+      "bytes": 32938
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940001_aligned_gpt-5.4.json": {
+      "sha256": "28bf46345f17d17f5ee90648e0be9a8c7ac4d3233533398d45d21906fa8ed7f4",
+      "bytes": 33348
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940001_competitive_gpt-5.4-mini.json": {
+      "sha256": "383b02cd7f4bbf48559f99f45e599f2e0dd9f87be869e8c5e474942b27a15c16",
+      "bytes": 32023
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940001_competitive_gpt-5.4.json": {
+      "sha256": "40fcecac6e892f5a51dd44f1f8f2d6d8872c47edc0918526e8e54d8ff1bb2755",
+      "bytes": 25970
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940001_mixed_gpt-5.4-mini.json": {
+      "sha256": "6dda42522fd474029250c2718dd9f3dc2734ca601acf32820a19a7b1438a7aa3",
+      "bytes": 36870
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940001_mixed_gpt-5.4.json": {
+      "sha256": "bce5be87a1c923c24e9cdb6b7ebad6d99bfcbfba618934d8c65628c502b49b24",
+      "bytes": 23362
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940002_aligned_gpt-5.4-mini.json": {
+      "sha256": "fa81855c23d8f7e97c7af589aaee2c8698cf3b2b939aaaa96781d6a4154cc055",
+      "bytes": 27197
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940002_aligned_gpt-5.4.json": {
+      "sha256": "fd4ac71c56b042752a95fbba5e52508abe1ce1e02836f318c8c9cbfcd26d24f1",
+      "bytes": 34513
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940002_competitive_gpt-5.4-mini.json": {
+      "sha256": "b292b89a6ecd3e2ed211616f9778ec780248c2b8aa3614436c608b5aa26d5a77",
+      "bytes": 27786
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940002_competitive_gpt-5.4.json": {
+      "sha256": "d2a7c5711f74df63a5f5a57fea58633c58fbbb95ff468c7f717f14fa1288d84d",
+      "bytes": 19090
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940002_mixed_gpt-5.4-mini.json": {
+      "sha256": "d3fa3cbee908d958883eae99916213b3e3af4f6aa5400c57ebf4186f22fdf4c6",
+      "bytes": 27364
+    },
+    "experiments/taxonomy_six_env_20260910/live/relay_incident_940002_mixed_gpt-5.4.json": {
+      "sha256": "d811a465b20e5fdcddc0decbcdd861578dfd034c506caf8a04428cb0eac295be",
+      "bytes": 17320
+    },
+    "experiments/taxonomy_six_env_20260910/live/requests.jsonl": {
+      "sha256": "c0c61bb3f6d35ed787aac8aa5042899a579347feace20ae7cdc2498574bf5f8d",
+      "bytes": 1896467
+    },
+    "experiments/taxonomy_six_env_20260910/local_analysis.json": {
+      "sha256": "dccbc67a1beaaa28015684d049ce9f149e94b87a1c5b3bdfb8a75c38d78e91ab",
+      "bytes": 32695
+    },
+    "experiments/taxonomy_six_env_20260910/progress.json": {
+      "sha256": "5c4546ae460676e1286f24504206415f3d4d5f66dbb6ede8ed089f132746d052",
+      "bytes": 723
+    },
+    "experiments/taxonomy_six_env_20260910/protocol.json": {
+      "sha256": "1753f06153d4f6987ae241a24c0867f1319f36449aae5006547cbf8f2dc994a9",
+      "bytes": 10504
+    },
+    "experiments/taxonomy_six_env_20260910/provider_gpt54.json": {
+      "sha256": "dd25767401ec093b09bde178b5dcb9aff8ddbb03b058aba0260abea5006648bb",
+      "bytes": 7025
+    },
+    "experiments/taxonomy_six_env_20260910/recovery/audit.json": {
+      "sha256": "67a4e7bbc158681a565e75f7147388325929cc57b799cb687aa352a5d33f66d0",
+      "bytes": 364
+    },
+    "experiments/taxonomy_six_env_20260910/recovery/negotiation_940002_mixed_gpt-5.4.json": {
+      "sha256": "d830e25dc8ebc44893154824cf7c6a9b3a9728232e61102f31679f68584963ae",
+      "bytes": 34889
+    },
+    "experiments/taxonomy_six_env_20260910/recovery/progress.json": {
+      "sha256": "8f13e3cbf520aa52190e4141e0b36e968e0455395c450894e2371d5afa9d9869",
+      "bytes": 772
+    },
+    "experiments/taxonomy_six_env_20260910/run.py": {
+      "sha256": "0eb4dccdf7bfc96063ccf8d45631345c233db4be99fb649df4608ccc6965d35b",
+      "bytes": 5929
+    },
+    "experiments/taxonomy_six_env_20260910/semantic.py": {
+      "sha256": "e9c63d8439a9e1d90448c804d2a708c20f04b88bb5138560bbad0cef8595719f",
+      "bytes": 11023
+    },
+    "experiments/taxonomy_six_env_20260910/semantic_craft/freeze.json": {
+      "sha256": "106b9279a545a69b8a9dd106f56d8ec74b4a3383da0e3c014abdbd399db40281",
+      "bytes": 613
+    },
+    "experiments/taxonomy_six_env_20260910/semantic_craft/inputs.json": {
+      "sha256": "3df7f3553cb6aeec75b8b1c1ff2fe4f8b9422b22ab43ff612942f56cae60bfb4",
+      "bytes": 281348
+    },
+    "experiments/taxonomy_six_env_20260910/semantic_craft/prompt.txt": {
+      "sha256": "872f7364ddd01e5f387d9f62e725556ed092ee72ba8b33eda1997c82a532e7df",
+      "bytes": 3556
+    },
+    "experiments/taxonomy_six_env_20260910/test_environments.py": {
+      "sha256": "aba8dc9675ec7c5592687b087bc69965f4c2d7ec0cac96974fff2bffd7734365",
+      "bytes": 4281
+    },
+    "experiments/taxonomy_six_env_20260910/verified_examples.json": {
+      "sha256": "569cc3df509a49b5af8b137016f4eef9a9095a235e59831d9500b6085fd10180",
+      "bytes": 18543
+    },
+    "experiments/taxonomy_six_env_20260910/write_report.py": {
+      "sha256": "e99eda19b4738fa3ad279a1dbd6f41314c44472fe6b15bf1ddd5871b2068071b",
+      "bytes": 10056
+    },
+    "info_marketplace/pilot_runtime.py": {
+      "sha256": "f4e3ca988ddb49ac8dc49eb0dd6afdcc0aca2e8568a11638b83127bb0e9e0fb6",
+      "bytes": 14928
+    },
+    "info_marketplace/selective_disclosure.py": {
+      "sha256": "9726084a90c6b1b648a46e3274ae3bff23284139b8d71801faf927a42930a262",
+      "bytes": 8898
+    },
+    "paper/artifact/data/delivery_prospective.jsonl": {
+      "sha256": "fdeb2efa2dadbeb74e7f2fd5b6eb5a76fe5853559ca797c5511f9b36d0031ef6",
+      "bytes": 960574
+    },
+    "results/craft_trade_paper_v2_2026_09_08/game_609080_all_aligned.json": {
+      "sha256": "c145fc54bee6aa679187ea61d7e1996648712df6bae5bb06439d44789b014d67",
+      "bytes": 4410854
+    },
+    "results/craft_trade_paper_v2_2026_09_08/game_609080_all_competitive.json": {
+      "sha256": "7c39256a5c0f322c6f5ae300d8d54c511693ac3b2e2ac25921782eb2475531be",
+      "bytes": 3563842
+    },
+    "results/craft_trade_paper_v2_2026_09_08/game_609080_mixed.json": {
+      "sha256": "c51c9be0bc2dd571ec9be373e5a8d4b13c6c285e4f2b6ef920c9d3b27fea0085",
+      "bytes": 3821153
+    },
+    "results/craft_trade_paper_v2_2026_09_08/game_609081_all_aligned.json": {
+      "sha256": "9d2c716c917f7b5f6bfd4840f0b22b79c07bce8b2131e08fe121c8609a88065c",
+      "bytes": 4401217
+    },
+    "results/craft_trade_paper_v2_2026_09_08/game_609081_all_competitive.json": {
+      "sha256": "d13b426eb1178f1e801fc2b9b776b4be5a485211845e586a1084903ea289782c",
+      "bytes": 3297801
+    },
+    "results/craft_trade_paper_v2_2026_09_08/game_609081_mixed.json": {
+      "sha256": "e796b45c06f1cb3b7bf67b7bc311ce5395c408373a364e5d9fe8cd77a37bbc4b",
+      "bytes": 3894372
+    },
+    "scripts/export_craft_trade_taxonomy.py": {
+      "sha256": "c9cc941f795d4d57444890195ee0b9c58119fc613baed084f1289f81332e670d",
+      "bytes": 8089
+    }
+  },
+  "scope": "Original frozen collection and analysis files; six retained craft games and all 480 document trajectories. Rejected review drafts remain rejected; prepared external semantic evaluator was not executed. Logs are synthetic agent trajectories. API credentials, caches, locks, and console logs excluded."
+}
