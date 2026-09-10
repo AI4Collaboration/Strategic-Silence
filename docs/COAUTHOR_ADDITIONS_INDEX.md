@@ -8,6 +8,14 @@ This guide summarizes the merged additions in **PRs #4, #5 and #6** and lists ev
 | [#5 — Data guide, examples and figures](https://github.com/AI4Collaboration/Strategic-Silence/pull/5) | A field-level data guide, a 26-game index, nine exact observed examples, reproducible quantitative figures and separately labeled illustrations. | [Data guide](../results/craft_trade/DATA.md), [game index](../results/craft_trade/games.csv), [examples](../results/craft_trade/examples.json), [figures](../results/craft_trade/figures/). |
 | [#6 — LLM review and human-reviewed sample](https://github.com/AI4Collaboration/Strategic-Silence/pull/6) | An exploratory Luna review of **all 944 speaking rounds** in the frozen cohort, a fixed 10% audit packet, and the documented user review of its **29 competitive cases**. This PR also includes shared runtime, geometry and bounty code. | [Review summary](../artifacts/luna_full_cohort_selective_disclosure_2026_09_08/README.md), [protocol](../artifacts/luna_full_cohort_selective_disclosure_2026_09_08/PROTOCOL.md), [competitive review packet](../artifacts/luna_full_cohort_selective_disclosure_2026_09_08/LEAN_MANUAL_VALIDATION_COMPETITIVE_10PCT.md). |
 
+## Service objective results: GPT-5.4
+
+The service environment now has **24 completed objective-condition episodes**: an initial 3 matched cases plus a separate 5-case follow-up (15 new episodes, five per condition). Across the eight cases, aligned experts disclosed in **8/8**, mixed experts withheld in **8/8**, and competitive experts withheld in **8/8**. There were **zero format failures**. Mixed means an individual-payoff expert with team-oriented clients; payment mechanics stay fixed across conditions.
+
+The withholding is **content omission while communicating**. Important caveat: service and independent success tie in total team points, so this demonstrates disclosure choices, not team-payoff harm. Elicited plans and assistant semantic annotations are not independent human intent validation. This is service evidence alongside the separate crafting/trading environment; Kimi K3 replication has not run here.
+
+Start with the [results and limitations](../results/service_objectives/README.md), [per-cohort summary](../results/service_objectives/reproduced_summary.json), and [offline reproduction script](../scripts/reproduce_service_objectives.py). The archive contains raw trajectories, annotations and budget provenance. **224 requests replayed; 47 focused tests passed.** The follow-up cost $0.80; cumulative accounted service spend remains within the original $5 cap at $4.44.
+
 ## How these additions fit the paper
 
 - **Methods:** use the environment description and native game implementation for communication timing, private recipes, crafting, reciprocal trades and settlement survival.
