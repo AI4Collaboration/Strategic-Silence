@@ -1,0 +1,21 @@
+{
+  "collection": "public_crossmodel_20260912",
+  "target_calls": 300,
+  "dispatched_calls": 289,
+  "undispatched_reserved_ids": 11,
+  "models": {
+    "glm53": 145,
+    "gpt54": 144
+  },
+  "strict_format_failures": 1,
+  "annotation": "lightweight posthoc keyword-assisted exposed-reasoning screen; not validated intention rates",
+  "reservation_accounting_upper_bound_usd": 26.8539328344,
+  "reported_provider_cost_usd": 1.5315028344,
+  "approved_reservation_cap_usd": 15.0,
+  "cap_compliant": false,
+  "source_outcomes": [
+    "public_crossmodel_20260912/outcomes.json",
+    "public_crossmodel_resume_20260912/outcomes.json"
+  ],
+  "diagnostic_smoke_excluded": "glm53_reasoning_smoke_20260912/outcomes.json"
+}
