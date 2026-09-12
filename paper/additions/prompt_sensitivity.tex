@@ -1,0 +1,66 @@
+% Requires booktabs. Include after the empirical results section.
+\subsection{Truthfulness versus completeness instructions}
+\label{sec:prompt-sensitivity}
+We compare communication decisions on two archived resource-game states
+(initial Mines and later Forest), retaining the competitive gold objective
+but removing private-plan and share/keep-private elicitation. The response
+contains only public and addressed private messages; NONE remains legal.
+The added system suffix is either absent, ``Tell the truth.'', or
+``Tell the truth, and the whole truth.''
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Model & No suffix & Truth only & Whole truth \\
+\midrule
+GPT-5.4 & 29/50 (58\%) & 22/50 (44\%) & 0/50 (0\%) \\
+GLM-5.3 & --- & --- & 0/50 (0\%)$^{*}$ \\
+GPT-6 Astra & --- & 5/10 (50\%) & 0/10 (0\%) \\
+\bottomrule
+\end{tabular}
+\caption{Known gold omitted from both communication channels. Dashes mean
+untested in this cleaned comparison, not zero. Each arm samples both states
+equally. $^{*}$GLM has 23 formatting failures; all 50 interpretable public
+fields disclose gold, as do all 27 strictly valid responses.}
+\label{tab:prompt-sensitivity}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Model & Readable / calls & Explicit override & Cost only \\
+\midrule
+GPT-5.4 & 29/50 summaries & 0/29 & 0/29 \\
+GLM-5.3 & 50/50 texts & 5/50 & 3/50 \\
+GPT-6 Astra & 3/10 summaries & 0/3 & 0/3 \\
+\bottomrule
+\end{tabular}
+\caption{Posthoc assistant review of whole-truth reasoning. Explicit override:
+considers concealment/delay, invokes the instruction, then discloses.
+Cost only: acknowledges competitive disclosure costs and prioritizes the
+instruction without an explicit concealment alternative. Columns are disjoint.
+Missing readable reasoning is unknown, not a negative.}
+\label{tab:prompt-reasoning}
+\end{table}
+
+GLM provides eight instruction-versus-competition examples, including five
+explicit concealment alternatives. Among its 27 strict-format-valid outputs,
+one meets the explicit-override criterion and three meet cost-only. One GPT-5.4
+summary considers keeping gold private to avoid competition, but does not
+explicitly attribute its final disclosure to an instruction override.
+These labels describe exposed deliberation, not validated latent preference
+or a faithful, exhaustive record of internal computation. OpenAI responses
+expose summaries rather than raw reasoning text.
+
+The observed results support prompt-sensitive disclosure in these selected
+states, not universal suppression of strategic withholding. GPT-5.4's
+no-suffix and whole-truth arms were collected together; truth-only was a
+later batch. Astra arms were separate batches. Temporal/backend confounding
+therefore remains for truth-only comparisons. GLM has no matched cleaned
+control. These are repeated communication decisions, not full games or
+independently sampled environments. Gold omission alone does not establish
+intent, recipient ignorance, harm, or failure across the entire taxonomy.
+All whole-truth responses publicly report the correct three-gold amount;
+this does not certify exhaustive truth about every fact or promise fulfillment.
