@@ -1,6 +1,30 @@
 # TL;DR: updates and additions
 
-This guide summarizes the merged additions in **PRs #4, #5 and #6** and lists every added or modified file, so coauthors can find the methods, results and supporting evidence.
+This guide summarizes the additions in **PRs #4, #5 and #6**, the service objective results, and **PR #10's prompt-sensitivity tables**, so coauthors can find the methods, results and supporting evidence. The complete historical file inventory below covers PRs #4--6; PR #10's files are listed separately.
+
+## PR #10: truth versus whole-truth paper tables
+
+[PR #10](https://github.com/AI4Collaboration/Strategic-Silence/pull/10) adds a paper-ready cross-model comparison on two cleaned resource-game states, without private-plan or share/keep-private elicitation. The competitive objective and legal NONE action remain unchanged.
+
+| Model | No added instruction: gold omitted | Truth only: gold omitted | Whole truth: gold omitted |
+|---|---:|---:|---:|
+| GPT-5.4 | 29/50 (58%) | 22/50 (44%) | 0/50 (0%) |
+| GLM-5.3 | Not tested here | Not tested here | 0/50 (0%)* |
+| GPT-6 Astra | Not tested | 5/10 (50%) | 0/10 (0%) |
+
+*GLM has 23 formatting failures: all 50 interpretable public fields disclose gold, and all 27 strict-format-valid responses do too. Gold omission means absence from both channels, not independently validated intent or harm.*
+
+The separate reasoning table counts **5/50 GLM traces** that explicitly consider concealment/delay, invoke the whole-truth instruction, then disclose, plus **3/50 additional** competitive-cost/instruction cases. Only one of the five explicit cases and all three additional cases pass strict formatting. No explicit override was established in GPT-5.4's 29 available whole-truth summaries or Astra's three; missing summaries are unknown, not negative evidence. These are posthoc assistant interpretations, not independent human intent validation.
+
+**Paper takeaway:** disclosure is prompt-sensitive in these tested states; the data do not establish universal suppression or an intrinsic preference being overridden. Truth-only comparisons were separate batches; GLM has no matched cleaned control. These are repeated decisions on two states, not full-game evaluations.
+
+Files:
+
+- [Readable tables, provenance and limitations](../paper/additions/README.md).
+- [Insertion-ready LaTeX subsection](../paper/additions/prompt_sensitivity.tex), requiring `booktabs`.
+- [Standalone compilation preview](../paper/additions/preview.tex), successfully compiled with Tectonic.
+
+**Assembly/release boundary:** the authoritative local manuscript is not tracked on main, so the subsection still needs insertion into it and a final page-limit check. Source artifact paths are documented, but raw experiment journals are preserved locally and are not bundled in this PR. No new experiments were run for the table addition.
 
 | PR | What we added | Where to start |
 |---|---|---|
