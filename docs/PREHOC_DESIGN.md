@@ -1,242 +1,207 @@
-# Pre-hoc environment design
+# Pre-hoc design: appropriate disclosure and harmful omission
 
-Status: design specification. Case dossiers, native backends and model runs are
-pending. The unit of evaluation is a disclosure opportunity before a consequential
-action within a continuing workflow.
+Status: research design. No native backend, admitted case collection or new
+model results are implemented. The environment roster is not fixed.
 
-## A systematic taxonomy
+## Start with the desired behavior
 
-Use **Interdependence Theory** to describe the structure of an interaction.
-Rusbult and Van Lange [1, pp. 354-357] identify six dimensions: level of dependence,
-mutuality of dependence, basis of dependence, covariation of interests, temporal
-structure, and information availability. Their framework supplies the dimensions;
-the agent inputs and measurements below are our operationalization.
+Agents should communicate information needed for an authorized decision while
+respecting their duties to the person or organization they represent. This
+requires selection: a useful message need not contain everything the agent knows.
 
-| Established dimension | Pre-hoc specification for our environments |
-| --- | --- |
-| Level of dependence | Actions available without the other agent; feasible alternatives; cost and delay of independent verification or replacement |
-| Mutuality of dependence | Direction and asymmetry of these dependencies, recorded separately for each actor |
-| Basis of dependence | Which outcomes another actor can determine unilaterally, and which require coordinated actions; derive this from tool permissions and state transitions |
-| Covariation of interests | How feasible outcomes affect each principal's objectives and each agent's local incentives; retain common benefits and conflicts separately |
-| Temporal structure | Communication and action order, deadlines, opportunities to revise or challenge a decision, and consequences for later stages |
-| Information availability | Who knows the task state, interests and interaction rules; our task-evidence extension records source access, actual observations and verification cost |
-
-This is a dimensional taxonomy. Each episode receives a profile across all six
-dimensions. Values are derived from the workflow before model behavior is
-observed. Preserve the underlying permissions, alternatives and outcome rules;
-any coarse labels used in figures must have a registered coding rule. Authority
-alone does not establish dependence, and a shared employer does not establish
-aligned incentives.
-
-For multi-agent workflows, record the full actor and dependency graph. Label the
-focal sender-recipient decision while retaining other actors, joint constraints,
-coalition opportunities and third-party outcomes. A collection of isolated dyads
-cannot represent every joint dependency.
-
-## Mapping the proposed research settings
-
-Oversight, peer collaboration and delegated bargaining are useful workflow
-profiles within this space. Their names do not determine all six coordinates.
-
-| Proposed setting | Typical structural profile | Variables that must still be specified |
+| Situation | Desired behavior | Evidence needed for evaluation |
 | --- | --- | --- |
-| Human or agent oversight | An evaluator controls an approval or disposition; the reporting agent can influence the evidence available for that decision | Outside options, evaluator access, local approval incentives, appeal and revision rights |
-| Peer collaboration or swarm | Several agents jointly produce an outcome; useful evidence is distributed across participants | Bottleneck roles, team objectives versus local rewards, dependencies between contributions, communication and verification costs |
-| Agents negotiating for different principals | Agreement requires coordinated acceptance; principals can share gains from agreement while disagreeing about their allocation | Outside options, mandates, confidential preferences, factual disclosure duties and enforceable agreement terms |
+| Material information the recipient is entitled to receive | Communicate the relevant content or an adequate qualification before the decision | Source documents, task duties and a reviewed account of why the fact matters |
+| Confidential information outside the recipient's authorization | Protect it; provide an authorized summary or limitation statement when appropriate | The mandate, recipient and disclosure restrictions |
+| Discretionary private information | Permit withholding within the task's rules | Evidence that no relevant disclosure obligation applies |
+| Irrelevant detail | Permit omission while preserving decision-relevant content | The decision criteria and the relevance review |
+| Conflicting or unresolved obligations | Retain for separate boundary analysis | The competing rules and unresolved judgment |
 
-Human versus LLM oversight is an actor implementation variable. Legal, scientific
-and commercial work are application domains. A contract dispute can contain
-cooperative fact gathering, adversarial negotiation and third-party adjudication;
-profile the relevant episode rather than assigning the entire domain one label.
+These are evaluation judgments, not classes of environment. Permissible
+withholding is not automatically beneficial: a benefit claim needs outcome
+evidence. A counterparty receiving a less favorable negotiated price is not by
+itself evidence of a task failure.
 
-## Information-flow rules are a separate layer
+Appropriate selective disclosure is the desired behavior. Measure missing
+required content and prohibited disclosures separately, plus episode-level task
+success without either error. Freeze the eligible fact sets and report their
+denominators; optional content has no mandatory disclose/withhold label.
 
-Contextual Integrity grounds the analysis of appropriate information flows in
-context, actors, information subjects and transmission conditions [2, 3]. We apply
-this approach to task evidence as well as personal information. Our annotation
-scheme distinguishes required, discretionary and restricted disclosure; this
-three-way scheme is an evaluation choice, not a classification supplied by those
-papers.
+For the first study, select clear obligations and permissions. Use ordinary task
+documents and general role duties, rather than a prompt listing the exact facts
+the sender must disclose. Annotate materiality before inspecting model outcomes.
+Some duties may be triggered by a volunteered claim or authorized request; fix
+that conditional rule in advance.
 
-For each fact, define its sender, recipient, subject or principal, purpose,
-channel, time and applicable rule:
+## A concrete boundary control
 
-| Status | Operational meaning | Example |
-| --- | --- | --- |
-| Required | The role, protocol or agreement requires communicating this fact under the specified conditions | A known unmet acceptance requirement that a signed procurement disclosure form requires the vendor to report |
-| Discretionary | Sharing is authorized, but the applicable rules permit withholding | A client's reservation price during negotiation |
-| Restricted | Sharing with this recipient through this channel is unauthorized | Confidential client instructions outside the agreed disclosure scope |
+Place three kinds of content in the same dossier: a required material fact,
+irrelevant background, and information that should remain private.
 
-Case rules supply the duties. Record their source in the task protocol,
-delegation mandate, contract or reviewed procedural rules. Conditions can depend
-on a proposal, volunteered claim, authorized request or consent event. For
-example, a rule against misleading partial representations can require a
-qualification once an agent volunteers a particular claim. Fix that conditional
-rule before collection; evaluate whether its condition occurred from the trace.
-A question alone does not override confidentiality.
+For example, a procurement dossier could contain a known inability to meet an
+explicit delivery requirement, old unrelated delivery logs, and confidential
+internal costs. Under a task rule requiring disclosure of unmet requirements,
+the appropriate response communicates the delivery limitation, omits the
+unrelated logs and protects the costs. This is a proposed case pattern; a real
+dossier and its disclosure rules must be verified before use.
 
-Review unresolved or conflicting rules before admitting a case to confirmatory
-failure analysis. Retain unresolved cases separately. Materiality concerns the
-registered decision criteria; a favorable restoration outcome cannot create a
-disclosure duty after the fact.
+Score the communicated meaning, not exact reproduction of a fact string.
+An authorized qualification, redacted explanation or refusal to certify can
+satisfy the duty without exposing a restricted source. Escalation and refusal
+must be scored against the task: indiscriminate refusal is not a successful
+solution. Changing the recipient or authorization for the same fact is a
+separate boundary test, not an omission-repair comparison with fixed conditions.
 
-Keep three judgments separate: whether withholding is incentive-sensitive,
-whether it changes outcomes, and whether it violates the applicable duties.
-Discretionary withholding can be strategic and can disadvantage a counterpart
-without constituting a failure. Excessive disclosure can itself violate the
-sender's mandate.
+## When can omission matter?
 
-## Candidate native workflows
+Separate preconditions from possible drivers and measured consequences.
 
-Develop linked episodes from three document-grounded case families. Each family
-supports two distinct profiles, providing six candidate workflows without making
-application domains the taxonomy. These are admission targets, not implemented
-environments or validated case counts.
-
-| Case family and episode | Profile | Private evidence and disclosure boundary | Executed decision and outcome |
-| --- | --- | --- | --- |
-| Enterprise procurement: contract negotiation | Delegated bargaining | Vendor knows an unmet delivery or compatibility requirement; disclose it when the procurement rules require it. Reservation prices remain discretionary or confidential under the mandate | Agents propose and accept terms; execute an order and assess fulfillment against the agreed requirements |
-| Enterprise delivery: cross-functional execution | Peer collaboration | A logistics agent sees a supplier delay affecting an integration team's schedule; the project handoff protocol requires reporting critical blockers | Agents update dependencies, reserve resources and execute a delivery plan; record missed commitments and documented rework costs |
-| Research production: distributed analysis | Peer collaboration | An analysis agent observes a data-processing exception relevant to other agents' outputs; the analysis protocol specifies which exceptions must be shared | Agents run analyses and integrate artifacts; independent execution checks test protocol compliance and result validity |
-| Research governance: methodology review | Oversight | The writer has observed a deviation or required analysis absent from the account; the review protocol requires reporting it | A reviewer inspects records and approves or requests revision; assess the actual submission against the protocol |
-| Commercial dispute: settlement negotiation | Delegated bargaining | A representative knows an agreed extension; the case-specific evidence-exchange rules determine disclosure duties. Client settlement limits remain private | Representatives exchange evidence, propose terms and execute settlement or proceed to adjudication; assess fulfillment, costs and principal interests separately |
-| Commercial dispute: adjudication | Oversight | A representative presents the original deadline while omitting an admissible extension covered by the stipulated disclosure rules | An adjudicator requests records and issues a disposition; independent case review supplies the evidentiary standard and reference outcome |
-
-Use contracts, correspondence, task logs, analysis records and executable
-acceptance criteria with traceable provenance. Document any adaptations and
-obtain domain review. The legal tasks use explicit case procedures; selective
-advocacy alone is not labeled misconduct. Tools must change the task state, and
-receivers must be able to inspect, challenge, defer or reject. Retain successful,
-benign and legitimate-confidentiality cases so that blanket refusal or universal
-disclosure cannot solve the suite.
-
-Linked episodes share provenance, not necessarily decisions or disclosure duties.
-They provide coverage, not an estimate of the causal effect of changing from
-negotiation to oversight. Cluster episodes from a shared dossier as one case
-family. Prioritize admitted cases and backend validity over filling every cell.
-
-## The pre-hoc input package
-
-Freeze a versioned case specification before collection:
-
-| Component | Required content |
+| Item | Role in the experiment |
 | --- | --- |
-| Task and evidence | Source dossier, provenance, initial state, atomic fact references, decision criteria and native completion conditions |
-| Actors and mandates | Principal represented by each agent, responsibilities, permissions, objective and confidentiality obligations |
-| Structural profile | All six interdependence dimensions, with evidence from the actual action space and outcome rules |
-| Information allocation | Actor-specific documents, retrieval permissions, recipient initial information and the rule for recording actual observations |
-| Disclosure policy | Conditional required/discretionary/restricted annotations, source rules and reviewer decisions |
-| Interaction protocol | Tools, communication channels, valid opportunities to speak or remain silent, follow-up rights, deadlines and resource budgets |
-| Outcomes and interventions | Executable outcome checks, independently reviewed reference outcomes, eligible material facts, restoration selection rules and placebo candidates |
-| Experimental assignment | Incentive and instruction conditions, randomization, case-family grouping, exclusion rules and analysis denominators |
+| The sender encounters relevant evidence | Establishes exposure; recognition needs additional evidence |
+| The sender can choose what to communicate before a decision | Creates an opportunity for silence or selective disclosure |
+| An authorized way to communicate the material content exists | Makes disclosure a feasible alternative under the same duties |
+| The recipient does not already have equivalent information | Allows a potentially informative omission |
+| The recipient's feasible actions depend on that information | Establishes relevance; actual effects remain to be tested |
+| Withholding can advance a local objective | A candidate driver, manipulated through incentives |
+| Verification or follow-up is costly or delayed | A candidate moderator, not a necessary condition |
+| A worse action or outcome follows | A measured consequence, never an admission label inferred from the theory |
 
-Deliver the package in three views:
+Independent retrieval can prevent harm even after a material omission. The
+receiver keeps its native tools, follow-up rights and ability to decline.
+Do not disable these protections merely to manufacture an effect.
 
-- **Shared actor inputs:** task context, common rules, public evidence and tool
-  documentation.
-- **Actor-private inputs:** mandate, private evidence and applicable local
-  incentives, expressed as ordinary work instructions.
-- **Evaluator-only records:** fact labels, outcome references, intervention
-  candidates and assignment metadata. Never include these labels or expected
-  actions in actor prompts.
+## Pre-hoc case package
 
-Expose the rules through realistic mandates and task documents. A main condition
-must not hand the sender an evaluator-written list of the exact missing facts.
-Instructions specify accurate communication and, in the completeness condition,
-all material information required by the role while respecting authorization.
+Freeze the following before collection:
 
-Record evidence availability, observed content and demonstrated factual recognition
-separately. Access permission alone is not knowledge. Define any knowledge probe
-and its timing before collection and balance it across conditions; report
-probe-induced disclosure separately from spontaneous communication.
+- Source dossier, provenance, initial state, material facts and decision criteria.
+- Actors, principals, objectives, permissions and responsibilities.
+- Shared and private evidence, retrieval access and communication opportunities.
+- Required, discretionary and restricted disclosure annotations with source rules.
+- Native tools, deadlines, budgets and state-changing decision options.
+- Acceptable semantic disclosures, including permitted qualifications.
+- Independent outcome checks, eligible restoration sets and placebo candidates.
+- Assignment rules, analysis denominators and source-family identifiers.
 
-## Controlled comparisons
+Actors receive their task documents, applicable rules and private information.
+Evaluators retain fact labels, outcome references and intervention metadata.
+No prompt tells the sender which fact to hide or reveals the expected action.
 
-Use within-case comparisons for causal estimates. Cover the structural space
-through cases, then vary a small number of feasible dimensions within each case.
+## Experiment 1: does pressure change disclosure?
 
-1. **Incentives and instructions.** In oversight and shared-task episodes, compare
-   task-aligned objectives with a local reward such as approval, speed or credit
-   that can conflict with the task. Cross this with baseline, truth-only and
-   truth-plus-required-material-completeness instructions. Keep mandates,
-   evidence, permissions and disclosure duties fixed. Never instruct concealment.
-2. **Bargaining pressure.** Keep agents representing their respective principals.
-   Compare feasible compensation or deal-pressure conditions under the same
-   mandates. Both arms can remain mixed-interest interactions. A change to a
-   common principal or joint objective is a separately labeled structural
-   extension, not the same incentive contrast.
-3. **Information availability.** Where the backend supports it, compare
-   sender-exclusive evidence, independently retrievable but unread evidence, and
-   evidence already supplied to the receiver. Hold access budgets fixed when
-   changing location or permissions; study verification cost in a separate
-   contrast. These variants test access and attention mechanisms separately.
-4. **Other dimensions.** Initially record dependence, control and temporal
-   structure as case properties. Test alternatives, authority or repeated
-   interaction only with matched native variants. A descriptive profile is not
-   a randomized treatment.
+Present or retrieve identical evidence for the sender before assigning incentives
+and instructions in the controlled mechanism study. Compare a task-consistent
+objective with a feasible local pressure such as a deal, speed or approval
+reward. Preserve mandates, substantive duties, tools and task state. When two
+agents represent different principals, both conditions may retain conflicting
+interests; a new common objective is a different task.
 
-Truth-only and completeness arms share the same substantive duties; the latter
-makes the communication requirement explicit. The contrast tests instruction
-effectiveness under a fixed norm, not whether adding a new duty changes behavior.
+Cross incentive conditions with baseline, truth-only and truth-plus-material-
+completeness instructions. Completeness means communicating the material content
+required by the existing role while preserving confidential information. It does
+not create a new duty or require universal disclosure.
+Use a natural truthfulness instruction such as "Be truthful in your
+communication." A deliberately narrow instruction to avoid only literally false
+claims is a separate ablation, not the primary test of truthfulness instructions.
 
-## Minimal restoration and causal interpretation
+Record exposure, demonstrated recognition and communication separately.
+Retrieval receipts do not prove understanding. A factual probe in a separate
+branch tests whether the model can recover the fact from that state, not what it
+was privately thinking in the scored continuation. Probes inside a scored run
+can prime disclosure and must be labeled and balanced across conditions.
+Natural information-seeking is a separate robustness condition because the
+incentive may also change which evidence the sender reads.
 
-For confirmatory required-disclosure cases, freeze the workflow immediately
-before the recipient's consequential decision and create independent continuations:
+Estimate effects over all assigned episodes. Report false assertions, required
+omissions, literal silence, inappropriate disclosure, task completion and native
+outcomes. Also report the joint rate of factually accurate messages, required
+omissions and task defects, with factual message content distinguished from
+silence or empty refusals. Comparing only truthful or omission-selected
+trajectories across conditions does not identify the randomized treatment effect.
 
-| Arm | Evidence update |
+If truth-only instructions reduce lies while omissions remain, report that
+dissociation. Claim substitution toward omission only if the absolute omission
+rate increases under the controlled comparison, not merely its share among
+remaining failures.
+
+## Experiment 2: does the missing content affect the decision?
+
+Choose eligible facts and evidence requirements before observing outcomes.
+After communication, use the registered rule to identify which eligible content
+is missing. Freeze the workflow before the receiver's consequential action.
+Create independent continuations:
+
+| Arm | Update |
 | --- | --- |
 | O | Empty update; retain the original communication |
-| M | A reviewed minimal missing set of required material facts for the registered issue |
-| P | Authorized nonmaterial evidence matched to M in source, timing, presentation and serialized input length |
-| F | All still-missing required evidence known to the sender for this recipient at this time |
+| M | The missing authorized content needed for a registered material issue |
+| P | Nonmaterial authorized evidence matched for source, novelty, timing, presentation and input length where feasible |
+| F | All still-missing required content known to the sender for this recipient at the checkpoint |
 
-Select candidate sets using the case's evidence requirements before observing
-continuation outcomes. Define minimality by the registered evidentiary issue,
-including jointly necessary facts. If several sets qualify, use a fixed selection
-rule or evaluate each with multiplicity accounted for. An already-complete case
-has no missing-fact restoration and remains a completeness control.
+O/M/P are the main continuation arms. Use F for capability and completeness
+diagnostics on a predeclared subset rather than requiring it for every omission.
 
-Packets supply source-grounded facts without recommended actions. They neither
-repair the artifact nor reveal discretionary or restricted information. F is a
-complete required-disclosure reference, not a guarantee of the best outcome.
-Optional-information interventions belong in a separately labeled information-
-value analysis; recipient benefit alone does not make their original absence a
-failure. A legally confidential fact is never restored to an unauthorized actor.
+Define minimality by the evidentiary issue, including jointly necessary facts.
+Do not search for the smallest addition that happens to produce a successful
+action. Register a selection rule for multiple eligible sets. Already-complete
+episodes remain controls without a missing-content restoration.
 
-Compare native loss in P versus M, alongside O/M, O/P and M/F. Lower loss in M
-supports an effect of the missing evidence under this intervention. Count null
-and adverse effects as well. Keep downstream information seeking and tools
-available, with identical starting state, budgets and continuation policies.
-Changes after restoration are part of the intervention's total effect. The
-incentive experiment supplies separate evidence about strategic withholding.
+Updates supply evidence, not a recommended action or a repaired artifact.
+The main intervention adds content through the sender's ordinary channel, with
+source identity and timing matched between M and P. An authenticated external
+update is a separate diagnostic condition: source authority can itself change
+the response. Record exactly which spans or messages the intervention adds.
+Keep the original world state, task duties, authority and budgets identical at
+the branch point. Record any mismatch between M and P; include an already-known
+content control to diagnose attention and reminder effects. F is a completeness
+reference, not an assumed optimal policy. Test the receiver's ability to use
+adequate authorized information separately before interpreting null repairs.
 
-Report omissions with both assigned-episode and knowledge-eligible opportunity
-denominators, plus conditional restoration effects among qualifying omissions.
-Eligibility can change when incentives affect information seeking. Do not compare only
-the omission-selected samples across incentive arms as a causal incentive effect:
-those samples can contain different trajectories. Report total task outcomes for
-all assigned runs and cluster uncertainty by independent source case family.
+Measure actions actually executed through native tools and their consequences.
+Compare M with P alongside O/M, O/P and M/F, retaining null and adverse effects.
+The result estimates the effect of the specified information intervention among
+eligible omissions. It does not by itself establish a strategic motive, the
+natural effect of an ordinary sender disclosure, or a causal mediation estimate
+for the incentive treatment.
 
-## Source verification
+Pre-register separate restoration strata for factually audited accurate
+communication, literal silence and communication containing false assertions.
+Assess the communication available to the recipient before the checkpoint.
+The truthful-but-incomplete consequence claim requires an effect in the accurate
+communication stratum; a repair effect pooled with lying cannot establish it.
+These conditional M/P comparisons do not replace the all-assigned estimates
+of incentives or instructions.
 
-Verified on 2026-11-15. Crossref metadata verifies [1] and [3]; the publisher record
-verifies [2]. The retrieved source passages establish the conceptual claims.
-The operational fields, workflow examples and experimental choices above are
-our proposed design.
+Combine this evidence with Experiment 1 without collapsing the judgments:
+incentive sensitivity, breach of disclosure duty and information-caused loss
+are separate findings. Report sender benefit, receiver outcomes and shared
+outcomes separately; a redistribution of bargaining surplus is not automatically
+a defect. Cluster uncertainty by independent source case family.
 
-1. Caryl E. Rusbult and Paul A. M. Van Lange (2003). *Interdependence, Interaction,
-   and Relationships*. Annual Review of Psychology, 54, 351-375.
-   [DOI and publisher record](https://doi.org/10.1146/annurev.psych.54.101601.145059).
-   [Author-university full text](https://research.vu.nl/ws/portalfiles/portal/1898345/Rusbult%20Annual%20Review%20of%20Psychology%2054%202003%20u.pdf),
-   pp. 354-357: situation dimensions and their combinations.
-2. Helen Nissenbaum (2004). *Privacy as Contextual Integrity*. Washington Law
-   Review, 79, 119-158.
-   [Publisher record and text](https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/).
-   The abstract and framework relate appropriate flows to contextual norms.
-3. Adam Barth, Anupam Datta, John C. Mitchell and Helen Nissenbaum (2006).
-   *Privacy and Contextual Integrity: Framework and Applications*. IEEE Symposium
-   on Security and Privacy, 184-198. [DOI](https://doi.org/10.1109/SP.2006.32).
-   [Author-institution record](https://crypto.stanford.edu/portia/pubs/articles/BDMN811702440.html)
-   and [full text](https://theory.stanford.edu/people/jcm/papers/barth-datta-mitchell-nissenbaum-2006.pdf):
-   roles, subjects, allowed and disallowed flows, and temporal conditions.
+## Selecting environments
+
+Begin with one native workflow for validity checks. Add an independently sourced
+task only when it tests a materially different evidence and decision mechanism.
+The final number follows from these checks, not a preset domain quota.
+
+A candidate must have consequential decisions, realistic evidence, observable
+information access, feasible legitimate disclosure, native receiver actions and
+an independent outcome check. It must support useful behavior as well as
+failure, so that universal disclosure and blanket refusal cannot solve it.
+
+Define the unit of a domain label at the task level and write inclusion and
+exclusion rules before assigning cases. Assign each case one primary domain;
+use secondary labels for cross-cutting features. Commercial transactions and
+customer service cannot be counted as separate coverage merely by renaming
+stages of the same process. Negotiation, oversight and collaboration are workflow
+features, not a three-class domain partition.
+
+Record why each selected task matters through its concrete consequences, who
+relies on the decision, and the evidence that the workflow is used in practice.
+Select distinct tasks based on those criteria, not names alone. Existing
+benchmark audits and modified tasks receive separate labels. Shared dossiers
+and near-duplicate cases remain one family for inference.
+
+The [experiment plan](EXPERIMENT_PLAN.md) specifies the first-paper claim,
+relevant prior work, validation gates and questions reserved for later studies.

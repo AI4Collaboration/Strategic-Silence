@@ -70,12 +70,9 @@ artifacts, not independent proof of strategic intent.
 | Another informed party can contest the account | Introduce an independently informed counterparty under fixed case facts | Open hypothesis |
 | Instructions require accuracy versus material completeness | Baseline, truth only, truth plus authorized material disclosure | Reported pilot lead; needs controlled replication |
 
-The [pre-hoc design](PREHOC_DESIGN.md) maps these hypotheses onto an established
-structural framework: private advantage concerns covariation of interests;
-independent action concerns dependence; retrieval and verification concern
-information availability. Adding an informed party changes the actor graph.
-Instruction wording is an experimental treatment, rather than a structural
-taxonomy dimension. Disclosure duties are specified separately.
+The [pre-hoc design](PREHOC_DESIGN.md) starts by distinguishing justified
+withholding from omissions that undermine the recipient's authorized decision.
+The conditions above are testable hypotheses, not classes of environment.
 
 The working hypothesis is that withholding becomes attractive when disclosing a
 known material fact would move the recipient's decision against the sender's
