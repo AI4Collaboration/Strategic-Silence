@@ -1,7 +1,8 @@
 # Pre-hoc design: appropriate disclosure and harmful omission
 
 Status: research design. No native backend, admitted case collection or new
-model results are implemented. The environment roster is not fixed.
+model results are implemented. The [environment catalog](ENVIRONMENTS.md)
+specifies five primary task domains and six concrete design targets.
 
 ## Start with the desired behavior
 
@@ -181,9 +182,10 @@ a defect. Cluster uncertainty by independent source case family.
 
 ## Selecting environments
 
-Begin with one native workflow for validity checks. Add an independently sourced
-task only when it tests a materially different evidence and decision mechanism.
-The final number follows from these checks, not a preset domain quota.
+The [environment catalog](ENVIRONMENTS.md) specifies the six workflows and
+their distinct evidence and decision mechanisms. Validate native execution
+incrementally, starting with transactions and software changes. Report admitted
+cases and functioning backends separately from the full design target.
 
 A candidate must have consequential decisions, realistic evidence, observable
 information access, feasible legitimate disclosure, native receiver actions and

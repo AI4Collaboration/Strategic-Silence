@@ -52,12 +52,22 @@ whether an episode completes the task while avoiding both errors.
 
 ## How environments are selected
 
-The environment roster and count remain open until candidate tasks pass evidence
-and execution checks. Each needs sourced documents, a consequential action,
-independently reviewed outcome rules and an authorized restoration test. The
-[pre-hoc design](docs/PREHOC_DESIGN.md) specifies these requirements; the
-[experiment plan](docs/EXPERIMENT_PLAN.md) separates the first study from the
-broader research program.
+The design specifies **five primary task domains and six environments**:
+
+| Domain | Environment and consequential decision |
+| --- | --- |
+| Transactions and customer rights | E1: select and execute a transaction or eligible remedy |
+| Software engineering | E2: accept a patch and execute behavior checks |
+| Scientific research | E3: execute and adopt or revise a scientific analysis |
+| Civil legal proceedings | E4: produce evidence and issue a supported disposition |
+| Industrial operations | E5: commit and execute a dispatch/resource schedule; E6: accept, hold or rework a physical item |
+
+The [environment catalog](docs/ENVIRONMENTS.md) defines the roles, required and
+protected information, incentives, actual actions, loss checks, minimal
+restoration and source/adaptation boundary for each. These are design targets;
+native implementations and admitted case collections are still pending.
+The [pre-hoc design](docs/PREHOC_DESIGN.md) specifies common evidence requirements,
+and the [experiment plan](docs/EXPERIMENT_PLAN.md) specifies the comparisons.
 
 Commercial transactions and customer-service interactions are not counted as
 independent domains merely because their workflow names differ. Each case will

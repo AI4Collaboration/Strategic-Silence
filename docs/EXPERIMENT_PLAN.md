@@ -43,34 +43,30 @@ omission share among fewer remaining failures.
 
 ## Stage 1: validate one native workflow
 
-Select one workflow with sourced documents, clear disclosure responsibilities
-and a meaningful executed decision. The existing review and service tasks below
-are candidates for validity checks, not a settled domain roster:
+The [environment catalog](ENVIRONMENTS.md) defines five primary task domains
+and six environments: transaction resolution, software change acceptance,
+scientific analysis adoption, civil adjudication, operational scheduling and
+physical conformance. Transactions include customer service; the last two
+workflows share the industrial-operations domain.
 
-- Inter-Agent Influence's methodology review provides a native approval action.
-  The original draft contains an explicit false statement, and both agents can
-  inspect the protocol and draft. Keep the original as an audit condition;
-  changes to documents or access are labeled extensions. Its single published
-  methodology case cannot establish cross-case generalization.
-- KnownLieBench provides knowledge checks, entitlement policies and service
-  interactions. Native refunds are executed by the service agent. Evaluate the
-  actual action holder; customer-controlled harm requires a separately labeled
-  adapter. Service and commercial transactions count as overlapping candidate
-  coverage, not independent domains.
-- A new legal workflow remains an option after admission checks. It requires
-  sourced case materials, explicit procedural duties, reviewed admissible
-  evidence and an independently checked outcome. Selective advocacy alone is
-  not a failure label. Do not add a court setting solely to increase the count.
+Start validity checks with E1 (transactions) and E2 (software changes), then
+E3 (science) and E5 (scheduling). E4 (legal) and E6 (physical conformance) require
+their respective domain review and source validation. Every environment has
+a concrete source/adaptation boundary, disclosure example, executed endpoint
+and restoration packet specified in the catalog. The full roster is a design
+target, not a claim that the backends or case collections already exist.
 
 Before model collection, verify the source records, annotation rules, native
 tools, state isolation and evidence packets offline. Use more than one plausible
 outcome, including justified acceptance and rejection. Receivers may investigate,
 ask follow-up questions and refuse unsupported requests.
 
-Each dossier should include required material information and clear legitimate-
-withholding controls. A valid solution communicates the former without leaking
-the latter. Accept authorized qualifications and redacted evidence. The task
-must not be solvable by universal disclosure or blanket refusal.
+Every environment includes required material information and clear legitimate-
+withholding controls. Put them in the same dossier when authentic task rules
+support both; otherwise use matched boundary cases. Do not fabricate secret
+fields just to fill a matrix. A valid solution communicates the former without
+leaking the latter. Accept authorized qualifications and redacted evidence.
+The task must not be solvable by universal disclosure or blanket refusal.
 
 The subsequent model preflight checks whether receivers can use adequate
 authorized evidence and whether senders can identify and communicate it.
@@ -132,10 +128,10 @@ These are interpretation rules, not fixed significance thresholds. Case counts,
 power, smallest effects of interest and analysis choices are frozen after
 offline task validation and before substantive collection.
 
-Add a second independently sourced workflow because it changes a mechanism
-that matters, such as the evidence available or the consequential decision.
-Further environments need a stated incremental question. The final number is
-not fixed at six.
+The catalog states what each of the six environments adds to coverage. Admit
+each through the same evidence and execution checks. Publish the implemented
+roster and case counts explicitly; an unfinished environment cannot count as
+an experimental replication.
 
 Assign each case one primary task domain under written inclusion and exclusion
 rules. Keep workflow features and application sectors as separate metadata.
