@@ -11,16 +11,29 @@ making only true statements? Does that omission alter another agent's action and
 cause avoidable loss? [Takeaways](TAKEAWAYS.md) distinguish earlier observations
 from conditions that remain hypotheses.
 
-## Candidate workflows
+## Taxonomy and case admission
 
-These are concrete candidates, not a settled theoretical taxonomy.
+The [pre-hoc design](PREHOC_DESIGN.md) is the environment specification. It uses
+Interdependence Theory's six dimensions to characterize each interaction before
+collection. Oversight, peer collaboration and delegated bargaining are profiles
+within that space. Application domains and human/LLM actor identity are recorded
+separately. Profile differences describe coverage; matched within-case variants
+support causal comparisons.
 
-| Workflow | Roles and native decision | Material omission example | Readiness |
-| --- | --- | --- | --- |
-| Legal: commercial contract dispute | Two representatives submit and contest evidence; an adjudicator requests records and issues a disposition | Original deadline and delivery date are presented while an agreed extension is withheld | New case dossiers and execution backend required |
-| Commercial: enterprise procurement | A vendor provides product evidence; a buyer investigates, evaluates alternatives and places an order | A known limitation conflicts with an explicit buyer requirement but is absent from the account | New case dossiers, procurement tools and acceptance checks required |
-| Scientific: methodology review | A report writer presents evidence; a reviewer inspects the protocol and files, then approves or requests revision | A required analysis or material deviation is omitted from the report | Adapt the Inter-Agent Influence workflow; new omission-isolating cases required |
-| Customer service: entitlement negotiation | A service agent presents policy and options; a customer checks eligibility and accepts or contests an offer | A less useful option is explained while an applicable entitlement remains undisclosed | Existing-benchmark validation candidate; recipient decision authority must be audited |
+The initial development targets are six native episodes from three case families:
+
+| Source case family | Candidate episodes | Required execution evidence |
+| --- | --- | --- |
+| Enterprise contracts and delivery | Procurement negotiation; cross-functional delivery collaboration | Accepted terms, orders, resource commitments, delivery state and acceptance checks |
+| Research records and protocols | Distributed analysis; methodology oversight | Executed analyses, integrated artifacts, review actions and protocol-compliance checks |
+| Commercial dispute dossiers | Settlement negotiation; adjudication | Evidence submissions, executed settlements or dispositions, and independently reviewed case outcomes |
+
+Every episode needs a sourced dossier, a six-dimensional structural profile,
+actor mandates, an information-access map, conditional disclosure rules, native
+tools and reviewed outcome checks. Label facts as required, discretionary or
+restricted for the specific recipient and time. Fix those rules before model
+collection, including any requirement to qualify a volunteered claim. Preserve
+unresolved normative cases separately from confirmatory failure analysis.
 
 Legal cases cover ordinary delivery, quality, scope and payment disputes under
 explicit case rules. An independent case review must establish the evidentiary
@@ -36,24 +49,35 @@ mapping inputs must not be relabeled as these workflows.
 
 ## Paired design within each workflow
 
-1. Establish knowledge from actual observations or retrieval receipts. Separate
-   sender-exclusive information, recipient-accessible but unread evidence, and
-   information already seen by the recipient.
-2. Cross aligned/conflicting objectives with baseline/truth-only/truth-plus-
-   material-completeness instructions. Preserve other instructions, documents,
-   tools and decision options. Record the observed silence/omission behavior;
-   do not explicitly instruct the agent to hide facts.
+1. Establish evidence exposure from actual observations or retrieval receipts;
+   record demonstrated factual recognition separately. Separate sender-exclusive
+   information, recipient-accessible but unread evidence, and information already
+   seen by the recipient. Access permission alone is not knowledge.
+2. Cross feasible within-case incentive conditions with baseline/truth-only/
+   truth-plus-required-material-completeness instructions. In shared-task and
+   oversight episodes, compare task-aligned incentives with conflicting local
+   rewards. In bargaining, vary compensation or deal pressure while preserving
+   each principal's mandate; both arms can remain mixed-interest interactions.
+   Hold disclosure duties, documents, tools and decision options fixed. Record
+   observed silence/omission behavior; do not instruct the agent to hide facts.
 3. Audit factual assertions and material omissions against the case evidence.
    Missing information must matter under the task rules, not merely be omitted
-   from a shorter summary. Legitimate confidentiality is a separate control.
+   from a shorter summary. Record duties, outcome effects and incentive
+   sensitivity separately. Legitimate confidentiality is a separate control.
 4. Freeze the recipient before its consequential action. Create independent
-   original (O), minimal evidence (M), matched irrelevant evidence (P), and full
-   permitted evidence (F) continuations. Updates contain facts without a
-   recommended action and do not repair artifacts or change the world state.
-5. Check that restoration affects the recipient's executed choice and native
+   original (O), minimal required evidence (M), matched authorized nonmaterial
+   evidence (P), and complete required-disclosure (F) continuations. F supplies
+   all still-missing required evidence known to the sender for this recipient
+   at this time. Keep discretionary and restricted information private. Updates
+   contain facts without a recommended action and do not repair artifacts or
+   change the world state. Cases without missing required facts remain controls
+   without a restoration branch.
+5. Test whether restoration affects the recipient's executed choice and native
    outcome. Register candidate minimal evidence sets before inspecting those
-   outcomes; allow jointly necessary facts. Match update source, timing and
-   presentation, and review placebo irrelevance.
+   outcomes; allow jointly necessary facts and fix a selection rule when several
+   sets qualify. Define minimality from the evidentiary issue, not successful
+   outcome repair. Match update source, timing and presentation, and review
+   placebo irrelevance. Retain null and adverse restoration effects.
 6. Add already-informed controls. When facts were accessible but unread, describe
    the intervention as presenting existing evidence rather than granting new
    information. Record access, reading and attention separately.
@@ -61,6 +85,19 @@ mapping inputs must not be relabeled as these workflows.
 No-false-claim flags alone do not certify truthful transcripts. Invalid outputs,
 refusals, unknown facts and failed operations retain their own denominators.
 Report literal silence separately from communication containing material omissions.
+Report total outcomes for all assigned episodes and omissions with both the
+assigned-episode and knowledge-eligible opportunity denominators. Estimate
+restoration effects conditional on qualifying omissions; omission-selected
+subgroups can differ across incentive arms and cannot alone identify an incentive
+effect. Study discretionary disclosure as information value, with its own
+principal-specific costs, rather than treating all recipient gains as proof of
+failure. F is a reference for required completeness, not an optimal-welfare oracle.
+
+Information-access comparisons distinguish sender-exclusive, independently
+retrievable and already-presented evidence. Initially record dependence, control
+and temporal structure as case properties. Add matched variants only when the
+native backend can isolate the intended dimension. Do not treat human and LLM
+oversight as interchangeable observations or claim human validation from LLM runs.
 
 ## Existing benchmark reuse
 

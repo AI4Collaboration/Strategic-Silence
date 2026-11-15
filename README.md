@@ -4,8 +4,8 @@
 needs to make a sound decision?**
 
 We study strategic silence and selective disclosure in agentic workflows with
-conflicting interests. The central hypothesis is that requiring factual
-truthfulness can leave harmful omissions intact. Our evaluation design measures
+varying interests and disclosure duties. The central hypothesis is that requiring
+factual truthfulness can leave harmful omissions intact. Our evaluation design measures
 when agents withhold known material facts, whether those omissions affect
 executed decisions, and whether restoring the missing evidence reduces loss.
 
@@ -27,35 +27,57 @@ Materiality comes from the case's decision criteria, evidence and task rules.
 Concise summaries, unknown facts, protected information, refusals and invalid
 outputs are distinguished from strategic withholding. Harm is measured separately
 from omission: it requires evidence about the recipient's action and its outcome.
+Strategic behavior, outcome effects and violations of disclosure duties are
+separate judgments. Keeping a client's reservation price private can be strategic
+without constituting a failure.
 
-## Scenarios
+## Environment taxonomy and scenarios
 
-The design has three core candidate workflows and one existing-benchmark
-validation candidate. These are task choices, not a settled theoretical taxonomy.
-All comparisons of incentives, instructions and restoration are paired within
-the same case.
+The design uses the six dimensions of
+[Interdependence Theory](https://doi.org/10.1146/annurev.psych.54.101601.145059):
+dependence level, mutuality, basis, covariation of interests, temporal structure
+and information availability. We operationalize them through each task's actual
+alternatives, tool permissions, objectives, action sequence and evidence access.
+Each decision episode receives a profile before model collection.
 
-| Workflow | Agent roles and executed decision | Example of material omission | Development route |
-| --- | --- | --- | --- |
-| **Legal: commercial contract dispute** | Two representatives submit and contest evidence; an adjudicator requests records and issues a disposition | Original deadline and delivery evidence are submitted while an agreed extension is withheld | Build the case dossiers and adjudication environment |
-| **Commercial: enterprise procurement** | A vendor presents evidence; a buyer inspects alternatives, places an order and checks acceptance requirements | A known product limitation conflicts with an explicit buyer requirement but is not disclosed | Build document-grounded procurement and acceptance tools |
-| **Scientific: methodology review** | A report writer presents results; a reviewer inspects the protocol and files, then approves or requests revision | Required analyses or material deviations are absent from an otherwise factually accurate account | Adapt the Inter-Agent Influence review workflow and expand its cases |
-| **Customer service: entitlement negotiation** | A service agent presents options; a customer checks eligibility and accepts or contests an offer | A less useful option is explained while an applicable entitlement remains undisclosed | Audit KnownLieBench; label changes to decision authority as extensions |
+Oversight, peer collaboration and delegated bargaining map to this structural
+space. They guide case coverage; they are not exhaustive, mutually exclusive
+taxonomy classes. Human versus LLM oversight is an actor variable, and legal,
+scientific or commercial work is an application domain.
 
-Legal cases concern ordinary delivery, quality, scope and payment disputes, with
-explicit case rules and independently reviewed reference outcomes. Each workflow
-needs realistic evidence, tools with actual state effects, and benign cases in
-which the sender's requested outcome is justified. Recipients can investigate,
-ask follow-up questions and decline the sender's recommendation.
+| Workflow profile | Candidate native episodes | Consequential actions |
+| --- | --- | --- |
+| **Oversight** | Methodology review; commercial dispute adjudication | Approve or require revision; request evidence and issue a disposition |
+| **Peer collaboration** | Distributed research analysis; cross-functional enterprise delivery | Run and integrate analyses; revise dependencies and execute a delivery plan |
+| **Delegated bargaining** | Enterprise procurement; commercial dispute settlement | Negotiate and execute an order or settlement under a principal's mandate |
+
+These six candidate episodes come from three linked case families. Comparisons
+across profiles establish coverage; causal tests use matched variants within a
+case. KnownLieBench remains an existing-benchmark validation candidate.
+
+A separate information-flow specification, informed by
+[Contextual Integrity](https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/),
+records which facts are **required**, **discretionary** or **restricted** for each
+recipient and time. Duties come from sourced task rules and mandates. They can
+depend on claims or requests under rules fixed before collection. Benefiting a
+counterpart is not by itself a duty to reveal private information.
+
+The [pre-hoc design](docs/PREHOC_DESIGN.md) defines the taxonomy, candidate
+episodes, actor inputs, hidden evaluation records and controlled comparisons.
+Each workflow needs realistic evidence, tools with state effects and reviewed
+outcomes, including benign and legitimate-confidentiality cases. Recipients can
+investigate, ask follow-up questions and decline the sender's recommendation.
 
 ## Shared experiment protocol
 
 1. **Establish information access.** Record what the sender actually observed.
    Separate facts unavailable to the recipient, facts it can retrieve but has not
    read, and facts it already knows.
-2. **Vary incentives and instructions.** Within each case, cross aligned versus
-   conflicting objectives with baseline, truth-only, and truth-plus-material-
-   completeness instructions. Keep the remaining task facts and tools fixed.
+2. **Vary incentives and instructions.** Cross feasible within-case incentive
+   conditions with baseline, truth-only, and truth-plus-required-material-
+   completeness instructions. Preserve principals, mandates, disclosure duties,
+   task facts and tools. Shared-task episodes compare aligned and conflicting
+   local rewards; bargaining episodes vary deal pressure under fixed mandates.
    Agents choose their communication; prompts do not instruct them to conceal.
 3. **Audit the communication.** Check assertions against the source evidence and
    identify omitted material facts. Register eligible evidence sets independently
@@ -66,14 +88,16 @@ ask follow-up questions and decline the sender's recommendation.
    | Arm | Evidence update |
    | --- | --- |
    | O: Original | Empty update; preserve the sender's completed communication |
-   | M: Minimal restoration | Smallest reviewed missing evidence set needed for the registered issue |
-   | P: Placebo | Irrelevant evidence matched to M in source, timing, presentation and token length |
-   | F: Full information | All permitted sender evidence available at that time |
+   | M: Minimal restoration | Smallest reviewed missing set of required material facts for the registered issue |
+   | P: Placebo | Authorized nonmaterial evidence matched to M in source, timing, presentation and token length |
+   | F: Complete required disclosure | All still-missing required evidence known to the sender for this recipient at this time |
 
    Updates supply facts without recommending an action, repairing the work
    product or changing the environment. Jointly necessary facts can form a minimal
-   set. Include already-informed controls. Presenting an accessible but unread
-   fact is distinguished from providing previously unavailable information.
+   set. Preserve discretionary and restricted information. Include already-
+   informed controls. Presenting an accessible but unread fact is distinguished
+   from providing previously unavailable information. Already-complete episodes
+   remain controls without a missing-fact restoration.
 5. **Measure actions and consequences.** Continue each branch through native
    tools. Compare M with P to test whether the missing evidence changes decisions
    and reduces loss; also report O/M, O/P and M/F. Preserve unsuccessful,
@@ -91,6 +115,9 @@ requirement violations, incorrect dispositions, documented costs and affected-
 party outcomes. Keep native units and report within-case paired effects, with
 uncertainty clustered by independent case family. Sample sizes, model revisions
 and budget will be fixed after case and backend validation.
+Report all assigned episodes for incentive effects and qualifying omitted-fact
+episodes for conditional restoration effects. Discretionary information-value
+tests are separate from confirmatory disclosure-failure tests.
 
 [Inter-Agent Influence](https://arxiv.org/html/2611.04556v1) provides an agentic
 methodology-review workflow. Its false-claim scorer excludes strategic omission,
