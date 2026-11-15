@@ -52,15 +52,15 @@ whether an episode completes the task while avoiding both errors.
 
 ## How environments are selected
 
-The design specifies **five primary task domains and six environments**:
+The design specifies **five primary task domains and six environment families**:
 
 | Domain | Environment and consequential decision |
 | --- | --- |
-| Transactions and customer rights | E1: select and execute a transaction or eligible remedy |
+| Transactions and customer rights | E1: negotiate and execute a bilateral agreement; separately audit existing remedies |
 | Software engineering | E2: accept a patch and execute behavior checks |
 | Scientific research | E3: execute and adopt or revise a scientific analysis |
 | Civil legal proceedings | E4: produce evidence and issue a supported disposition |
-| Industrial operations | E5: commit and execute a dispatch/resource schedule; E6: accept, hold or rework a physical item |
+| Industrial operations | E5: planners commit and jointly execute routes, with centralized dispatch as a separate mode; E6: accept, hold or rework a physical item |
 
 The [environment catalog](docs/ENVIRONMENTS.md) defines the roles, required and
 protected information, incentives, actual actions, loss checks, minimal
@@ -68,6 +68,20 @@ restoration and source/adaptation boundary for each. These are design targets;
 native implementations and admitted case collections are still pending.
 The [pre-hoc design](docs/PREHOC_DESIGN.md) specifies common evidence requirements,
 and the [experiment plan](docs/EXPERIMENT_PLAN.md) specifies the comparisons.
+
+Coverage follows the decision mechanism: observed evidence, authorized
+communication, the recipient's information and action, and the resulting
+outcome. Each link needs positive evidence and boundary controls. Required,
+discretionary and prohibited disclosure have different scoring rules. The
+number of environments alone does not establish comprehensive coverage.
+
+Oversight tests the correctness of review decisions; shared-task execution tests
+team performance under local pressures; bilateral negotiation tests separately
+authorized objectives, valid agreement and fulfillment while preserving
+legitimate private information. These are overlapping research questions.
+Record principals, objectives and decision authority for each episode rather
+than inferring them from a task name. Human-oversight results require actual
+human recipients; an agent reviewer or human annotator does not supply them.
 
 Commercial transactions and customer-service interactions are not counted as
 independent domains merely because their workflow names differ. Each case will

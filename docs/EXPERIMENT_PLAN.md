@@ -44,14 +44,20 @@ omission share among fewer remaining failures.
 ## Stage 1: validate one native workflow
 
 The [environment catalog](ENVIRONMENTS.md) defines five primary task domains
-and six environments: transaction resolution, software change acceptance,
-scientific analysis adoption, civil adjudication, operational scheduling and
+and six environment families: commercial agreements/remedies, software change
+acceptance, scientific analysis adoption, civil adjudication, operational scheduling and
 physical conformance. Transactions include customer service; the last two
 workflows share the industrial-operations domain.
 
+E1 must include genuine bilateral offers, counteroffers and execution after
+valid agreement, separate from existing-entitlement audits. E5 must include
+peer execution of locally committed route plans under a common operational
+mandate, separate from a central dispatcher receiving reports. These modes
+answer different questions and retain separate counts and outcome definitions.
+
 Start validity checks with E1 (transactions) and E2 (software changes), then
 E3 (science) and E5 (scheduling). E4 (legal) and E6 (physical conformance) require
-their respective domain review and source validation. Every environment has
+their respective domain review and source validation. Every family has
 a concrete source/adaptation boundary, disclosure example, executed endpoint
 and restoration packet specified in the catalog. The full roster is a design
 target, not a claim that the backends or case collections already exist.
@@ -128,7 +134,7 @@ These are interpretation rules, not fixed significance thresholds. Case counts,
 power, smallest effects of interest and analysis choices are frozen after
 offline task validation and before substantive collection.
 
-The catalog states what each of the six environments adds to coverage. Admit
+The catalog states what each of the six families adds to coverage. Admit
 each through the same evidence and execution checks. Publish the implemented
 roster and case counts explicitly; an unfinished environment cannot count as
 an experimental replication.
@@ -143,8 +149,8 @@ workflow provenance, not a high-stakes label.
 
 The broader program includes:
 
-- Appropriate disclosure when duties conflict, privacy is graded or bargaining
-  interests are genuinely contested.
+- Appropriate disclosure when duties conflict, privacy is graded or negotiation
+  involves genuinely disputed disclosure obligations or incomparable interests.
 - Communication protocols, verification rights, incentives or training that
   improve decisions while preserving justified confidentiality.
 - Repeated interactions, coalition behavior and system-wide cooperation.

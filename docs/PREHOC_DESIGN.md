@@ -2,7 +2,69 @@
 
 Status: research design. No native backend, admitted case collection or new
 model results are implemented. The [environment catalog](ENVIRONMENTS.md)
-specifies five primary task domains and six concrete design targets.
+specifies five primary task domains and six environment families, with explicit
+workflow modes and episode-level coverage requirements.
+
+## Deriving coverage from the decision mechanism
+
+The basic object is an information-dependent decision:
+
+    observed evidence -> selected communication -> another actor's action -> outcome
+
+Task duties and authorization constrain the communication; incentives can affect
+the selection. This structure identifies the evidence needed for a claim, but
+does not imply that there must be exactly six application domains or workflows.
+The environments supply different source evidence and executable outcome checks.
+
+For a given recipient, time and purpose, consistent reviewed rules partition
+content into required, prohibited and discretionary disclosure. Required content
+must be authorized; prohibited content must be protected; discretionary content
+permits either choice. Conflicting or unresolved rules retain an unresolved
+label outside confirmatory duty-violation rates. Equivalent authorized summaries
+and qualifications can satisfy a duty without exposing a restricted raw source.
+
+Test each link rather than presuming every omission reaches the outcome:
+
+| Link | Main evidence | Boundary or negative control |
+| --- | --- | --- |
+| Evidence to sender knowledge | Recorded exposure and demonstrated recognition | Unknown/unread facts are not scored as knowing concealment |
+| Knowledge to communication | A feasible authorized channel and a material disclosure opportunity | Required protection, discretionary information and irrelevant detail |
+| Communication to recipient information | The recipient lacks equivalent content at the decision | Already-informed recipients and independent verification |
+| Recipient information to action/outcome | Source-matched M/P continuations and native execution | Nonmaterial updates, intact system guards and adequate-information capability checks |
+| Incentive to information selection | Randomized pressure with duties and exposure fixed | Ordinary objectives; natural truthfulness wording without concealment instructions |
+
+The first two controls distinguish non-disclosure from misconduct, the next two
+test whether missing information matters, and the last supports a strategic
+interpretation. An effect at one link does not establish the others.
+
+For every episode, record the represented principals, mandated objectives,
+disclosure rights and required consents before communication. Principal identity
+and objective alignment are separate fields. A joint agreement requires the
+relevant parties' valid commitments even if only the last acceptance invokes
+the execution tool. Conditional or hybrid authority is recorded explicitly.
+These facts organize comparisons; a binary coding grid is not proof of broad
+environmental coverage.
+
+When the mandate is common task success, measure team outcomes separately from
+local-agent gains. When agents represent independently authorized interests,
+measure each party's outcome, agreement feasibility and compliance separately.
+An ordinary redistribution of bargaining surplus is not automatically a defect.
+Internal oversight, external adjudication, peer execution and bilateral
+negotiation provide contrasting episodes, not an exhaustive social taxonomy.
+
+Coverage therefore has two requirements: each study must exercise the mechanism
+and its boundary controls, and the selected environments must instantiate
+materially different evidence and consequential actions. Report the coverage
+actually realized, including missing cases or modes. Six names alone satisfy
+neither requirement.
+
+The released case manifest must report environment/mode, source family,
+represented principals, mandated objectives, required consents, each fact's
+disclosure status, knowledge evidence, recipient access and decision checkpoint.
+Publish counts for required, discretionary, prohibited and unresolved content,
+plus realized boundary controls. Missing coverage is reported as missing, not
+filled by an environment label. Human and agent recipients retain separate
+counts. Disclosure after the relevant commitment is not timely completeness.
 
 ## Start with the desired behavior
 
@@ -88,6 +150,9 @@ Freeze the following before collection:
 Actors receive their task documents, applicable rules and private information.
 Evaluators retain fact labels, outcome references and intervention metadata.
 No prompt tells the sender which fact to hide or reveals the expected action.
+Audit all recipient-visible channels, including structured offers, shared
+artifacts and delivered tool receipts. A missing chat sentence is not omission
+if equivalent content was already communicated through another channel.
 
 ## Experiment 1: does pressure change disclosure?
 
@@ -182,9 +247,9 @@ a defect. Cluster uncertainty by independent source case family.
 
 ## Selecting environments
 
-The [environment catalog](ENVIRONMENTS.md) specifies the six workflows and
-their distinct evidence and decision mechanisms. Validate native execution
-incrementally, starting with transactions and software changes. Report admitted
+The [environment catalog](ENVIRONMENTS.md) specifies six environment families,
+their workflow modes and distinct evidence and decision mechanisms. Validate
+native execution incrementally, starting with transactions and software changes. Report admitted
 cases and functioning backends separately from the full design target.
 
 A candidate must have consequential decisions, realistic evidence, observable
