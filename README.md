@@ -35,8 +35,8 @@ container checks create consequences across owners.
 1. Agents inspect local records, query authorized evidence, communicate and act.
 2. At each recipient's first dependent action, score missing required evidence.
    Separately count unauthorized fact–recipient deliveries, including forwarding.
-3. Freeze the whole swarm before the affected decision. Compare **O** (empty
-   update), **M** (missing authorized record) and **P** (nonmaterial record).
+3. Freeze the whole swarm before the affected decision. Compare **no added
+   information**, **required information added** and **unrelated information added**.
 4. Resume all agents and measure native loss. Keep world state, permissions,
    timing and budgets matched at the fork; updates are matched in UTF-8 bytes.
 
@@ -55,7 +55,7 @@ python -m disclosure_causality offline --output output/offline
 python -m disclosure_causality replay output/offline/examples.json
 ```
 
-Default: all six environments, sizes **4, 7, 8, 16, 32**, seeds **0, 1**.
+Default: all six environments, sizes **4, 8, 16, 32**, seeds **0, 1**.
 For a smoke run, add `--sizes 4 --seeds 0`. To repartition a fixed workload:
 
 ```sh
@@ -69,7 +69,7 @@ deterministic work order; free-form model communication remains future work.
 
 ## Validation and next experiments
 
-[Saved validation](results/offline/validation.json): **738 scripted episodes**
+[Saved validation](results/offline/validation.json): **612 scripted episodes**
 across growing and fixed workloads, including 108 null-control episodes;
 **36 matching continuation replays**. The current test suite has **83 tests**.
 

@@ -1439,7 +1439,338 @@
       },
       "environment": "M1",
       "evidence": {
-        "M": {
+        "no_added_information": {
+          "actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "decision_actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "defect_checks": [
+            {
+              "event_ids": [
+                "event-000004",
+                "event-000007",
+                "event-000009",
+                "event-000011",
+                "event-000013"
+              ],
+              "name": "native_loss",
+              "oracle_reference": "M1/local-simulator-v1",
+              "state_reference": "1fc3592b36f7a1c2b4fa67d966586d697833da6065525c8eec026a6c1e5cef5a",
+              "status": "observed",
+              "unit": "nonconforming_outputs",
+              "value": 3
+            }
+          ],
+          "events": [
+            {
+              "actor": "agent-0",
+              "after_state_hash": "f4b2d87502d9f4ac048151c4883b0a93c8605bde3851681f2005a21741d79b07",
+              "arguments": {},
+              "before_state_hash": "f226e349d6ceee172e697d7cf9c93b4562e93ccfb4ea2d60ecc9feacb2f77b92",
+              "effect": "observe",
+              "event_id": "event-000000",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0000/progress",
+                  "work-0000/private",
+                  "work-0000/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000000",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "626cd08c96e0e5c10d60cc5c1b15a425d7ad731e4169cb8ad6400611283b6c16",
+              "arguments": {},
+              "before_state_hash": "f4b2d87502d9f4ac048151c4883b0a93c8605bde3851681f2005a21741d79b07",
+              "effect": "observe",
+              "event_id": "event-000001",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0001/progress",
+                  "work-0001/private",
+                  "work-0001/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000001",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "027eaca6ed54d234e77e2e34338cd19b45e8fd7cc4876e2ac91bea982b4aa827",
+              "arguments": {},
+              "before_state_hash": "626cd08c96e0e5c10d60cc5c1b15a425d7ad731e4169cb8ad6400611283b6c16",
+              "effect": "observe",
+              "event_id": "event-000002",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0002/progress",
+                  "work-0002/private",
+                  "work-0002/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000002",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "a1ee5283f5ec48df68f03e25514ce907d4488051cf8249ff8f619133d4c9c65d",
+              "arguments": {},
+              "before_state_hash": "027eaca6ed54d234e77e2e34338cd19b45e8fd7cc4876e2ac91bea982b4aa827",
+              "effect": "observe",
+              "event_id": "event-000003",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0003/progress",
+                  "work-0003/private",
+                  "work-0003/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000003",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "e999023c1795520e1b44c69d1133c4fb4bfa2d68946085d0e2a384a6f1c46ba3",
+              "arguments": {
+                "replace_input": false,
+                "unit": "work-0000"
+              },
+              "before_state_hash": "a1ee5283f5ec48df68f03e25514ce907d4488051cf8249ff8f619133d4c9c65d",
+              "effect": "execute",
+              "event_id": "event-000004",
+              "result": {
+                "accepted": true,
+                "lot": "work-0000",
+                "replacement_used": false,
+                "status": "assembled_pending_final_check"
+              },
+              "result_reference": "receipt:event-000004",
+              "status": "ok",
+              "tool": "assemble_lot"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "c83a0db9320ac6427e0ce5aad6edbc297ae7b4b07509f4d4cf2f2f34d9232e2d",
+              "arguments": {
+                "fact_ids": [
+                  "work-0000/progress"
+                ],
+                "recipient": "agent-1",
+                "subject": "work-0000"
+              },
+              "before_state_hash": "e999023c1795520e1b44c69d1133c4fb4bfa2d68946085d0e2a384a6f1c46ba3",
+              "effect": "communicate",
+              "event_id": "event-000005",
+              "result": {
+                "accepted": true,
+                "message": 0,
+                "wire_bytes": 281
+              },
+              "result_reference": "receipt:event-000005",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "78d112bc8b8f7d23185a1468ca9ad92425c342473520b6af0870c89efe5fc97b",
+              "arguments": {
+                "fact_ids": [],
+                "recipient": "agent-1",
+                "subject": "work-0000",
+                "wire_bytes": 308
+              },
+              "before_state_hash": "c83a0db9320ac6427e0ce5aad6edbc297ae7b4b07509f4d4cf2f2f34d9232e2d",
+              "effect": "communicate",
+              "event_id": "event-000006",
+              "result": {
+                "accepted": true,
+                "message": 1,
+                "wire_bytes": 308
+              },
+              "result_reference": "receipt:event-000006",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "a6b0c887e2910ecc15e0b5740a43aa574613c0bd4bad6b2b6fc53896b629fde4",
+              "arguments": {
+                "replace_input": false,
+                "unit": "work-0001"
+              },
+              "before_state_hash": "78d112bc8b8f7d23185a1468ca9ad92425c342473520b6af0870c89efe5fc97b",
+              "effect": "execute",
+              "event_id": "event-000007",
+              "result": {
+                "accepted": true,
+                "lot": "work-0001",
+                "replacement_used": false,
+                "status": "assembled_pending_final_check"
+              },
+              "result_reference": "receipt:event-000007",
+              "status": "ok",
+              "tool": "assemble_lot"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "b17d3c4686cf43ec8b3d8c2ae62f2e520db2622f0786689ee14adb5b446a6213",
+              "arguments": {
+                "fact_ids": [
+                  "work-0001/progress",
+                  "work-0001/coord"
+                ],
+                "recipient": "agent-2",
+                "subject": "work-0001"
+              },
+              "before_state_hash": "a6b0c887e2910ecc15e0b5740a43aa574613c0bd4bad6b2b6fc53896b629fde4",
+              "effect": "communicate",
+              "event_id": "event-000008",
+              "result": {
+                "accepted": true,
+                "message": 2,
+                "wire_bytes": 535
+              },
+              "result_reference": "receipt:event-000008",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "d0a222a275dd7bdaae077b900ca8a0d8ea14b2687ea9a8bc1b90149a54dca8ac",
+              "arguments": {
+                "replace_input": false,
+                "unit": "work-0002"
+              },
+              "before_state_hash": "b17d3c4686cf43ec8b3d8c2ae62f2e520db2622f0786689ee14adb5b446a6213",
+              "effect": "execute",
+              "event_id": "event-000009",
+              "result": {
+                "accepted": true,
+                "lot": "work-0002",
+                "replacement_used": false,
+                "status": "assembled_pending_final_check"
+              },
+              "result_reference": "receipt:event-000009",
+              "status": "ok",
+              "tool": "assemble_lot"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "3a93c0112531dc1306c2da8dd0fc2c8207fa60a0407cb28824f5b945a098b834",
+              "arguments": {
+                "fact_ids": [
+                  "work-0002/progress",
+                  "work-0002/coord"
+                ],
+                "recipient": "agent-3",
+                "subject": "work-0002"
+              },
+              "before_state_hash": "d0a222a275dd7bdaae077b900ca8a0d8ea14b2687ea9a8bc1b90149a54dca8ac",
+              "effect": "communicate",
+              "event_id": "event-000010",
+              "result": {
+                "accepted": true,
+                "message": 3,
+                "wire_bytes": 535
+              },
+              "result_reference": "receipt:event-000010",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "89867404c88e00945f16090462ded834fe63a1d394b5e487bb47966ca2c70a1d",
+              "arguments": {
+                "replace_input": false,
+                "unit": "work-0003"
+              },
+              "before_state_hash": "3a93c0112531dc1306c2da8dd0fc2c8207fa60a0407cb28824f5b945a098b834",
+              "effect": "execute",
+              "event_id": "event-000011",
+              "result": {
+                "accepted": true,
+                "lot": "work-0003",
+                "replacement_used": false,
+                "status": "assembled_pending_final_check"
+              },
+              "result_reference": "receipt:event-000011",
+              "status": "ok",
+              "tool": "assemble_lot"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "ace8e71f7e69103010e3f96413d59668540a3d74c35a150c592c4a43061fc26d",
+              "arguments": {
+                "fact_ids": [
+                  "work-0003/progress",
+                  "work-0003/coord"
+                ],
+                "recipient": "agent-0",
+                "subject": "work-0003"
+              },
+              "before_state_hash": "89867404c88e00945f16090462ded834fe63a1d394b5e487bb47966ca2c70a1d",
+              "effect": "communicate",
+              "event_id": "event-000012",
+              "result": {
+                "accepted": true,
+                "message": 4,
+                "wire_bytes": 535
+              },
+              "result_reference": "receipt:event-000012",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "1fc3592b36f7a1c2b4fa67d966586d697833da6065525c8eec026a6c1e5cef5a",
+              "arguments": {},
+              "before_state_hash": "ace8e71f7e69103010e3f96413d59668540a3d74c35a150c592c4a43061fc26d",
+              "effect": "execute",
+              "event_id": "event-000013",
+              "result": {
+                "accepted": false,
+                "native_checks": {
+                  "by_work": {
+                    "work-0001": 1,
+                    "work-0002": 1,
+                    "work-0003": 1
+                  },
+                  "loss": 3,
+                  "loss_unit": "nonconforming_outputs",
+                  "nonconforming_downstream_outputs": 3,
+                  "replacement_inputs": 0
+                },
+                "status": "blocked"
+              },
+              "result_reference": "receipt:event-000013",
+              "status": "rejected",
+              "tool": "finalize"
+            }
+          ],
+          "execution_status": "completed",
+          "final_state_hash": "1fc3592b36f7a1c2b4fa67d966586d697833da6065525c8eec026a6c1e5cef5a",
+          "initial_state_hash": "f226e349d6ceee172e697d7cf9c93b4562e93ccfb4ea2d60ecc9feacb2f77b92",
+          "outcome_basis": "environment_trace_and_state"
+        },
+        "required_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -1772,338 +2103,7 @@
           "initial_state_hash": "f226e349d6ceee172e697d7cf9c93b4562e93ccfb4ea2d60ecc9feacb2f77b92",
           "outcome_basis": "environment_trace_and_state"
         },
-        "O": {
-          "actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "decision_actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "defect_checks": [
-            {
-              "event_ids": [
-                "event-000004",
-                "event-000007",
-                "event-000009",
-                "event-000011",
-                "event-000013"
-              ],
-              "name": "native_loss",
-              "oracle_reference": "M1/local-simulator-v1",
-              "state_reference": "1fc3592b36f7a1c2b4fa67d966586d697833da6065525c8eec026a6c1e5cef5a",
-              "status": "observed",
-              "unit": "nonconforming_outputs",
-              "value": 3
-            }
-          ],
-          "events": [
-            {
-              "actor": "agent-0",
-              "after_state_hash": "f4b2d87502d9f4ac048151c4883b0a93c8605bde3851681f2005a21741d79b07",
-              "arguments": {},
-              "before_state_hash": "f226e349d6ceee172e697d7cf9c93b4562e93ccfb4ea2d60ecc9feacb2f77b92",
-              "effect": "observe",
-              "event_id": "event-000000",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0000/progress",
-                  "work-0000/private",
-                  "work-0000/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000000",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "626cd08c96e0e5c10d60cc5c1b15a425d7ad731e4169cb8ad6400611283b6c16",
-              "arguments": {},
-              "before_state_hash": "f4b2d87502d9f4ac048151c4883b0a93c8605bde3851681f2005a21741d79b07",
-              "effect": "observe",
-              "event_id": "event-000001",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0001/progress",
-                  "work-0001/private",
-                  "work-0001/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000001",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "027eaca6ed54d234e77e2e34338cd19b45e8fd7cc4876e2ac91bea982b4aa827",
-              "arguments": {},
-              "before_state_hash": "626cd08c96e0e5c10d60cc5c1b15a425d7ad731e4169cb8ad6400611283b6c16",
-              "effect": "observe",
-              "event_id": "event-000002",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0002/progress",
-                  "work-0002/private",
-                  "work-0002/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000002",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "a1ee5283f5ec48df68f03e25514ce907d4488051cf8249ff8f619133d4c9c65d",
-              "arguments": {},
-              "before_state_hash": "027eaca6ed54d234e77e2e34338cd19b45e8fd7cc4876e2ac91bea982b4aa827",
-              "effect": "observe",
-              "event_id": "event-000003",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0003/progress",
-                  "work-0003/private",
-                  "work-0003/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000003",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "e999023c1795520e1b44c69d1133c4fb4bfa2d68946085d0e2a384a6f1c46ba3",
-              "arguments": {
-                "replace_input": false,
-                "unit": "work-0000"
-              },
-              "before_state_hash": "a1ee5283f5ec48df68f03e25514ce907d4488051cf8249ff8f619133d4c9c65d",
-              "effect": "execute",
-              "event_id": "event-000004",
-              "result": {
-                "accepted": true,
-                "lot": "work-0000",
-                "replacement_used": false,
-                "status": "assembled_pending_final_check"
-              },
-              "result_reference": "receipt:event-000004",
-              "status": "ok",
-              "tool": "assemble_lot"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "c83a0db9320ac6427e0ce5aad6edbc297ae7b4b07509f4d4cf2f2f34d9232e2d",
-              "arguments": {
-                "fact_ids": [
-                  "work-0000/progress"
-                ],
-                "recipient": "agent-1",
-                "subject": "work-0000"
-              },
-              "before_state_hash": "e999023c1795520e1b44c69d1133c4fb4bfa2d68946085d0e2a384a6f1c46ba3",
-              "effect": "communicate",
-              "event_id": "event-000005",
-              "result": {
-                "accepted": true,
-                "message": 0,
-                "wire_bytes": 281
-              },
-              "result_reference": "receipt:event-000005",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "78d112bc8b8f7d23185a1468ca9ad92425c342473520b6af0870c89efe5fc97b",
-              "arguments": {
-                "fact_ids": [],
-                "recipient": "agent-1",
-                "subject": "work-0000",
-                "wire_bytes": 308
-              },
-              "before_state_hash": "c83a0db9320ac6427e0ce5aad6edbc297ae7b4b07509f4d4cf2f2f34d9232e2d",
-              "effect": "communicate",
-              "event_id": "event-000006",
-              "result": {
-                "accepted": true,
-                "message": 1,
-                "wire_bytes": 308
-              },
-              "result_reference": "receipt:event-000006",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "a6b0c887e2910ecc15e0b5740a43aa574613c0bd4bad6b2b6fc53896b629fde4",
-              "arguments": {
-                "replace_input": false,
-                "unit": "work-0001"
-              },
-              "before_state_hash": "78d112bc8b8f7d23185a1468ca9ad92425c342473520b6af0870c89efe5fc97b",
-              "effect": "execute",
-              "event_id": "event-000007",
-              "result": {
-                "accepted": true,
-                "lot": "work-0001",
-                "replacement_used": false,
-                "status": "assembled_pending_final_check"
-              },
-              "result_reference": "receipt:event-000007",
-              "status": "ok",
-              "tool": "assemble_lot"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "b17d3c4686cf43ec8b3d8c2ae62f2e520db2622f0786689ee14adb5b446a6213",
-              "arguments": {
-                "fact_ids": [
-                  "work-0001/progress",
-                  "work-0001/coord"
-                ],
-                "recipient": "agent-2",
-                "subject": "work-0001"
-              },
-              "before_state_hash": "a6b0c887e2910ecc15e0b5740a43aa574613c0bd4bad6b2b6fc53896b629fde4",
-              "effect": "communicate",
-              "event_id": "event-000008",
-              "result": {
-                "accepted": true,
-                "message": 2,
-                "wire_bytes": 535
-              },
-              "result_reference": "receipt:event-000008",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "d0a222a275dd7bdaae077b900ca8a0d8ea14b2687ea9a8bc1b90149a54dca8ac",
-              "arguments": {
-                "replace_input": false,
-                "unit": "work-0002"
-              },
-              "before_state_hash": "b17d3c4686cf43ec8b3d8c2ae62f2e520db2622f0786689ee14adb5b446a6213",
-              "effect": "execute",
-              "event_id": "event-000009",
-              "result": {
-                "accepted": true,
-                "lot": "work-0002",
-                "replacement_used": false,
-                "status": "assembled_pending_final_check"
-              },
-              "result_reference": "receipt:event-000009",
-              "status": "ok",
-              "tool": "assemble_lot"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "3a93c0112531dc1306c2da8dd0fc2c8207fa60a0407cb28824f5b945a098b834",
-              "arguments": {
-                "fact_ids": [
-                  "work-0002/progress",
-                  "work-0002/coord"
-                ],
-                "recipient": "agent-3",
-                "subject": "work-0002"
-              },
-              "before_state_hash": "d0a222a275dd7bdaae077b900ca8a0d8ea14b2687ea9a8bc1b90149a54dca8ac",
-              "effect": "communicate",
-              "event_id": "event-000010",
-              "result": {
-                "accepted": true,
-                "message": 3,
-                "wire_bytes": 535
-              },
-              "result_reference": "receipt:event-000010",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "89867404c88e00945f16090462ded834fe63a1d394b5e487bb47966ca2c70a1d",
-              "arguments": {
-                "replace_input": false,
-                "unit": "work-0003"
-              },
-              "before_state_hash": "3a93c0112531dc1306c2da8dd0fc2c8207fa60a0407cb28824f5b945a098b834",
-              "effect": "execute",
-              "event_id": "event-000011",
-              "result": {
-                "accepted": true,
-                "lot": "work-0003",
-                "replacement_used": false,
-                "status": "assembled_pending_final_check"
-              },
-              "result_reference": "receipt:event-000011",
-              "status": "ok",
-              "tool": "assemble_lot"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "ace8e71f7e69103010e3f96413d59668540a3d74c35a150c592c4a43061fc26d",
-              "arguments": {
-                "fact_ids": [
-                  "work-0003/progress",
-                  "work-0003/coord"
-                ],
-                "recipient": "agent-0",
-                "subject": "work-0003"
-              },
-              "before_state_hash": "89867404c88e00945f16090462ded834fe63a1d394b5e487bb47966ca2c70a1d",
-              "effect": "communicate",
-              "event_id": "event-000012",
-              "result": {
-                "accepted": true,
-                "message": 4,
-                "wire_bytes": 535
-              },
-              "result_reference": "receipt:event-000012",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "1fc3592b36f7a1c2b4fa67d966586d697833da6065525c8eec026a6c1e5cef5a",
-              "arguments": {},
-              "before_state_hash": "ace8e71f7e69103010e3f96413d59668540a3d74c35a150c592c4a43061fc26d",
-              "effect": "execute",
-              "event_id": "event-000013",
-              "result": {
-                "accepted": false,
-                "native_checks": {
-                  "by_work": {
-                    "work-0001": 1,
-                    "work-0002": 1,
-                    "work-0003": 1
-                  },
-                  "loss": 3,
-                  "loss_unit": "nonconforming_outputs",
-                  "nonconforming_downstream_outputs": 3,
-                  "replacement_inputs": 0
-                },
-                "status": "blocked"
-              },
-              "result_reference": "receipt:event-000013",
-              "status": "rejected",
-              "tool": "finalize"
-            }
-          ],
-          "execution_status": "completed",
-          "final_state_hash": "1fc3592b36f7a1c2b4fa67d966586d697833da6065525c8eec026a6c1e5cef5a",
-          "initial_state_hash": "f226e349d6ceee172e697d7cf9c93b4562e93ccfb4ea2d60ecc9feacb2f77b92",
-          "outcome_basis": "environment_trace_and_state"
-        },
-        "P": {
+        "unrelated_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -2438,9 +2438,9 @@
         }
       },
       "expected_final_hashes": {
-        "M": "0c07f6e311956dceefdb1b857cc24a60dc76d87feb520a0f559c97fc6658034c",
-        "O": "f7651a9f87f9999e17dd28332cbd0f31fabb5ae924ce9ef5d56f47ff97fe643d",
-        "P": "9e3d00dcb4176684759ab63f5255e9e628ca8e027d42ecef7fa52b1a2e4daf8f"
+        "no_added_information": "f7651a9f87f9999e17dd28332cbd0f31fabb5ae924ce9ef5d56f47ff97fe643d",
+        "required_information": "0c07f6e311956dceefdb1b857cc24a60dc76d87feb520a0f559c97fc6658034c",
+        "unrelated_information": "9e3d00dcb4176684759ab63f5255e9e628ca8e027d42ecef7fa52b1a2e4daf8f"
       },
       "privacy_evidence": {
         "actor_ids": [
@@ -4802,350 +4802,7 @@
       },
       "environment": "M2",
       "evidence": {
-        "M": {
-          "actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "decision_actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "defect_checks": [
-            {
-              "event_ids": [
-                "event-000009",
-                "event-000010",
-                "event-000011",
-                "event-000012",
-                "event-000013"
-              ],
-              "name": "native_loss",
-              "oracle_reference": "M2/local-simulator-v1",
-              "state_reference": "87160d1f2fd88aec47e2e8507fe8b3307950f91a85b07dff448db002496ce4be",
-              "status": "observed",
-              "unit": "rejected_allocations",
-              "value": 0
-            }
-          ],
-          "events": [
-            {
-              "actor": "agent-0",
-              "after_state_hash": "de68920e4c5882a2e0eea53b88ec9bd0a4e8b6c4649c96c14ea1297fd0d65db4",
-              "arguments": {},
-              "before_state_hash": "e8f64e8a6ffdfd4166f641c5346f638aa000a7c0b94b46cb7a14bd45fe425d5c",
-              "effect": "observe",
-              "event_id": "event-000000",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0000/coord",
-                  "work-0000/progress",
-                  "work-0000/private",
-                  "work-0000/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000000",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "76da06c7ba1cfdfc512222bfdd5817d7453ddf62e4aa44f735232b9badd7381e",
-              "arguments": {},
-              "before_state_hash": "de68920e4c5882a2e0eea53b88ec9bd0a4e8b6c4649c96c14ea1297fd0d65db4",
-              "effect": "observe",
-              "event_id": "event-000001",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0001/coord",
-                  "work-0001/progress",
-                  "work-0001/private",
-                  "work-0001/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000001",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "21d395c6a2531765649cdc6b722e78309ccec913a9db136c9e645beabb2e7a96",
-              "arguments": {},
-              "before_state_hash": "76da06c7ba1cfdfc512222bfdd5817d7453ddf62e4aa44f735232b9badd7381e",
-              "effect": "observe",
-              "event_id": "event-000002",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0002/coord",
-                  "work-0002/progress",
-                  "work-0002/private",
-                  "work-0002/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000002",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "7fcd56850cf552752d2a9db6ea8f1bad0e50b7523dad75b9a23749de4efb7210",
-              "arguments": {},
-              "before_state_hash": "21d395c6a2531765649cdc6b722e78309ccec913a9db136c9e645beabb2e7a96",
-              "effect": "observe",
-              "event_id": "event-000003",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0003/coord",
-                  "work-0003/progress",
-                  "work-0003/private",
-                  "work-0003/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000003",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "c30dedf6301bda982f307b5a6537f039ca37f45edbb5ec259a3774602ef6c98b",
-              "arguments": {
-                "fact_ids": [
-                  "work-0000/progress"
-                ],
-                "recipient": "agent-1",
-                "subject": "work-0000"
-              },
-              "before_state_hash": "7fcd56850cf552752d2a9db6ea8f1bad0e50b7523dad75b9a23749de4efb7210",
-              "effect": "communicate",
-              "event_id": "event-000004",
-              "result": {
-                "accepted": true,
-                "message": 0,
-                "wire_bytes": 271
-              },
-              "result_reference": "receipt:event-000004",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "27bbb44c748841f999f7d0b83dd0a4a4c3faf797f7b2eadf1409e5d2638e4114",
-              "arguments": {
-                "fact_ids": [
-                  "work-0001/progress",
-                  "work-0001/coord"
-                ],
-                "recipient": "agent-2",
-                "subject": "work-0001"
-              },
-              "before_state_hash": "c30dedf6301bda982f307b5a6537f039ca37f45edbb5ec259a3774602ef6c98b",
-              "effect": "communicate",
-              "event_id": "event-000005",
-              "result": {
-                "accepted": true,
-                "message": 1,
-                "wire_bytes": 480
-              },
-              "result_reference": "receipt:event-000005",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "609571d60b0f7bf816ca8c5dd108ea5e5578aa58bbd5e9e2dae7f0b06815cbdb",
-              "arguments": {
-                "fact_ids": [
-                  "work-0002/progress",
-                  "work-0002/coord"
-                ],
-                "recipient": "agent-3",
-                "subject": "work-0002"
-              },
-              "before_state_hash": "27bbb44c748841f999f7d0b83dd0a4a4c3faf797f7b2eadf1409e5d2638e4114",
-              "effect": "communicate",
-              "event_id": "event-000006",
-              "result": {
-                "accepted": true,
-                "message": 2,
-                "wire_bytes": 480
-              },
-              "result_reference": "receipt:event-000006",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "a148ade0d3eb60b30851f8c0e9ed77cc53ca0e99dfb33e505957bd3c9d727efb",
-              "arguments": {
-                "fact_ids": [
-                  "work-0003/progress",
-                  "work-0003/coord"
-                ],
-                "recipient": "agent-0",
-                "subject": "work-0003"
-              },
-              "before_state_hash": "609571d60b0f7bf816ca8c5dd108ea5e5578aa58bbd5e9e2dae7f0b06815cbdb",
-              "effect": "communicate",
-              "event_id": "event-000007",
-              "result": {
-                "accepted": true,
-                "message": 3,
-                "wire_bytes": 480
-              },
-              "result_reference": "receipt:event-000007",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "444274c34e062217e4e7b117d69fca5c132134e88a9f5e32bb3019c460b92617",
-              "arguments": {
-                "fact_ids": [
-                  "work-0000/coord"
-                ],
-                "recipient": "agent-1",
-                "subject": "work-0000",
-                "wire_bytes": 278
-              },
-              "before_state_hash": "a148ade0d3eb60b30851f8c0e9ed77cc53ca0e99dfb33e505957bd3c9d727efb",
-              "effect": "communicate",
-              "event_id": "event-000008",
-              "result": {
-                "accepted": true,
-                "message": 4,
-                "wire_bytes": 278
-              },
-              "result_reference": "receipt:event-000008",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "93e957922a1a912557fe5fc90ffdf155b07ef67b88931ead8a540e81e954494f",
-              "arguments": {
-                "quantity": 6,
-                "route": "primary",
-                "unit": "work-0000"
-              },
-              "before_state_hash": "444274c34e062217e4e7b117d69fca5c132134e88a9f5e32bb3019c460b92617",
-              "effect": "execute",
-              "event_id": "event-000009",
-              "result": {
-                "accepted": true,
-                "order": "work-0000",
-                "quantity": 6,
-                "route": "primary"
-              },
-              "result_reference": "receipt:event-000009",
-              "status": "ok",
-              "tool": "reserve_production"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "bbfb8a670c17f6d16b44d59db1fc71195e4794d805d3ad2f75f16d36cb21a0e5",
-              "arguments": {
-                "quantity": 5,
-                "route": "backup",
-                "unit": "work-0001"
-              },
-              "before_state_hash": "93e957922a1a912557fe5fc90ffdf155b07ef67b88931ead8a540e81e954494f",
-              "effect": "execute",
-              "event_id": "event-000010",
-              "result": {
-                "accepted": true,
-                "order": "work-0001",
-                "quantity": 5,
-                "route": "backup"
-              },
-              "result_reference": "receipt:event-000010",
-              "status": "ok",
-              "tool": "reserve_production"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "dde6e0796cce6d9d447c3d2f754db85ea6ce7ab7e7acd8da9de711d43e0d9d60",
-              "arguments": {
-                "quantity": 4,
-                "route": "primary",
-                "unit": "work-0002"
-              },
-              "before_state_hash": "bbfb8a670c17f6d16b44d59db1fc71195e4794d805d3ad2f75f16d36cb21a0e5",
-              "effect": "execute",
-              "event_id": "event-000011",
-              "result": {
-                "accepted": true,
-                "order": "work-0002",
-                "quantity": 4,
-                "route": "primary"
-              },
-              "result_reference": "receipt:event-000011",
-              "status": "ok",
-              "tool": "reserve_production"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "85222c1a1b8f187de3adbc4ae28f0377e817102d9c70219a378e0b1dc4c1e20c",
-              "arguments": {
-                "quantity": 4,
-                "route": "backup",
-                "unit": "work-0003"
-              },
-              "before_state_hash": "dde6e0796cce6d9d447c3d2f754db85ea6ce7ab7e7acd8da9de711d43e0d9d60",
-              "effect": "execute",
-              "event_id": "event-000012",
-              "result": {
-                "accepted": true,
-                "order": "work-0003",
-                "quantity": 4,
-                "route": "backup"
-              },
-              "result_reference": "receipt:event-000012",
-              "status": "ok",
-              "tool": "reserve_production"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "87160d1f2fd88aec47e2e8507fe8b3307950f91a85b07dff448db002496ce4be",
-              "arguments": {},
-              "before_state_hash": "85222c1a1b8f187de3adbc4ae28f0377e817102d9c70219a378e0b1dc4c1e20c",
-              "effect": "execute",
-              "event_id": "event-000013",
-              "result": {
-                "accepted": true,
-                "native_checks": {
-                  "backup_reserved": 9,
-                  "by_work": {
-                    "work-0000": 0,
-                    "work-0001": 0,
-                    "work-0002": 0,
-                    "work-0003": 0
-                  },
-                  "capacity_rejections": 0,
-                  "loss": 0,
-                  "loss_unit": "rejected_allocations",
-                  "unfilled_orders": 0
-                },
-                "status": "released"
-              },
-              "result_reference": "receipt:event-000013",
-              "status": "ok",
-              "tool": "finalize"
-            }
-          ],
-          "execution_status": "completed",
-          "final_state_hash": "87160d1f2fd88aec47e2e8507fe8b3307950f91a85b07dff448db002496ce4be",
-          "initial_state_hash": "e8f64e8a6ffdfd4166f641c5346f638aa000a7c0b94b46cb7a14bd45fe425d5c",
-          "outcome_basis": "environment_trace_and_state"
-        },
-        "O": {
+        "no_added_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -5507,7 +5164,350 @@
           "initial_state_hash": "e8f64e8a6ffdfd4166f641c5346f638aa000a7c0b94b46cb7a14bd45fe425d5c",
           "outcome_basis": "environment_trace_and_state"
         },
-        "P": {
+        "required_information": {
+          "actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "decision_actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "defect_checks": [
+            {
+              "event_ids": [
+                "event-000009",
+                "event-000010",
+                "event-000011",
+                "event-000012",
+                "event-000013"
+              ],
+              "name": "native_loss",
+              "oracle_reference": "M2/local-simulator-v1",
+              "state_reference": "87160d1f2fd88aec47e2e8507fe8b3307950f91a85b07dff448db002496ce4be",
+              "status": "observed",
+              "unit": "rejected_allocations",
+              "value": 0
+            }
+          ],
+          "events": [
+            {
+              "actor": "agent-0",
+              "after_state_hash": "de68920e4c5882a2e0eea53b88ec9bd0a4e8b6c4649c96c14ea1297fd0d65db4",
+              "arguments": {},
+              "before_state_hash": "e8f64e8a6ffdfd4166f641c5346f638aa000a7c0b94b46cb7a14bd45fe425d5c",
+              "effect": "observe",
+              "event_id": "event-000000",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0000/coord",
+                  "work-0000/progress",
+                  "work-0000/private",
+                  "work-0000/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000000",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "76da06c7ba1cfdfc512222bfdd5817d7453ddf62e4aa44f735232b9badd7381e",
+              "arguments": {},
+              "before_state_hash": "de68920e4c5882a2e0eea53b88ec9bd0a4e8b6c4649c96c14ea1297fd0d65db4",
+              "effect": "observe",
+              "event_id": "event-000001",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0001/coord",
+                  "work-0001/progress",
+                  "work-0001/private",
+                  "work-0001/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000001",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "21d395c6a2531765649cdc6b722e78309ccec913a9db136c9e645beabb2e7a96",
+              "arguments": {},
+              "before_state_hash": "76da06c7ba1cfdfc512222bfdd5817d7453ddf62e4aa44f735232b9badd7381e",
+              "effect": "observe",
+              "event_id": "event-000002",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0002/coord",
+                  "work-0002/progress",
+                  "work-0002/private",
+                  "work-0002/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000002",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "7fcd56850cf552752d2a9db6ea8f1bad0e50b7523dad75b9a23749de4efb7210",
+              "arguments": {},
+              "before_state_hash": "21d395c6a2531765649cdc6b722e78309ccec913a9db136c9e645beabb2e7a96",
+              "effect": "observe",
+              "event_id": "event-000003",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0003/coord",
+                  "work-0003/progress",
+                  "work-0003/private",
+                  "work-0003/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000003",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "c30dedf6301bda982f307b5a6537f039ca37f45edbb5ec259a3774602ef6c98b",
+              "arguments": {
+                "fact_ids": [
+                  "work-0000/progress"
+                ],
+                "recipient": "agent-1",
+                "subject": "work-0000"
+              },
+              "before_state_hash": "7fcd56850cf552752d2a9db6ea8f1bad0e50b7523dad75b9a23749de4efb7210",
+              "effect": "communicate",
+              "event_id": "event-000004",
+              "result": {
+                "accepted": true,
+                "message": 0,
+                "wire_bytes": 271
+              },
+              "result_reference": "receipt:event-000004",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "27bbb44c748841f999f7d0b83dd0a4a4c3faf797f7b2eadf1409e5d2638e4114",
+              "arguments": {
+                "fact_ids": [
+                  "work-0001/progress",
+                  "work-0001/coord"
+                ],
+                "recipient": "agent-2",
+                "subject": "work-0001"
+              },
+              "before_state_hash": "c30dedf6301bda982f307b5a6537f039ca37f45edbb5ec259a3774602ef6c98b",
+              "effect": "communicate",
+              "event_id": "event-000005",
+              "result": {
+                "accepted": true,
+                "message": 1,
+                "wire_bytes": 480
+              },
+              "result_reference": "receipt:event-000005",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "609571d60b0f7bf816ca8c5dd108ea5e5578aa58bbd5e9e2dae7f0b06815cbdb",
+              "arguments": {
+                "fact_ids": [
+                  "work-0002/progress",
+                  "work-0002/coord"
+                ],
+                "recipient": "agent-3",
+                "subject": "work-0002"
+              },
+              "before_state_hash": "27bbb44c748841f999f7d0b83dd0a4a4c3faf797f7b2eadf1409e5d2638e4114",
+              "effect": "communicate",
+              "event_id": "event-000006",
+              "result": {
+                "accepted": true,
+                "message": 2,
+                "wire_bytes": 480
+              },
+              "result_reference": "receipt:event-000006",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "a148ade0d3eb60b30851f8c0e9ed77cc53ca0e99dfb33e505957bd3c9d727efb",
+              "arguments": {
+                "fact_ids": [
+                  "work-0003/progress",
+                  "work-0003/coord"
+                ],
+                "recipient": "agent-0",
+                "subject": "work-0003"
+              },
+              "before_state_hash": "609571d60b0f7bf816ca8c5dd108ea5e5578aa58bbd5e9e2dae7f0b06815cbdb",
+              "effect": "communicate",
+              "event_id": "event-000007",
+              "result": {
+                "accepted": true,
+                "message": 3,
+                "wire_bytes": 480
+              },
+              "result_reference": "receipt:event-000007",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "444274c34e062217e4e7b117d69fca5c132134e88a9f5e32bb3019c460b92617",
+              "arguments": {
+                "fact_ids": [
+                  "work-0000/coord"
+                ],
+                "recipient": "agent-1",
+                "subject": "work-0000",
+                "wire_bytes": 278
+              },
+              "before_state_hash": "a148ade0d3eb60b30851f8c0e9ed77cc53ca0e99dfb33e505957bd3c9d727efb",
+              "effect": "communicate",
+              "event_id": "event-000008",
+              "result": {
+                "accepted": true,
+                "message": 4,
+                "wire_bytes": 278
+              },
+              "result_reference": "receipt:event-000008",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "93e957922a1a912557fe5fc90ffdf155b07ef67b88931ead8a540e81e954494f",
+              "arguments": {
+                "quantity": 6,
+                "route": "primary",
+                "unit": "work-0000"
+              },
+              "before_state_hash": "444274c34e062217e4e7b117d69fca5c132134e88a9f5e32bb3019c460b92617",
+              "effect": "execute",
+              "event_id": "event-000009",
+              "result": {
+                "accepted": true,
+                "order": "work-0000",
+                "quantity": 6,
+                "route": "primary"
+              },
+              "result_reference": "receipt:event-000009",
+              "status": "ok",
+              "tool": "reserve_production"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "bbfb8a670c17f6d16b44d59db1fc71195e4794d805d3ad2f75f16d36cb21a0e5",
+              "arguments": {
+                "quantity": 5,
+                "route": "backup",
+                "unit": "work-0001"
+              },
+              "before_state_hash": "93e957922a1a912557fe5fc90ffdf155b07ef67b88931ead8a540e81e954494f",
+              "effect": "execute",
+              "event_id": "event-000010",
+              "result": {
+                "accepted": true,
+                "order": "work-0001",
+                "quantity": 5,
+                "route": "backup"
+              },
+              "result_reference": "receipt:event-000010",
+              "status": "ok",
+              "tool": "reserve_production"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "dde6e0796cce6d9d447c3d2f754db85ea6ce7ab7e7acd8da9de711d43e0d9d60",
+              "arguments": {
+                "quantity": 4,
+                "route": "primary",
+                "unit": "work-0002"
+              },
+              "before_state_hash": "bbfb8a670c17f6d16b44d59db1fc71195e4794d805d3ad2f75f16d36cb21a0e5",
+              "effect": "execute",
+              "event_id": "event-000011",
+              "result": {
+                "accepted": true,
+                "order": "work-0002",
+                "quantity": 4,
+                "route": "primary"
+              },
+              "result_reference": "receipt:event-000011",
+              "status": "ok",
+              "tool": "reserve_production"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "85222c1a1b8f187de3adbc4ae28f0377e817102d9c70219a378e0b1dc4c1e20c",
+              "arguments": {
+                "quantity": 4,
+                "route": "backup",
+                "unit": "work-0003"
+              },
+              "before_state_hash": "dde6e0796cce6d9d447c3d2f754db85ea6ce7ab7e7acd8da9de711d43e0d9d60",
+              "effect": "execute",
+              "event_id": "event-000012",
+              "result": {
+                "accepted": true,
+                "order": "work-0003",
+                "quantity": 4,
+                "route": "backup"
+              },
+              "result_reference": "receipt:event-000012",
+              "status": "ok",
+              "tool": "reserve_production"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "87160d1f2fd88aec47e2e8507fe8b3307950f91a85b07dff448db002496ce4be",
+              "arguments": {},
+              "before_state_hash": "85222c1a1b8f187de3adbc4ae28f0377e817102d9c70219a378e0b1dc4c1e20c",
+              "effect": "execute",
+              "event_id": "event-000013",
+              "result": {
+                "accepted": true,
+                "native_checks": {
+                  "backup_reserved": 9,
+                  "by_work": {
+                    "work-0000": 0,
+                    "work-0001": 0,
+                    "work-0002": 0,
+                    "work-0003": 0
+                  },
+                  "capacity_rejections": 0,
+                  "loss": 0,
+                  "loss_unit": "rejected_allocations",
+                  "unfilled_orders": 0
+                },
+                "status": "released"
+              },
+              "result_reference": "receipt:event-000013",
+              "status": "ok",
+              "tool": "finalize"
+            }
+          ],
+          "execution_status": "completed",
+          "final_state_hash": "87160d1f2fd88aec47e2e8507fe8b3307950f91a85b07dff448db002496ce4be",
+          "initial_state_hash": "e8f64e8a6ffdfd4166f641c5346f638aa000a7c0b94b46cb7a14bd45fe425d5c",
+          "outcome_basis": "environment_trace_and_state"
+        },
+        "unrelated_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -5873,9 +5873,9 @@
         }
       },
       "expected_final_hashes": {
-        "M": "5ebede26a5f2c8f2ffcbab17ffa24e07f63771f7598ac945e3dc15fb55ac4c5e",
-        "O": "3177b703c1babfbd7eaa196ae678924a6794713fdd91dce52f97fda8f0b4e117",
-        "P": "6b95c4560ea8aa2e287caf19aab1234bc84c7d0f71fedfb8ae16ea07c8263d27"
+        "no_added_information": "3177b703c1babfbd7eaa196ae678924a6794713fdd91dce52f97fda8f0b4e117",
+        "required_information": "5ebede26a5f2c8f2ffcbab17ffa24e07f63771f7598ac945e3dc15fb55ac4c5e",
+        "unrelated_information": "6b95c4560ea8aa2e287caf19aab1234bc84c7d0f71fedfb8ae16ea07c8263d27"
       },
       "privacy_evidence": {
         "actor_ids": [
@@ -8223,7 +8223,339 @@
       },
       "environment": "M3",
       "evidence": {
-        "M": {
+        "no_added_information": {
+          "actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "decision_actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "defect_checks": [
+            {
+              "event_ids": [
+                "event-000009",
+                "event-000010",
+                "event-000011",
+                "event-000012",
+                "event-000013"
+              ],
+              "name": "native_loss",
+              "oracle_reference": "M3/local-simulator-v1",
+              "state_reference": "0a3e723324289660c7ec1031b1e7cf5b8ae0934a6718c9a7b36a5853a32de03d",
+              "status": "observed",
+              "unit": "incompatible_interfaces",
+              "value": 1
+            }
+          ],
+          "events": [
+            {
+              "actor": "agent-0",
+              "after_state_hash": "7cc02f81001cb370c8befa6d95f7795ca83ebe65b035e4f35cf1e71bb775f854",
+              "arguments": {},
+              "before_state_hash": "182ed442d3457f63b340b02d0164ef4c495fd6b00762f8ae2e4543a0011a4d2c",
+              "effect": "observe",
+              "event_id": "event-000000",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0000/coord",
+                  "work-0000/progress",
+                  "work-0000/private",
+                  "work-0000/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000000",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "1783037d7da8a894507b64cb4c5f8780c64ee1613e26f129e9e80c958079b9b1",
+              "arguments": {},
+              "before_state_hash": "7cc02f81001cb370c8befa6d95f7795ca83ebe65b035e4f35cf1e71bb775f854",
+              "effect": "observe",
+              "event_id": "event-000001",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0001/coord",
+                  "work-0001/progress",
+                  "work-0001/private",
+                  "work-0001/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000001",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "7a663031429cd4cd744f1345b97a1f3a09f28aead6e9643539aad3050ef1a8c6",
+              "arguments": {},
+              "before_state_hash": "1783037d7da8a894507b64cb4c5f8780c64ee1613e26f129e9e80c958079b9b1",
+              "effect": "observe",
+              "event_id": "event-000002",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0002/coord",
+                  "work-0002/progress",
+                  "work-0002/private",
+                  "work-0002/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000002",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "697edc00b9e797f71b9d8d9a079abc8618bbf950a62ed97e3f229eb42dbc2087",
+              "arguments": {},
+              "before_state_hash": "7a663031429cd4cd744f1345b97a1f3a09f28aead6e9643539aad3050ef1a8c6",
+              "effect": "observe",
+              "event_id": "event-000003",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0003/coord",
+                  "work-0003/progress",
+                  "work-0003/private",
+                  "work-0003/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000003",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "a2809169c036458fb588a295475999d340167461d4c7b8cf7e1589ce20ed2e34",
+              "arguments": {
+                "fact_ids": [
+                  "work-0000/progress"
+                ],
+                "recipient": "agent-1",
+                "subject": "work-0000"
+              },
+              "before_state_hash": "697edc00b9e797f71b9d8d9a079abc8618bbf950a62ed97e3f229eb42dbc2087",
+              "effect": "communicate",
+              "event_id": "event-000004",
+              "result": {
+                "accepted": true,
+                "message": 0,
+                "wire_bytes": 274
+              },
+              "result_reference": "receipt:event-000004",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "9af56e37c6308b79a2c1fc00eb5c9886431cba8c3fdac0a84616ca93c48270b7",
+              "arguments": {
+                "fact_ids": [
+                  "work-0001/progress",
+                  "work-0001/coord"
+                ],
+                "recipient": "agent-2",
+                "subject": "work-0001"
+              },
+              "before_state_hash": "a2809169c036458fb588a295475999d340167461d4c7b8cf7e1589ce20ed2e34",
+              "effect": "communicate",
+              "event_id": "event-000005",
+              "result": {
+                "accepted": true,
+                "message": 1,
+                "wire_bytes": 479
+              },
+              "result_reference": "receipt:event-000005",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "846b4a075a0a7f83952b44fd48f2006326a7209b1ad3829dcae4e84d0c351696",
+              "arguments": {
+                "fact_ids": [
+                  "work-0002/progress",
+                  "work-0002/coord"
+                ],
+                "recipient": "agent-3",
+                "subject": "work-0002"
+              },
+              "before_state_hash": "9af56e37c6308b79a2c1fc00eb5c9886431cba8c3fdac0a84616ca93c48270b7",
+              "effect": "communicate",
+              "event_id": "event-000006",
+              "result": {
+                "accepted": true,
+                "message": 2,
+                "wire_bytes": 479
+              },
+              "result_reference": "receipt:event-000006",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "6727bb93a00f344cdfd37cd62fe2c5b83bbd4bfa7bc9d61163f10f7f24f634c5",
+              "arguments": {
+                "fact_ids": [
+                  "work-0003/progress",
+                  "work-0003/coord"
+                ],
+                "recipient": "agent-0",
+                "subject": "work-0003"
+              },
+              "before_state_hash": "846b4a075a0a7f83952b44fd48f2006326a7209b1ad3829dcae4e84d0c351696",
+              "effect": "communicate",
+              "event_id": "event-000007",
+              "result": {
+                "accepted": true,
+                "message": 3,
+                "wire_bytes": 479
+              },
+              "result_reference": "receipt:event-000007",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "e3aea359fed2a7a49b5947829ff575fe0603d9c3b67db63f4e896070a79e3e8d",
+              "arguments": {
+                "fact_ids": [],
+                "recipient": "agent-1",
+                "subject": "work-0000",
+                "wire_bytes": 278
+              },
+              "before_state_hash": "6727bb93a00f344cdfd37cd62fe2c5b83bbd4bfa7bc9d61163f10f7f24f634c5",
+              "effect": "communicate",
+              "event_id": "event-000008",
+              "result": {
+                "accepted": true,
+                "message": 4,
+                "wire_bytes": 278
+              },
+              "result_reference": "receipt:event-000008",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "04dc24fe8b8b74f90ae87e09d1ccc54ef07fa7f34a27e8c3d396f0e70c372d9c",
+              "arguments": {
+                "input_revision": "R1",
+                "unit": "work-0000"
+              },
+              "before_state_hash": "e3aea359fed2a7a49b5947829ff575fe0603d9c3b67db63f4e896070a79e3e8d",
+              "effect": "execute",
+              "event_id": "event-000009",
+              "result": {
+                "accepted": true,
+                "part": "work-0000",
+                "status": "configuration_committed"
+              },
+              "result_reference": "receipt:event-000009",
+              "status": "ok",
+              "tool": "commit_configuration"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "c6a46090fb1221584c8ae2919944c23a2b025cec76af1496f08efc4c3f224057",
+              "arguments": {
+                "input_revision": "R1",
+                "unit": "work-0001"
+              },
+              "before_state_hash": "04dc24fe8b8b74f90ae87e09d1ccc54ef07fa7f34a27e8c3d396f0e70c372d9c",
+              "effect": "execute",
+              "event_id": "event-000010",
+              "result": {
+                "accepted": true,
+                "part": "work-0001",
+                "status": "configuration_committed"
+              },
+              "result_reference": "receipt:event-000010",
+              "status": "ok",
+              "tool": "commit_configuration"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "4f49be36b85138f69c601f86487f1c30f8ea311e399abff23a2198166b959fa1",
+              "arguments": {
+                "input_revision": "R1",
+                "unit": "work-0002"
+              },
+              "before_state_hash": "c6a46090fb1221584c8ae2919944c23a2b025cec76af1496f08efc4c3f224057",
+              "effect": "execute",
+              "event_id": "event-000011",
+              "result": {
+                "accepted": true,
+                "part": "work-0002",
+                "status": "configuration_committed"
+              },
+              "result_reference": "receipt:event-000011",
+              "status": "ok",
+              "tool": "commit_configuration"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "1080c85c320af4f854f387cbc865c8d5080955b8356fefc269e912819c03895b",
+              "arguments": {
+                "input_revision": "R1",
+                "unit": "work-0003"
+              },
+              "before_state_hash": "4f49be36b85138f69c601f86487f1c30f8ea311e399abff23a2198166b959fa1",
+              "effect": "execute",
+              "event_id": "event-000012",
+              "result": {
+                "accepted": true,
+                "part": "work-0003",
+                "status": "configuration_committed"
+              },
+              "result_reference": "receipt:event-000012",
+              "status": "ok",
+              "tool": "commit_configuration"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "0a3e723324289660c7ec1031b1e7cf5b8ae0934a6718c9a7b36a5853a32de03d",
+              "arguments": {},
+              "before_state_hash": "1080c85c320af4f854f387cbc865c8d5080955b8356fefc269e912819c03895b",
+              "effect": "execute",
+              "event_id": "event-000013",
+              "result": {
+                "accepted": false,
+                "native_checks": {
+                  "by_work": {
+                    "work-0000": 0,
+                    "work-0001": 1,
+                    "work-0002": 0,
+                    "work-0003": 0
+                  },
+                  "committed_components": 4,
+                  "interface_mismatches": 1,
+                  "loss": 1,
+                  "loss_unit": "incompatible_interfaces"
+                },
+                "status": "blocked"
+              },
+              "result_reference": "receipt:event-000013",
+              "status": "rejected",
+              "tool": "finalize"
+            }
+          ],
+          "execution_status": "completed",
+          "final_state_hash": "0a3e723324289660c7ec1031b1e7cf5b8ae0934a6718c9a7b36a5853a32de03d",
+          "initial_state_hash": "182ed442d3457f63b340b02d0164ef4c495fd6b00762f8ae2e4543a0011a4d2c",
+          "outcome_basis": "environment_trace_and_state"
+        },
+        "required_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -8557,339 +8889,7 @@
           "initial_state_hash": "182ed442d3457f63b340b02d0164ef4c495fd6b00762f8ae2e4543a0011a4d2c",
           "outcome_basis": "environment_trace_and_state"
         },
-        "O": {
-          "actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "decision_actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "defect_checks": [
-            {
-              "event_ids": [
-                "event-000009",
-                "event-000010",
-                "event-000011",
-                "event-000012",
-                "event-000013"
-              ],
-              "name": "native_loss",
-              "oracle_reference": "M3/local-simulator-v1",
-              "state_reference": "0a3e723324289660c7ec1031b1e7cf5b8ae0934a6718c9a7b36a5853a32de03d",
-              "status": "observed",
-              "unit": "incompatible_interfaces",
-              "value": 1
-            }
-          ],
-          "events": [
-            {
-              "actor": "agent-0",
-              "after_state_hash": "7cc02f81001cb370c8befa6d95f7795ca83ebe65b035e4f35cf1e71bb775f854",
-              "arguments": {},
-              "before_state_hash": "182ed442d3457f63b340b02d0164ef4c495fd6b00762f8ae2e4543a0011a4d2c",
-              "effect": "observe",
-              "event_id": "event-000000",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0000/coord",
-                  "work-0000/progress",
-                  "work-0000/private",
-                  "work-0000/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000000",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "1783037d7da8a894507b64cb4c5f8780c64ee1613e26f129e9e80c958079b9b1",
-              "arguments": {},
-              "before_state_hash": "7cc02f81001cb370c8befa6d95f7795ca83ebe65b035e4f35cf1e71bb775f854",
-              "effect": "observe",
-              "event_id": "event-000001",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0001/coord",
-                  "work-0001/progress",
-                  "work-0001/private",
-                  "work-0001/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000001",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "7a663031429cd4cd744f1345b97a1f3a09f28aead6e9643539aad3050ef1a8c6",
-              "arguments": {},
-              "before_state_hash": "1783037d7da8a894507b64cb4c5f8780c64ee1613e26f129e9e80c958079b9b1",
-              "effect": "observe",
-              "event_id": "event-000002",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0002/coord",
-                  "work-0002/progress",
-                  "work-0002/private",
-                  "work-0002/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000002",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "697edc00b9e797f71b9d8d9a079abc8618bbf950a62ed97e3f229eb42dbc2087",
-              "arguments": {},
-              "before_state_hash": "7a663031429cd4cd744f1345b97a1f3a09f28aead6e9643539aad3050ef1a8c6",
-              "effect": "observe",
-              "event_id": "event-000003",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0003/coord",
-                  "work-0003/progress",
-                  "work-0003/private",
-                  "work-0003/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000003",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "a2809169c036458fb588a295475999d340167461d4c7b8cf7e1589ce20ed2e34",
-              "arguments": {
-                "fact_ids": [
-                  "work-0000/progress"
-                ],
-                "recipient": "agent-1",
-                "subject": "work-0000"
-              },
-              "before_state_hash": "697edc00b9e797f71b9d8d9a079abc8618bbf950a62ed97e3f229eb42dbc2087",
-              "effect": "communicate",
-              "event_id": "event-000004",
-              "result": {
-                "accepted": true,
-                "message": 0,
-                "wire_bytes": 274
-              },
-              "result_reference": "receipt:event-000004",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "9af56e37c6308b79a2c1fc00eb5c9886431cba8c3fdac0a84616ca93c48270b7",
-              "arguments": {
-                "fact_ids": [
-                  "work-0001/progress",
-                  "work-0001/coord"
-                ],
-                "recipient": "agent-2",
-                "subject": "work-0001"
-              },
-              "before_state_hash": "a2809169c036458fb588a295475999d340167461d4c7b8cf7e1589ce20ed2e34",
-              "effect": "communicate",
-              "event_id": "event-000005",
-              "result": {
-                "accepted": true,
-                "message": 1,
-                "wire_bytes": 479
-              },
-              "result_reference": "receipt:event-000005",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "846b4a075a0a7f83952b44fd48f2006326a7209b1ad3829dcae4e84d0c351696",
-              "arguments": {
-                "fact_ids": [
-                  "work-0002/progress",
-                  "work-0002/coord"
-                ],
-                "recipient": "agent-3",
-                "subject": "work-0002"
-              },
-              "before_state_hash": "9af56e37c6308b79a2c1fc00eb5c9886431cba8c3fdac0a84616ca93c48270b7",
-              "effect": "communicate",
-              "event_id": "event-000006",
-              "result": {
-                "accepted": true,
-                "message": 2,
-                "wire_bytes": 479
-              },
-              "result_reference": "receipt:event-000006",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "6727bb93a00f344cdfd37cd62fe2c5b83bbd4bfa7bc9d61163f10f7f24f634c5",
-              "arguments": {
-                "fact_ids": [
-                  "work-0003/progress",
-                  "work-0003/coord"
-                ],
-                "recipient": "agent-0",
-                "subject": "work-0003"
-              },
-              "before_state_hash": "846b4a075a0a7f83952b44fd48f2006326a7209b1ad3829dcae4e84d0c351696",
-              "effect": "communicate",
-              "event_id": "event-000007",
-              "result": {
-                "accepted": true,
-                "message": 3,
-                "wire_bytes": 479
-              },
-              "result_reference": "receipt:event-000007",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "e3aea359fed2a7a49b5947829ff575fe0603d9c3b67db63f4e896070a79e3e8d",
-              "arguments": {
-                "fact_ids": [],
-                "recipient": "agent-1",
-                "subject": "work-0000",
-                "wire_bytes": 278
-              },
-              "before_state_hash": "6727bb93a00f344cdfd37cd62fe2c5b83bbd4bfa7bc9d61163f10f7f24f634c5",
-              "effect": "communicate",
-              "event_id": "event-000008",
-              "result": {
-                "accepted": true,
-                "message": 4,
-                "wire_bytes": 278
-              },
-              "result_reference": "receipt:event-000008",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "04dc24fe8b8b74f90ae87e09d1ccc54ef07fa7f34a27e8c3d396f0e70c372d9c",
-              "arguments": {
-                "input_revision": "R1",
-                "unit": "work-0000"
-              },
-              "before_state_hash": "e3aea359fed2a7a49b5947829ff575fe0603d9c3b67db63f4e896070a79e3e8d",
-              "effect": "execute",
-              "event_id": "event-000009",
-              "result": {
-                "accepted": true,
-                "part": "work-0000",
-                "status": "configuration_committed"
-              },
-              "result_reference": "receipt:event-000009",
-              "status": "ok",
-              "tool": "commit_configuration"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "c6a46090fb1221584c8ae2919944c23a2b025cec76af1496f08efc4c3f224057",
-              "arguments": {
-                "input_revision": "R1",
-                "unit": "work-0001"
-              },
-              "before_state_hash": "04dc24fe8b8b74f90ae87e09d1ccc54ef07fa7f34a27e8c3d396f0e70c372d9c",
-              "effect": "execute",
-              "event_id": "event-000010",
-              "result": {
-                "accepted": true,
-                "part": "work-0001",
-                "status": "configuration_committed"
-              },
-              "result_reference": "receipt:event-000010",
-              "status": "ok",
-              "tool": "commit_configuration"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "4f49be36b85138f69c601f86487f1c30f8ea311e399abff23a2198166b959fa1",
-              "arguments": {
-                "input_revision": "R1",
-                "unit": "work-0002"
-              },
-              "before_state_hash": "c6a46090fb1221584c8ae2919944c23a2b025cec76af1496f08efc4c3f224057",
-              "effect": "execute",
-              "event_id": "event-000011",
-              "result": {
-                "accepted": true,
-                "part": "work-0002",
-                "status": "configuration_committed"
-              },
-              "result_reference": "receipt:event-000011",
-              "status": "ok",
-              "tool": "commit_configuration"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "1080c85c320af4f854f387cbc865c8d5080955b8356fefc269e912819c03895b",
-              "arguments": {
-                "input_revision": "R1",
-                "unit": "work-0003"
-              },
-              "before_state_hash": "4f49be36b85138f69c601f86487f1c30f8ea311e399abff23a2198166b959fa1",
-              "effect": "execute",
-              "event_id": "event-000012",
-              "result": {
-                "accepted": true,
-                "part": "work-0003",
-                "status": "configuration_committed"
-              },
-              "result_reference": "receipt:event-000012",
-              "status": "ok",
-              "tool": "commit_configuration"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "0a3e723324289660c7ec1031b1e7cf5b8ae0934a6718c9a7b36a5853a32de03d",
-              "arguments": {},
-              "before_state_hash": "1080c85c320af4f854f387cbc865c8d5080955b8356fefc269e912819c03895b",
-              "effect": "execute",
-              "event_id": "event-000013",
-              "result": {
-                "accepted": false,
-                "native_checks": {
-                  "by_work": {
-                    "work-0000": 0,
-                    "work-0001": 1,
-                    "work-0002": 0,
-                    "work-0003": 0
-                  },
-                  "committed_components": 4,
-                  "interface_mismatches": 1,
-                  "loss": 1,
-                  "loss_unit": "incompatible_interfaces"
-                },
-                "status": "blocked"
-              },
-              "result_reference": "receipt:event-000013",
-              "status": "rejected",
-              "tool": "finalize"
-            }
-          ],
-          "execution_status": "completed",
-          "final_state_hash": "0a3e723324289660c7ec1031b1e7cf5b8ae0934a6718c9a7b36a5853a32de03d",
-          "initial_state_hash": "182ed442d3457f63b340b02d0164ef4c495fd6b00762f8ae2e4543a0011a4d2c",
-          "outcome_basis": "environment_trace_and_state"
-        },
-        "P": {
+        "unrelated_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -9225,9 +9225,9 @@
         }
       },
       "expected_final_hashes": {
-        "M": "4efc3bd0e8d5523c341840f0e23b0b8a5e731ec34ebbed3d3a2e15ea851e47e4",
-        "O": "516abfad6b2744e9129903fb69d341867fee389fb2e6e732f00d103d9e07cb08",
-        "P": "775cd1c9b65bce105d68125c843fb15e9dfc4c9e6cb1815744e474dde86ba7f3"
+        "no_added_information": "516abfad6b2744e9129903fb69d341867fee389fb2e6e732f00d103d9e07cb08",
+        "required_information": "4efc3bd0e8d5523c341840f0e23b0b8a5e731ec34ebbed3d3a2e15ea851e47e4",
+        "unrelated_information": "775cd1c9b65bce105d68125c843fb15e9dfc4c9e6cb1815744e474dde86ba7f3"
       },
       "privacy_evidence": {
         "actor_ids": [
@@ -10954,7 +10954,343 @@
       },
       "environment": "L1",
       "evidence": {
-        "M": {
+        "no_added_information": {
+          "actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "decision_actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "defect_checks": [
+            {
+              "event_ids": [
+                "event-000004",
+                "event-000007",
+                "event-000009",
+                "event-000011",
+                "event-000013"
+              ],
+              "name": "native_loss",
+              "oracle_reference": "L1/local-simulator-v1",
+              "state_reference": "9685c57190b229c2cb4a28122f5ada4375839e29251fe454b63547783473c8fb",
+              "status": "observed",
+              "unit": "empty_dispatches",
+              "value": 1
+            }
+          ],
+          "events": [
+            {
+              "actor": "agent-0",
+              "after_state_hash": "7f40f68b2f6642e08a4dfe86544882a0c8f83ff6332ea12cc12467740425db17",
+              "arguments": {},
+              "before_state_hash": "62c6964f47682b7c6d899e58a6b4b7fcc1c232a165473a7ea212f376dfb6439b",
+              "effect": "observe",
+              "event_id": "event-000000",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0000/progress",
+                  "work-0000/private",
+                  "work-0000/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000000",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "7a66d0195e8c7fb98ae4e08bb3c420be669af79b6ee9cf8dcefb03ad00663d11",
+              "arguments": {},
+              "before_state_hash": "7f40f68b2f6642e08a4dfe86544882a0c8f83ff6332ea12cc12467740425db17",
+              "effect": "observe",
+              "event_id": "event-000001",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0001/progress",
+                  "work-0001/private",
+                  "work-0001/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000001",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "c67e1cc61db05bc17e8ad9cdd525a9a060046cc357760df352f9e68ea16e04de",
+              "arguments": {},
+              "before_state_hash": "7a66d0195e8c7fb98ae4e08bb3c420be669af79b6ee9cf8dcefb03ad00663d11",
+              "effect": "observe",
+              "event_id": "event-000002",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0002/progress",
+                  "work-0002/private",
+                  "work-0002/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000002",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "acdf1cb0a6d3962db4cb5f2856731ec58b0a849fa018ba8bb8abdaed84904f9f",
+              "arguments": {},
+              "before_state_hash": "c67e1cc61db05bc17e8ad9cdd525a9a060046cc357760df352f9e68ea16e04de",
+              "effect": "observe",
+              "event_id": "event-000003",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0003/progress",
+                  "work-0003/private",
+                  "work-0003/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000003",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "4689db5e39bf7a414840d922117effe63372c042a67e17b80b59938e03fc7f04",
+              "arguments": {
+                "depart_at": 0,
+                "unit": "work-0000"
+              },
+              "before_state_hash": "acdf1cb0a6d3962db4cb5f2856731ec58b0a849fa018ba8bb8abdaed84904f9f",
+              "effect": "execute",
+              "event_id": "event-000004",
+              "result": {
+                "accepted": true,
+                "arrived_at": 8,
+                "departed_at": 0,
+                "empty_dispatch": false,
+                "leg": "work-0000"
+              },
+              "result_reference": "receipt:event-000004",
+              "status": "ok",
+              "tool": "dispatch_leg"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "5ecf97fd85d16ab9366f3e85d90f19cb769bbfdca0c6506af91000883fab9e01",
+              "arguments": {
+                "fact_ids": [
+                  "work-0000/progress"
+                ],
+                "recipient": "agent-1",
+                "subject": "work-0000"
+              },
+              "before_state_hash": "4689db5e39bf7a414840d922117effe63372c042a67e17b80b59938e03fc7f04",
+              "effect": "communicate",
+              "event_id": "event-000005",
+              "result": {
+                "accepted": true,
+                "message": 0,
+                "wire_bytes": 278
+              },
+              "result_reference": "receipt:event-000005",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "4581f92f9fc07d69bf4ff6b1ded4e979d11c7c19790183b4df2e6d3bb0c35ded",
+              "arguments": {
+                "fact_ids": [],
+                "recipient": "agent-1",
+                "subject": "work-0000",
+                "wire_bytes": 278
+              },
+              "before_state_hash": "5ecf97fd85d16ab9366f3e85d90f19cb769bbfdca0c6506af91000883fab9e01",
+              "effect": "communicate",
+              "event_id": "event-000006",
+              "result": {
+                "accepted": true,
+                "message": 1,
+                "wire_bytes": 278
+              },
+              "result_reference": "receipt:event-000006",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "d69ef07d726ede6d29dfe99c71998a57243f318932bb1367a31e0a87ba11e974",
+              "arguments": {
+                "depart_at": 4,
+                "unit": "work-0001"
+              },
+              "before_state_hash": "4581f92f9fc07d69bf4ff6b1ded4e979d11c7c19790183b4df2e6d3bb0c35ded",
+              "effect": "execute",
+              "event_id": "event-000007",
+              "result": {
+                "accepted": true,
+                "arrived_at": 14,
+                "departed_at": 10,
+                "empty_dispatch": true,
+                "leg": "work-0001"
+              },
+              "result_reference": "receipt:event-000007",
+              "status": "ok",
+              "tool": "dispatch_leg"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "4d880ca6bfee18eae7f84696de5c7132db62b187fe689fdcafb3865e872dc8a0",
+              "arguments": {
+                "fact_ids": [
+                  "work-0001/progress",
+                  "work-0001/coord"
+                ],
+                "recipient": "agent-2",
+                "subject": "work-0001"
+              },
+              "before_state_hash": "d69ef07d726ede6d29dfe99c71998a57243f318932bb1367a31e0a87ba11e974",
+              "effect": "communicate",
+              "event_id": "event-000008",
+              "result": {
+                "accepted": true,
+                "message": 2,
+                "wire_bytes": 479
+              },
+              "result_reference": "receipt:event-000008",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "ebbcd965ee57d1fd93ef193ff7cf2c73b2bc8ef35d0c318912c5926be7a580b3",
+              "arguments": {
+                "depart_at": 14,
+                "unit": "work-0002"
+              },
+              "before_state_hash": "4d880ca6bfee18eae7f84696de5c7132db62b187fe689fdcafb3865e872dc8a0",
+              "effect": "execute",
+              "event_id": "event-000009",
+              "result": {
+                "accepted": true,
+                "arrived_at": 18,
+                "departed_at": 14,
+                "empty_dispatch": false,
+                "leg": "work-0002"
+              },
+              "result_reference": "receipt:event-000009",
+              "status": "ok",
+              "tool": "dispatch_leg"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "05371ffd85837bb88160576020c1c2a3fad00db94d101e05bbec0c557fe37c49",
+              "arguments": {
+                "fact_ids": [
+                  "work-0002/progress",
+                  "work-0002/coord"
+                ],
+                "recipient": "agent-3",
+                "subject": "work-0002"
+              },
+              "before_state_hash": "ebbcd965ee57d1fd93ef193ff7cf2c73b2bc8ef35d0c318912c5926be7a580b3",
+              "effect": "communicate",
+              "event_id": "event-000010",
+              "result": {
+                "accepted": true,
+                "message": 3,
+                "wire_bytes": 479
+              },
+              "result_reference": "receipt:event-000010",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "4a441c2eea9b99a42fc37cbc3d91cdf355696a95504ef3ef32d7a370bd570d41",
+              "arguments": {
+                "depart_at": 18,
+                "unit": "work-0003"
+              },
+              "before_state_hash": "05371ffd85837bb88160576020c1c2a3fad00db94d101e05bbec0c557fe37c49",
+              "effect": "execute",
+              "event_id": "event-000011",
+              "result": {
+                "accepted": true,
+                "arrived_at": 20,
+                "departed_at": 18,
+                "empty_dispatch": false,
+                "leg": "work-0003"
+              },
+              "result_reference": "receipt:event-000011",
+              "status": "ok",
+              "tool": "dispatch_leg"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "4ae1f0df9f060d853596a7f825369bd9c1cc6b202d4fe80fe0db6e3507103289",
+              "arguments": {
+                "fact_ids": [
+                  "work-0003/progress",
+                  "work-0003/coord"
+                ],
+                "recipient": "agent-0",
+                "subject": "work-0003"
+              },
+              "before_state_hash": "4a441c2eea9b99a42fc37cbc3d91cdf355696a95504ef3ef32d7a370bd570d41",
+              "effect": "communicate",
+              "event_id": "event-000012",
+              "result": {
+                "accepted": true,
+                "message": 4,
+                "wire_bytes": 479
+              },
+              "result_reference": "receipt:event-000012",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "9685c57190b229c2cb4a28122f5ada4375839e29251fe454b63547783473c8fb",
+              "arguments": {},
+              "before_state_hash": "4ae1f0df9f060d853596a7f825369bd9c1cc6b202d4fe80fe0db6e3507103289",
+              "effect": "execute",
+              "event_id": "event-000013",
+              "result": {
+                "accepted": true,
+                "native_checks": {
+                  "by_work": {
+                    "work-0000": 0,
+                    "work-0001": 1,
+                    "work-0002": 0,
+                    "work-0003": 0
+                  },
+                  "empty_dispatches": 1,
+                  "final_arrival": 20,
+                  "loss": 1,
+                  "loss_unit": "empty_dispatches"
+                },
+                "status": "released"
+              },
+              "result_reference": "receipt:event-000013",
+              "status": "ok",
+              "tool": "finalize"
+            }
+          ],
+          "execution_status": "completed",
+          "final_state_hash": "9685c57190b229c2cb4a28122f5ada4375839e29251fe454b63547783473c8fb",
+          "initial_state_hash": "62c6964f47682b7c6d899e58a6b4b7fcc1c232a165473a7ea212f376dfb6439b",
+          "outcome_basis": "environment_trace_and_state"
+        },
+        "required_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -11292,343 +11628,7 @@
           "initial_state_hash": "62c6964f47682b7c6d899e58a6b4b7fcc1c232a165473a7ea212f376dfb6439b",
           "outcome_basis": "environment_trace_and_state"
         },
-        "O": {
-          "actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "decision_actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "defect_checks": [
-            {
-              "event_ids": [
-                "event-000004",
-                "event-000007",
-                "event-000009",
-                "event-000011",
-                "event-000013"
-              ],
-              "name": "native_loss",
-              "oracle_reference": "L1/local-simulator-v1",
-              "state_reference": "9685c57190b229c2cb4a28122f5ada4375839e29251fe454b63547783473c8fb",
-              "status": "observed",
-              "unit": "empty_dispatches",
-              "value": 1
-            }
-          ],
-          "events": [
-            {
-              "actor": "agent-0",
-              "after_state_hash": "7f40f68b2f6642e08a4dfe86544882a0c8f83ff6332ea12cc12467740425db17",
-              "arguments": {},
-              "before_state_hash": "62c6964f47682b7c6d899e58a6b4b7fcc1c232a165473a7ea212f376dfb6439b",
-              "effect": "observe",
-              "event_id": "event-000000",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0000/progress",
-                  "work-0000/private",
-                  "work-0000/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000000",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "7a66d0195e8c7fb98ae4e08bb3c420be669af79b6ee9cf8dcefb03ad00663d11",
-              "arguments": {},
-              "before_state_hash": "7f40f68b2f6642e08a4dfe86544882a0c8f83ff6332ea12cc12467740425db17",
-              "effect": "observe",
-              "event_id": "event-000001",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0001/progress",
-                  "work-0001/private",
-                  "work-0001/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000001",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "c67e1cc61db05bc17e8ad9cdd525a9a060046cc357760df352f9e68ea16e04de",
-              "arguments": {},
-              "before_state_hash": "7a66d0195e8c7fb98ae4e08bb3c420be669af79b6ee9cf8dcefb03ad00663d11",
-              "effect": "observe",
-              "event_id": "event-000002",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0002/progress",
-                  "work-0002/private",
-                  "work-0002/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000002",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "acdf1cb0a6d3962db4cb5f2856731ec58b0a849fa018ba8bb8abdaed84904f9f",
-              "arguments": {},
-              "before_state_hash": "c67e1cc61db05bc17e8ad9cdd525a9a060046cc357760df352f9e68ea16e04de",
-              "effect": "observe",
-              "event_id": "event-000003",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0003/progress",
-                  "work-0003/private",
-                  "work-0003/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000003",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "4689db5e39bf7a414840d922117effe63372c042a67e17b80b59938e03fc7f04",
-              "arguments": {
-                "depart_at": 0,
-                "unit": "work-0000"
-              },
-              "before_state_hash": "acdf1cb0a6d3962db4cb5f2856731ec58b0a849fa018ba8bb8abdaed84904f9f",
-              "effect": "execute",
-              "event_id": "event-000004",
-              "result": {
-                "accepted": true,
-                "arrived_at": 8,
-                "departed_at": 0,
-                "empty_dispatch": false,
-                "leg": "work-0000"
-              },
-              "result_reference": "receipt:event-000004",
-              "status": "ok",
-              "tool": "dispatch_leg"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "5ecf97fd85d16ab9366f3e85d90f19cb769bbfdca0c6506af91000883fab9e01",
-              "arguments": {
-                "fact_ids": [
-                  "work-0000/progress"
-                ],
-                "recipient": "agent-1",
-                "subject": "work-0000"
-              },
-              "before_state_hash": "4689db5e39bf7a414840d922117effe63372c042a67e17b80b59938e03fc7f04",
-              "effect": "communicate",
-              "event_id": "event-000005",
-              "result": {
-                "accepted": true,
-                "message": 0,
-                "wire_bytes": 278
-              },
-              "result_reference": "receipt:event-000005",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "4581f92f9fc07d69bf4ff6b1ded4e979d11c7c19790183b4df2e6d3bb0c35ded",
-              "arguments": {
-                "fact_ids": [],
-                "recipient": "agent-1",
-                "subject": "work-0000",
-                "wire_bytes": 278
-              },
-              "before_state_hash": "5ecf97fd85d16ab9366f3e85d90f19cb769bbfdca0c6506af91000883fab9e01",
-              "effect": "communicate",
-              "event_id": "event-000006",
-              "result": {
-                "accepted": true,
-                "message": 1,
-                "wire_bytes": 278
-              },
-              "result_reference": "receipt:event-000006",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "d69ef07d726ede6d29dfe99c71998a57243f318932bb1367a31e0a87ba11e974",
-              "arguments": {
-                "depart_at": 4,
-                "unit": "work-0001"
-              },
-              "before_state_hash": "4581f92f9fc07d69bf4ff6b1ded4e979d11c7c19790183b4df2e6d3bb0c35ded",
-              "effect": "execute",
-              "event_id": "event-000007",
-              "result": {
-                "accepted": true,
-                "arrived_at": 14,
-                "departed_at": 10,
-                "empty_dispatch": true,
-                "leg": "work-0001"
-              },
-              "result_reference": "receipt:event-000007",
-              "status": "ok",
-              "tool": "dispatch_leg"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "4d880ca6bfee18eae7f84696de5c7132db62b187fe689fdcafb3865e872dc8a0",
-              "arguments": {
-                "fact_ids": [
-                  "work-0001/progress",
-                  "work-0001/coord"
-                ],
-                "recipient": "agent-2",
-                "subject": "work-0001"
-              },
-              "before_state_hash": "d69ef07d726ede6d29dfe99c71998a57243f318932bb1367a31e0a87ba11e974",
-              "effect": "communicate",
-              "event_id": "event-000008",
-              "result": {
-                "accepted": true,
-                "message": 2,
-                "wire_bytes": 479
-              },
-              "result_reference": "receipt:event-000008",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "ebbcd965ee57d1fd93ef193ff7cf2c73b2bc8ef35d0c318912c5926be7a580b3",
-              "arguments": {
-                "depart_at": 14,
-                "unit": "work-0002"
-              },
-              "before_state_hash": "4d880ca6bfee18eae7f84696de5c7132db62b187fe689fdcafb3865e872dc8a0",
-              "effect": "execute",
-              "event_id": "event-000009",
-              "result": {
-                "accepted": true,
-                "arrived_at": 18,
-                "departed_at": 14,
-                "empty_dispatch": false,
-                "leg": "work-0002"
-              },
-              "result_reference": "receipt:event-000009",
-              "status": "ok",
-              "tool": "dispatch_leg"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "05371ffd85837bb88160576020c1c2a3fad00db94d101e05bbec0c557fe37c49",
-              "arguments": {
-                "fact_ids": [
-                  "work-0002/progress",
-                  "work-0002/coord"
-                ],
-                "recipient": "agent-3",
-                "subject": "work-0002"
-              },
-              "before_state_hash": "ebbcd965ee57d1fd93ef193ff7cf2c73b2bc8ef35d0c318912c5926be7a580b3",
-              "effect": "communicate",
-              "event_id": "event-000010",
-              "result": {
-                "accepted": true,
-                "message": 3,
-                "wire_bytes": 479
-              },
-              "result_reference": "receipt:event-000010",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "4a441c2eea9b99a42fc37cbc3d91cdf355696a95504ef3ef32d7a370bd570d41",
-              "arguments": {
-                "depart_at": 18,
-                "unit": "work-0003"
-              },
-              "before_state_hash": "05371ffd85837bb88160576020c1c2a3fad00db94d101e05bbec0c557fe37c49",
-              "effect": "execute",
-              "event_id": "event-000011",
-              "result": {
-                "accepted": true,
-                "arrived_at": 20,
-                "departed_at": 18,
-                "empty_dispatch": false,
-                "leg": "work-0003"
-              },
-              "result_reference": "receipt:event-000011",
-              "status": "ok",
-              "tool": "dispatch_leg"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "4ae1f0df9f060d853596a7f825369bd9c1cc6b202d4fe80fe0db6e3507103289",
-              "arguments": {
-                "fact_ids": [
-                  "work-0003/progress",
-                  "work-0003/coord"
-                ],
-                "recipient": "agent-0",
-                "subject": "work-0003"
-              },
-              "before_state_hash": "4a441c2eea9b99a42fc37cbc3d91cdf355696a95504ef3ef32d7a370bd570d41",
-              "effect": "communicate",
-              "event_id": "event-000012",
-              "result": {
-                "accepted": true,
-                "message": 4,
-                "wire_bytes": 479
-              },
-              "result_reference": "receipt:event-000012",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "9685c57190b229c2cb4a28122f5ada4375839e29251fe454b63547783473c8fb",
-              "arguments": {},
-              "before_state_hash": "4ae1f0df9f060d853596a7f825369bd9c1cc6b202d4fe80fe0db6e3507103289",
-              "effect": "execute",
-              "event_id": "event-000013",
-              "result": {
-                "accepted": true,
-                "native_checks": {
-                  "by_work": {
-                    "work-0000": 0,
-                    "work-0001": 1,
-                    "work-0002": 0,
-                    "work-0003": 0
-                  },
-                  "empty_dispatches": 1,
-                  "final_arrival": 20,
-                  "loss": 1,
-                  "loss_unit": "empty_dispatches"
-                },
-                "status": "released"
-              },
-              "result_reference": "receipt:event-000013",
-              "status": "ok",
-              "tool": "finalize"
-            }
-          ],
-          "execution_status": "completed",
-          "final_state_hash": "9685c57190b229c2cb4a28122f5ada4375839e29251fe454b63547783473c8fb",
-          "initial_state_hash": "62c6964f47682b7c6d899e58a6b4b7fcc1c232a165473a7ea212f376dfb6439b",
-          "outcome_basis": "environment_trace_and_state"
-        },
-        "P": {
+        "unrelated_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -11968,9 +11968,9 @@
         }
       },
       "expected_final_hashes": {
-        "M": "6c59b76a90d539f139a4b896b70a6e43fae6399659d223620ea13f7c0e76e41c",
-        "O": "0c153c8740aabc21249170603ddc5ad3923649bf44ab3ab618dae8308151fc59",
-        "P": "9eba2362ee76baad2c497e23b9db0bd4eae94e114678ee6b023337cb1b758ca6"
+        "no_added_information": "0c153c8740aabc21249170603ddc5ad3923649bf44ab3ab618dae8308151fc59",
+        "required_information": "6c59b76a90d539f139a4b896b70a6e43fae6399659d223620ea13f7c0e76e41c",
+        "unrelated_information": "9eba2362ee76baad2c497e23b9db0bd4eae94e114678ee6b023337cb1b758ca6"
       },
       "privacy_evidence": {
         "actor_ids": [
@@ -13701,7 +13701,343 @@
       },
       "environment": "L2",
       "evidence": {
-        "M": {
+        "no_added_information": {
+          "actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "decision_actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "defect_checks": [
+            {
+              "event_ids": [
+                "event-000004",
+                "event-000007",
+                "event-000009",
+                "event-000011",
+                "event-000013"
+              ],
+              "name": "native_loss",
+              "oracle_reference": "L2/local-simulator-v1",
+              "state_reference": "e0a672e0a4cd150f9a46b349285c3fc341057039bfea358f251d997dc825fecd",
+              "status": "observed",
+              "unit": "simulated_time_units_waiting",
+              "value": 4
+            }
+          ],
+          "events": [
+            {
+              "actor": "agent-0",
+              "after_state_hash": "b2dbb024ed35dd7061509e1785f8bd362079c80224565285339271078f8a2cb0",
+              "arguments": {},
+              "before_state_hash": "efcf9563d880d15630692142f0ad924de6010c9601a3105052862f84d47efaa7",
+              "effect": "observe",
+              "event_id": "event-000000",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0000/progress",
+                  "work-0000/private",
+                  "work-0000/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000000",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "197e80a0e679d694d75f136fb6c292c43f4b14e3e969a0e29a141fbf3cdc3eec",
+              "arguments": {},
+              "before_state_hash": "b2dbb024ed35dd7061509e1785f8bd362079c80224565285339271078f8a2cb0",
+              "effect": "observe",
+              "event_id": "event-000001",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0001/progress",
+                  "work-0001/private",
+                  "work-0001/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000001",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "babd712bce59650925eaa2df1f477c1448286e19480ceb93d68ee7a73f43022b",
+              "arguments": {},
+              "before_state_hash": "197e80a0e679d694d75f136fb6c292c43f4b14e3e969a0e29a141fbf3cdc3eec",
+              "effect": "observe",
+              "event_id": "event-000002",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0002/progress",
+                  "work-0002/private",
+                  "work-0002/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000002",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "0a2c7e8cbea67ea5990197dcce53a609ce844e44c35e1278f834b19ba8975643",
+              "arguments": {},
+              "before_state_hash": "babd712bce59650925eaa2df1f477c1448286e19480ceb93d68ee7a73f43022b",
+              "effect": "observe",
+              "event_id": "event-000003",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0003/progress",
+                  "work-0003/private",
+                  "work-0003/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000003",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "3124b8aa819e7a477526039ca317c733e055e80704deafbc21d68ff05f7dc480",
+              "arguments": {
+                "arrive_at": 0,
+                "unit": "work-0000"
+              },
+              "before_state_hash": "0a2c7e8cbea67ea5990197dcce53a609ce844e44c35e1278f834b19ba8975643",
+              "effect": "execute",
+              "event_id": "event-000004",
+              "result": {
+                "accepted": true,
+                "anchorage_wait": 0,
+                "call": "work-0000",
+                "end": 8,
+                "start": 0
+              },
+              "result_reference": "receipt:event-000004",
+              "status": "ok",
+              "tool": "book_port_call"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "6943faebec3d49a4af448f32c90f809b54836dfa42620e8b58461f1e38d7ee76",
+              "arguments": {
+                "fact_ids": [
+                  "work-0000/progress"
+                ],
+                "recipient": "agent-1",
+                "subject": "work-0000"
+              },
+              "before_state_hash": "3124b8aa819e7a477526039ca317c733e055e80704deafbc21d68ff05f7dc480",
+              "effect": "communicate",
+              "event_id": "event-000005",
+              "result": {
+                "accepted": true,
+                "message": 0,
+                "wire_bytes": 279
+              },
+              "result_reference": "receipt:event-000005",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "a753edb8e3d7c4ed9201d12b944b83c33bb49d9be4a0cfee84229b8d72b4fcba",
+              "arguments": {
+                "fact_ids": [],
+                "recipient": "agent-1",
+                "subject": "work-0000",
+                "wire_bytes": 278
+              },
+              "before_state_hash": "6943faebec3d49a4af448f32c90f809b54836dfa42620e8b58461f1e38d7ee76",
+              "effect": "communicate",
+              "event_id": "event-000006",
+              "result": {
+                "accepted": true,
+                "message": 1,
+                "wire_bytes": 278
+              },
+              "result_reference": "receipt:event-000006",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "f9c5766fb31b7b7dc6baa694338c4a1d65c6cdf4bf8c7cbc89a8a8bb77a1475a",
+              "arguments": {
+                "arrive_at": 4,
+                "unit": "work-0001"
+              },
+              "before_state_hash": "a753edb8e3d7c4ed9201d12b944b83c33bb49d9be4a0cfee84229b8d72b4fcba",
+              "effect": "execute",
+              "event_id": "event-000007",
+              "result": {
+                "accepted": true,
+                "anchorage_wait": 4,
+                "call": "work-0001",
+                "end": 12,
+                "start": 8
+              },
+              "result_reference": "receipt:event-000007",
+              "status": "ok",
+              "tool": "book_port_call"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "181e6c7f4748a47178147c9f6e2023fe3e7f821b4b8bc8e03febf64dee3e2113",
+              "arguments": {
+                "fact_ids": [
+                  "work-0001/progress",
+                  "work-0001/coord"
+                ],
+                "recipient": "agent-2",
+                "subject": "work-0001"
+              },
+              "before_state_hash": "f9c5766fb31b7b7dc6baa694338c4a1d65c6cdf4bf8c7cbc89a8a8bb77a1475a",
+              "effect": "communicate",
+              "event_id": "event-000008",
+              "result": {
+                "accepted": true,
+                "message": 2,
+                "wire_bytes": 489
+              },
+              "result_reference": "receipt:event-000008",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "eb8679676d38ce70e2695cc1e1e5405edeba2ad8daba768f43bfb64d6c669307",
+              "arguments": {
+                "arrive_at": 12,
+                "unit": "work-0002"
+              },
+              "before_state_hash": "181e6c7f4748a47178147c9f6e2023fe3e7f821b4b8bc8e03febf64dee3e2113",
+              "effect": "execute",
+              "event_id": "event-000009",
+              "result": {
+                "accepted": true,
+                "anchorage_wait": 0,
+                "call": "work-0002",
+                "end": 16,
+                "start": 12
+              },
+              "result_reference": "receipt:event-000009",
+              "status": "ok",
+              "tool": "book_port_call"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "844b9cc1ca25b59499dc691a3a59a0d1e7ef353cba4edf57004a97cd32e06b32",
+              "arguments": {
+                "fact_ids": [
+                  "work-0002/progress",
+                  "work-0002/coord"
+                ],
+                "recipient": "agent-3",
+                "subject": "work-0002"
+              },
+              "before_state_hash": "eb8679676d38ce70e2695cc1e1e5405edeba2ad8daba768f43bfb64d6c669307",
+              "effect": "communicate",
+              "event_id": "event-000010",
+              "result": {
+                "accepted": true,
+                "message": 3,
+                "wire_bytes": 489
+              },
+              "result_reference": "receipt:event-000010",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "842431690d4f38daed2d782175597652e38704d5013536cb58d8d37d09792bcf",
+              "arguments": {
+                "arrive_at": 16,
+                "unit": "work-0003"
+              },
+              "before_state_hash": "844b9cc1ca25b59499dc691a3a59a0d1e7ef353cba4edf57004a97cd32e06b32",
+              "effect": "execute",
+              "event_id": "event-000011",
+              "result": {
+                "accepted": true,
+                "anchorage_wait": 0,
+                "call": "work-0003",
+                "end": 18,
+                "start": 16
+              },
+              "result_reference": "receipt:event-000011",
+              "status": "ok",
+              "tool": "book_port_call"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "9973ad3c4d2d81e08cdde9f4728abb4c87419466ca7e4ca6520e54c1cc547bde",
+              "arguments": {
+                "fact_ids": [
+                  "work-0003/progress",
+                  "work-0003/coord"
+                ],
+                "recipient": "agent-0",
+                "subject": "work-0003"
+              },
+              "before_state_hash": "842431690d4f38daed2d782175597652e38704d5013536cb58d8d37d09792bcf",
+              "effect": "communicate",
+              "event_id": "event-000012",
+              "result": {
+                "accepted": true,
+                "message": 4,
+                "wire_bytes": 489
+              },
+              "result_reference": "receipt:event-000012",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "e0a672e0a4cd150f9a46b349285c3fc341057039bfea358f251d997dc825fecd",
+              "arguments": {},
+              "before_state_hash": "9973ad3c4d2d81e08cdde9f4728abb4c87419466ca7e4ca6520e54c1cc547bde",
+              "effect": "execute",
+              "event_id": "event-000013",
+              "result": {
+                "accepted": true,
+                "native_checks": {
+                  "anchorage_wait": 4,
+                  "berth_free_at": 18,
+                  "by_work": {
+                    "work-0000": 0,
+                    "work-0001": 4,
+                    "work-0002": 0,
+                    "work-0003": 0
+                  },
+                  "loss": 4,
+                  "loss_unit": "simulated_time_units_waiting"
+                },
+                "status": "released"
+              },
+              "result_reference": "receipt:event-000013",
+              "status": "ok",
+              "tool": "finalize"
+            }
+          ],
+          "execution_status": "completed",
+          "final_state_hash": "e0a672e0a4cd150f9a46b349285c3fc341057039bfea358f251d997dc825fecd",
+          "initial_state_hash": "efcf9563d880d15630692142f0ad924de6010c9601a3105052862f84d47efaa7",
+          "outcome_basis": "environment_trace_and_state"
+        },
+        "required_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -14039,343 +14375,7 @@
           "initial_state_hash": "efcf9563d880d15630692142f0ad924de6010c9601a3105052862f84d47efaa7",
           "outcome_basis": "environment_trace_and_state"
         },
-        "O": {
-          "actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "decision_actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "defect_checks": [
-            {
-              "event_ids": [
-                "event-000004",
-                "event-000007",
-                "event-000009",
-                "event-000011",
-                "event-000013"
-              ],
-              "name": "native_loss",
-              "oracle_reference": "L2/local-simulator-v1",
-              "state_reference": "e0a672e0a4cd150f9a46b349285c3fc341057039bfea358f251d997dc825fecd",
-              "status": "observed",
-              "unit": "simulated_time_units_waiting",
-              "value": 4
-            }
-          ],
-          "events": [
-            {
-              "actor": "agent-0",
-              "after_state_hash": "b2dbb024ed35dd7061509e1785f8bd362079c80224565285339271078f8a2cb0",
-              "arguments": {},
-              "before_state_hash": "efcf9563d880d15630692142f0ad924de6010c9601a3105052862f84d47efaa7",
-              "effect": "observe",
-              "event_id": "event-000000",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0000/progress",
-                  "work-0000/private",
-                  "work-0000/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000000",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "197e80a0e679d694d75f136fb6c292c43f4b14e3e969a0e29a141fbf3cdc3eec",
-              "arguments": {},
-              "before_state_hash": "b2dbb024ed35dd7061509e1785f8bd362079c80224565285339271078f8a2cb0",
-              "effect": "observe",
-              "event_id": "event-000001",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0001/progress",
-                  "work-0001/private",
-                  "work-0001/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000001",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "babd712bce59650925eaa2df1f477c1448286e19480ceb93d68ee7a73f43022b",
-              "arguments": {},
-              "before_state_hash": "197e80a0e679d694d75f136fb6c292c43f4b14e3e969a0e29a141fbf3cdc3eec",
-              "effect": "observe",
-              "event_id": "event-000002",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0002/progress",
-                  "work-0002/private",
-                  "work-0002/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000002",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "0a2c7e8cbea67ea5990197dcce53a609ce844e44c35e1278f834b19ba8975643",
-              "arguments": {},
-              "before_state_hash": "babd712bce59650925eaa2df1f477c1448286e19480ceb93d68ee7a73f43022b",
-              "effect": "observe",
-              "event_id": "event-000003",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0003/progress",
-                  "work-0003/private",
-                  "work-0003/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000003",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "3124b8aa819e7a477526039ca317c733e055e80704deafbc21d68ff05f7dc480",
-              "arguments": {
-                "arrive_at": 0,
-                "unit": "work-0000"
-              },
-              "before_state_hash": "0a2c7e8cbea67ea5990197dcce53a609ce844e44c35e1278f834b19ba8975643",
-              "effect": "execute",
-              "event_id": "event-000004",
-              "result": {
-                "accepted": true,
-                "anchorage_wait": 0,
-                "call": "work-0000",
-                "end": 8,
-                "start": 0
-              },
-              "result_reference": "receipt:event-000004",
-              "status": "ok",
-              "tool": "book_port_call"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "6943faebec3d49a4af448f32c90f809b54836dfa42620e8b58461f1e38d7ee76",
-              "arguments": {
-                "fact_ids": [
-                  "work-0000/progress"
-                ],
-                "recipient": "agent-1",
-                "subject": "work-0000"
-              },
-              "before_state_hash": "3124b8aa819e7a477526039ca317c733e055e80704deafbc21d68ff05f7dc480",
-              "effect": "communicate",
-              "event_id": "event-000005",
-              "result": {
-                "accepted": true,
-                "message": 0,
-                "wire_bytes": 279
-              },
-              "result_reference": "receipt:event-000005",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "a753edb8e3d7c4ed9201d12b944b83c33bb49d9be4a0cfee84229b8d72b4fcba",
-              "arguments": {
-                "fact_ids": [],
-                "recipient": "agent-1",
-                "subject": "work-0000",
-                "wire_bytes": 278
-              },
-              "before_state_hash": "6943faebec3d49a4af448f32c90f809b54836dfa42620e8b58461f1e38d7ee76",
-              "effect": "communicate",
-              "event_id": "event-000006",
-              "result": {
-                "accepted": true,
-                "message": 1,
-                "wire_bytes": 278
-              },
-              "result_reference": "receipt:event-000006",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "f9c5766fb31b7b7dc6baa694338c4a1d65c6cdf4bf8c7cbc89a8a8bb77a1475a",
-              "arguments": {
-                "arrive_at": 4,
-                "unit": "work-0001"
-              },
-              "before_state_hash": "a753edb8e3d7c4ed9201d12b944b83c33bb49d9be4a0cfee84229b8d72b4fcba",
-              "effect": "execute",
-              "event_id": "event-000007",
-              "result": {
-                "accepted": true,
-                "anchorage_wait": 4,
-                "call": "work-0001",
-                "end": 12,
-                "start": 8
-              },
-              "result_reference": "receipt:event-000007",
-              "status": "ok",
-              "tool": "book_port_call"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "181e6c7f4748a47178147c9f6e2023fe3e7f821b4b8bc8e03febf64dee3e2113",
-              "arguments": {
-                "fact_ids": [
-                  "work-0001/progress",
-                  "work-0001/coord"
-                ],
-                "recipient": "agent-2",
-                "subject": "work-0001"
-              },
-              "before_state_hash": "f9c5766fb31b7b7dc6baa694338c4a1d65c6cdf4bf8c7cbc89a8a8bb77a1475a",
-              "effect": "communicate",
-              "event_id": "event-000008",
-              "result": {
-                "accepted": true,
-                "message": 2,
-                "wire_bytes": 489
-              },
-              "result_reference": "receipt:event-000008",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "eb8679676d38ce70e2695cc1e1e5405edeba2ad8daba768f43bfb64d6c669307",
-              "arguments": {
-                "arrive_at": 12,
-                "unit": "work-0002"
-              },
-              "before_state_hash": "181e6c7f4748a47178147c9f6e2023fe3e7f821b4b8bc8e03febf64dee3e2113",
-              "effect": "execute",
-              "event_id": "event-000009",
-              "result": {
-                "accepted": true,
-                "anchorage_wait": 0,
-                "call": "work-0002",
-                "end": 16,
-                "start": 12
-              },
-              "result_reference": "receipt:event-000009",
-              "status": "ok",
-              "tool": "book_port_call"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "844b9cc1ca25b59499dc691a3a59a0d1e7ef353cba4edf57004a97cd32e06b32",
-              "arguments": {
-                "fact_ids": [
-                  "work-0002/progress",
-                  "work-0002/coord"
-                ],
-                "recipient": "agent-3",
-                "subject": "work-0002"
-              },
-              "before_state_hash": "eb8679676d38ce70e2695cc1e1e5405edeba2ad8daba768f43bfb64d6c669307",
-              "effect": "communicate",
-              "event_id": "event-000010",
-              "result": {
-                "accepted": true,
-                "message": 3,
-                "wire_bytes": 489
-              },
-              "result_reference": "receipt:event-000010",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "842431690d4f38daed2d782175597652e38704d5013536cb58d8d37d09792bcf",
-              "arguments": {
-                "arrive_at": 16,
-                "unit": "work-0003"
-              },
-              "before_state_hash": "844b9cc1ca25b59499dc691a3a59a0d1e7ef353cba4edf57004a97cd32e06b32",
-              "effect": "execute",
-              "event_id": "event-000011",
-              "result": {
-                "accepted": true,
-                "anchorage_wait": 0,
-                "call": "work-0003",
-                "end": 18,
-                "start": 16
-              },
-              "result_reference": "receipt:event-000011",
-              "status": "ok",
-              "tool": "book_port_call"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "9973ad3c4d2d81e08cdde9f4728abb4c87419466ca7e4ca6520e54c1cc547bde",
-              "arguments": {
-                "fact_ids": [
-                  "work-0003/progress",
-                  "work-0003/coord"
-                ],
-                "recipient": "agent-0",
-                "subject": "work-0003"
-              },
-              "before_state_hash": "842431690d4f38daed2d782175597652e38704d5013536cb58d8d37d09792bcf",
-              "effect": "communicate",
-              "event_id": "event-000012",
-              "result": {
-                "accepted": true,
-                "message": 4,
-                "wire_bytes": 489
-              },
-              "result_reference": "receipt:event-000012",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "e0a672e0a4cd150f9a46b349285c3fc341057039bfea358f251d997dc825fecd",
-              "arguments": {},
-              "before_state_hash": "9973ad3c4d2d81e08cdde9f4728abb4c87419466ca7e4ca6520e54c1cc547bde",
-              "effect": "execute",
-              "event_id": "event-000013",
-              "result": {
-                "accepted": true,
-                "native_checks": {
-                  "anchorage_wait": 4,
-                  "berth_free_at": 18,
-                  "by_work": {
-                    "work-0000": 0,
-                    "work-0001": 4,
-                    "work-0002": 0,
-                    "work-0003": 0
-                  },
-                  "loss": 4,
-                  "loss_unit": "simulated_time_units_waiting"
-                },
-                "status": "released"
-              },
-              "result_reference": "receipt:event-000013",
-              "status": "ok",
-              "tool": "finalize"
-            }
-          ],
-          "execution_status": "completed",
-          "final_state_hash": "e0a672e0a4cd150f9a46b349285c3fc341057039bfea358f251d997dc825fecd",
-          "initial_state_hash": "efcf9563d880d15630692142f0ad924de6010c9601a3105052862f84d47efaa7",
-          "outcome_basis": "environment_trace_and_state"
-        },
-        "P": {
+        "unrelated_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -14715,9 +14715,9 @@
         }
       },
       "expected_final_hashes": {
-        "M": "f1888ce2a4b528f1337a3f43638d7e7600982bf588be481d889aeb2d4be3e830",
-        "O": "5ddc5884a4688f525610efe5d890009bf022d3193bad816708c42af796fe7249",
-        "P": "eb686bf2f66e4ac0c3f2178fa4d6dbf2f68a3e2e4cabe8092b09548b0dcf4384"
+        "no_added_information": "5ddc5884a4688f525610efe5d890009bf022d3193bad816708c42af796fe7249",
+        "required_information": "f1888ce2a4b528f1337a3f43638d7e7600982bf588be481d889aeb2d4be3e830",
+        "unrelated_information": "eb686bf2f66e4ac0c3f2178fa4d6dbf2f68a3e2e4cabe8092b09548b0dcf4384"
       },
       "privacy_evidence": {
         "actor_ids": [
@@ -17211,7 +17211,353 @@
       },
       "environment": "L3",
       "evidence": {
-        "M": {
+        "no_added_information": {
+          "actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "decision_actor_ids": [
+            "agent-0",
+            "agent-1",
+            "agent-2",
+            "agent-3"
+          ],
+          "defect_checks": [
+            {
+              "event_ids": [
+                "event-000009",
+                "event-000010",
+                "event-000011",
+                "event-000012",
+                "event-000013"
+              ],
+              "name": "native_loss",
+              "oracle_reference": "L3/local-simulator-v1",
+              "state_reference": "19566ccc62a0eeef0e14943d233ac44994f87a1e69aee72a0da893ccac8a4617",
+              "status": "observed",
+              "unit": "stale_documents",
+              "value": 1
+            }
+          ],
+          "events": [
+            {
+              "actor": "agent-0",
+              "after_state_hash": "347fd283626a62203dc8413b46f368637f10c78cc19372cbf56befb84f9de8dc",
+              "arguments": {},
+              "before_state_hash": "c257318acc3aac0176a0cd2ad9596290dfd5b9d371f17861cb9a34b15dccb8e1",
+              "effect": "observe",
+              "event_id": "event-000000",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0000/coord",
+                  "work-0000/progress",
+                  "work-0000/private",
+                  "work-0000/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000000",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "5acccf3f5914eb78f6d20e76a3b756c5352c7c796a272daf1a509b973619b756",
+              "arguments": {},
+              "before_state_hash": "347fd283626a62203dc8413b46f368637f10c78cc19372cbf56befb84f9de8dc",
+              "effect": "observe",
+              "event_id": "event-000001",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0001/coord",
+                  "work-0001/progress",
+                  "work-0001/private",
+                  "work-0001/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000001",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "34973dd6edd2be11a4e5714b489953bd4ab28f172da84e112f38755ca38d6178",
+              "arguments": {},
+              "before_state_hash": "5acccf3f5914eb78f6d20e76a3b756c5352c7c796a272daf1a509b973619b756",
+              "effect": "observe",
+              "event_id": "event-000002",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0002/coord",
+                  "work-0002/progress",
+                  "work-0002/private",
+                  "work-0002/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000002",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "736e8dcad8d3835195ddd9c14c01d95824ad3ca282e3043ab97eeff216eb3517",
+              "arguments": {},
+              "before_state_hash": "34973dd6edd2be11a4e5714b489953bd4ab28f172da84e112f38755ca38d6178",
+              "effect": "observe",
+              "event_id": "event-000003",
+              "result": {
+                "accepted": true,
+                "observed": [
+                  "work-0003/coord",
+                  "work-0003/progress",
+                  "work-0003/private",
+                  "work-0003/neutral"
+                ]
+              },
+              "result_reference": "receipt:event-000003",
+              "status": "ok",
+              "tool": "inspect"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "bf9c8aee7eb67fc7c959511f744d04e7230349ea07eb89e550d10d5e6a874fe9",
+              "arguments": {
+                "fact_ids": [
+                  "work-0000/progress"
+                ],
+                "recipient": "agent-1",
+                "subject": "work-0000"
+              },
+              "before_state_hash": "736e8dcad8d3835195ddd9c14c01d95824ad3ca282e3043ab97eeff216eb3517",
+              "effect": "communicate",
+              "event_id": "event-000004",
+              "result": {
+                "accepted": true,
+                "message": 0,
+                "wire_bytes": 282
+              },
+              "result_reference": "receipt:event-000004",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "5713ed89c40b900bdee26c5164e6a287bcd33dfa0b8c2e4b27ab83c3446fb898",
+              "arguments": {
+                "fact_ids": [
+                  "work-0001/progress",
+                  "work-0001/coord"
+                ],
+                "recipient": "agent-2",
+                "subject": "work-0001"
+              },
+              "before_state_hash": "bf9c8aee7eb67fc7c959511f744d04e7230349ea07eb89e550d10d5e6a874fe9",
+              "effect": "communicate",
+              "event_id": "event-000005",
+              "result": {
+                "accepted": true,
+                "message": 1,
+                "wire_bytes": 515
+              },
+              "result_reference": "receipt:event-000005",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "2a37bd109be44b4d18dd0c11bbb8282a56331a5571ff576ed951fe3554941da0",
+              "arguments": {
+                "fact_ids": [
+                  "work-0002/progress",
+                  "work-0002/coord"
+                ],
+                "recipient": "agent-3",
+                "subject": "work-0002"
+              },
+              "before_state_hash": "5713ed89c40b900bdee26c5164e6a287bcd33dfa0b8c2e4b27ab83c3446fb898",
+              "effect": "communicate",
+              "event_id": "event-000006",
+              "result": {
+                "accepted": true,
+                "message": 2,
+                "wire_bytes": 515
+              },
+              "result_reference": "receipt:event-000006",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "090606ca8fe556ac46d79b02a491bae59780c0cba03c93f2c367173085fa7845",
+              "arguments": {
+                "fact_ids": [
+                  "work-0003/progress",
+                  "work-0003/coord"
+                ],
+                "recipient": "agent-0",
+                "subject": "work-0003"
+              },
+              "before_state_hash": "2a37bd109be44b4d18dd0c11bbb8282a56331a5571ff576ed951fe3554941da0",
+              "effect": "communicate",
+              "event_id": "event-000007",
+              "result": {
+                "accepted": true,
+                "message": 3,
+                "wire_bytes": 515
+              },
+              "result_reference": "receipt:event-000007",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "371016d527fc464431a0ac51f580f03230c302c3d5a885be713b19e404653060",
+              "arguments": {
+                "fact_ids": [],
+                "recipient": "agent-1",
+                "subject": "work-0000",
+                "wire_bytes": 288
+              },
+              "before_state_hash": "090606ca8fe556ac46d79b02a491bae59780c0cba03c93f2c367173085fa7845",
+              "effect": "communicate",
+              "event_id": "event-000008",
+              "result": {
+                "accepted": true,
+                "message": 4,
+                "wire_bytes": 288
+              },
+              "result_reference": "receipt:event-000008",
+              "status": "ok",
+              "tool": "send"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "c73c4c93c8a15954e041e71d15e4c46e3b04cea3f85d71307738d0340c2f983b",
+              "arguments": {
+                "instruction_destination": "PORT-0003-A",
+                "instruction_quantity": 6,
+                "unit": "work-0000"
+              },
+              "before_state_hash": "371016d527fc464431a0ac51f580f03230c302c3d5a885be713b19e404653060",
+              "effect": "execute",
+              "event_id": "event-000009",
+              "result": {
+                "accepted": true,
+                "amendments": 0,
+                "destination": "PORT-0003-A",
+                "document": "work-0003",
+                "status": "approved"
+              },
+              "result_reference": "receipt:event-000009",
+              "status": "ok",
+              "tool": "amend_and_approve"
+            },
+            {
+              "actor": "agent-1",
+              "after_state_hash": "4f23f7f074229c1abfb5737aed36423288d04d077b97ecc5fa4aae0596c3c0ff",
+              "arguments": {
+                "instruction_destination": "PORT-0000-A",
+                "instruction_quantity": 5,
+                "unit": "work-0001"
+              },
+              "before_state_hash": "c73c4c93c8a15954e041e71d15e4c46e3b04cea3f85d71307738d0340c2f983b",
+              "effect": "execute",
+              "event_id": "event-000010",
+              "result": {
+                "accepted": true,
+                "amendments": 0,
+                "destination": "PORT-0000-A",
+                "document": "work-0000",
+                "status": "approved"
+              },
+              "result_reference": "receipt:event-000010",
+              "status": "ok",
+              "tool": "amend_and_approve"
+            },
+            {
+              "actor": "agent-2",
+              "after_state_hash": "28943e2d7ac70d46f9413badedc2310b9d0afb6999d5b1c297a3fdb38e7e58e8",
+              "arguments": {
+                "instruction_destination": "PORT-0001-A",
+                "instruction_quantity": 4,
+                "unit": "work-0002"
+              },
+              "before_state_hash": "4f23f7f074229c1abfb5737aed36423288d04d077b97ecc5fa4aae0596c3c0ff",
+              "effect": "execute",
+              "event_id": "event-000011",
+              "result": {
+                "accepted": true,
+                "amendments": 0,
+                "destination": "PORT-0001-A",
+                "document": "work-0001",
+                "status": "approved"
+              },
+              "result_reference": "receipt:event-000011",
+              "status": "ok",
+              "tool": "amend_and_approve"
+            },
+            {
+              "actor": "agent-3",
+              "after_state_hash": "3f411804d913662397cf1092986c7d512537940bb5d6a3255548c50914a7cd0d",
+              "arguments": {
+                "instruction_destination": "PORT-0002-A",
+                "instruction_quantity": 4,
+                "unit": "work-0003"
+              },
+              "before_state_hash": "28943e2d7ac70d46f9413badedc2310b9d0afb6999d5b1c297a3fdb38e7e58e8",
+              "effect": "execute",
+              "event_id": "event-000012",
+              "result": {
+                "accepted": true,
+                "amendments": 0,
+                "destination": "PORT-0002-A",
+                "document": "work-0002",
+                "status": "approved"
+              },
+              "result_reference": "receipt:event-000012",
+              "status": "ok",
+              "tool": "amend_and_approve"
+            },
+            {
+              "actor": "agent-0",
+              "after_state_hash": "19566ccc62a0eeef0e14943d233ac44994f87a1e69aee72a0da893ccac8a4617",
+              "arguments": {},
+              "before_state_hash": "3f411804d913662397cf1092986c7d512537940bb5d6a3255548c50914a7cd0d",
+              "effect": "execute",
+              "event_id": "event-000013",
+              "result": {
+                "accepted": false,
+                "native_checks": {
+                  "amendments": 0,
+                  "approved_documents": 4,
+                  "blocked_related_bookings": 3,
+                  "by_work": {
+                    "work-0000": 1,
+                    "work-0001": 0,
+                    "work-0002": 0,
+                    "work-0003": 0
+                  },
+                  "loss": 1,
+                  "loss_unit": "stale_documents",
+                  "stale_documents": 1
+                },
+                "status": "blocked"
+              },
+              "result_reference": "receipt:event-000013",
+              "status": "rejected",
+              "tool": "finalize"
+            }
+          ],
+          "execution_status": "completed",
+          "final_state_hash": "19566ccc62a0eeef0e14943d233ac44994f87a1e69aee72a0da893ccac8a4617",
+          "initial_state_hash": "c257318acc3aac0176a0cd2ad9596290dfd5b9d371f17861cb9a34b15dccb8e1",
+          "outcome_basis": "environment_trace_and_state"
+        },
+        "required_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -17559,353 +17905,7 @@
           "initial_state_hash": "c257318acc3aac0176a0cd2ad9596290dfd5b9d371f17861cb9a34b15dccb8e1",
           "outcome_basis": "environment_trace_and_state"
         },
-        "O": {
-          "actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "decision_actor_ids": [
-            "agent-0",
-            "agent-1",
-            "agent-2",
-            "agent-3"
-          ],
-          "defect_checks": [
-            {
-              "event_ids": [
-                "event-000009",
-                "event-000010",
-                "event-000011",
-                "event-000012",
-                "event-000013"
-              ],
-              "name": "native_loss",
-              "oracle_reference": "L3/local-simulator-v1",
-              "state_reference": "19566ccc62a0eeef0e14943d233ac44994f87a1e69aee72a0da893ccac8a4617",
-              "status": "observed",
-              "unit": "stale_documents",
-              "value": 1
-            }
-          ],
-          "events": [
-            {
-              "actor": "agent-0",
-              "after_state_hash": "347fd283626a62203dc8413b46f368637f10c78cc19372cbf56befb84f9de8dc",
-              "arguments": {},
-              "before_state_hash": "c257318acc3aac0176a0cd2ad9596290dfd5b9d371f17861cb9a34b15dccb8e1",
-              "effect": "observe",
-              "event_id": "event-000000",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0000/coord",
-                  "work-0000/progress",
-                  "work-0000/private",
-                  "work-0000/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000000",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "5acccf3f5914eb78f6d20e76a3b756c5352c7c796a272daf1a509b973619b756",
-              "arguments": {},
-              "before_state_hash": "347fd283626a62203dc8413b46f368637f10c78cc19372cbf56befb84f9de8dc",
-              "effect": "observe",
-              "event_id": "event-000001",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0001/coord",
-                  "work-0001/progress",
-                  "work-0001/private",
-                  "work-0001/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000001",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "34973dd6edd2be11a4e5714b489953bd4ab28f172da84e112f38755ca38d6178",
-              "arguments": {},
-              "before_state_hash": "5acccf3f5914eb78f6d20e76a3b756c5352c7c796a272daf1a509b973619b756",
-              "effect": "observe",
-              "event_id": "event-000002",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0002/coord",
-                  "work-0002/progress",
-                  "work-0002/private",
-                  "work-0002/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000002",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "736e8dcad8d3835195ddd9c14c01d95824ad3ca282e3043ab97eeff216eb3517",
-              "arguments": {},
-              "before_state_hash": "34973dd6edd2be11a4e5714b489953bd4ab28f172da84e112f38755ca38d6178",
-              "effect": "observe",
-              "event_id": "event-000003",
-              "result": {
-                "accepted": true,
-                "observed": [
-                  "work-0003/coord",
-                  "work-0003/progress",
-                  "work-0003/private",
-                  "work-0003/neutral"
-                ]
-              },
-              "result_reference": "receipt:event-000003",
-              "status": "ok",
-              "tool": "inspect"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "bf9c8aee7eb67fc7c959511f744d04e7230349ea07eb89e550d10d5e6a874fe9",
-              "arguments": {
-                "fact_ids": [
-                  "work-0000/progress"
-                ],
-                "recipient": "agent-1",
-                "subject": "work-0000"
-              },
-              "before_state_hash": "736e8dcad8d3835195ddd9c14c01d95824ad3ca282e3043ab97eeff216eb3517",
-              "effect": "communicate",
-              "event_id": "event-000004",
-              "result": {
-                "accepted": true,
-                "message": 0,
-                "wire_bytes": 282
-              },
-              "result_reference": "receipt:event-000004",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "5713ed89c40b900bdee26c5164e6a287bcd33dfa0b8c2e4b27ab83c3446fb898",
-              "arguments": {
-                "fact_ids": [
-                  "work-0001/progress",
-                  "work-0001/coord"
-                ],
-                "recipient": "agent-2",
-                "subject": "work-0001"
-              },
-              "before_state_hash": "bf9c8aee7eb67fc7c959511f744d04e7230349ea07eb89e550d10d5e6a874fe9",
-              "effect": "communicate",
-              "event_id": "event-000005",
-              "result": {
-                "accepted": true,
-                "message": 1,
-                "wire_bytes": 515
-              },
-              "result_reference": "receipt:event-000005",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "2a37bd109be44b4d18dd0c11bbb8282a56331a5571ff576ed951fe3554941da0",
-              "arguments": {
-                "fact_ids": [
-                  "work-0002/progress",
-                  "work-0002/coord"
-                ],
-                "recipient": "agent-3",
-                "subject": "work-0002"
-              },
-              "before_state_hash": "5713ed89c40b900bdee26c5164e6a287bcd33dfa0b8c2e4b27ab83c3446fb898",
-              "effect": "communicate",
-              "event_id": "event-000006",
-              "result": {
-                "accepted": true,
-                "message": 2,
-                "wire_bytes": 515
-              },
-              "result_reference": "receipt:event-000006",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "090606ca8fe556ac46d79b02a491bae59780c0cba03c93f2c367173085fa7845",
-              "arguments": {
-                "fact_ids": [
-                  "work-0003/progress",
-                  "work-0003/coord"
-                ],
-                "recipient": "agent-0",
-                "subject": "work-0003"
-              },
-              "before_state_hash": "2a37bd109be44b4d18dd0c11bbb8282a56331a5571ff576ed951fe3554941da0",
-              "effect": "communicate",
-              "event_id": "event-000007",
-              "result": {
-                "accepted": true,
-                "message": 3,
-                "wire_bytes": 515
-              },
-              "result_reference": "receipt:event-000007",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "371016d527fc464431a0ac51f580f03230c302c3d5a885be713b19e404653060",
-              "arguments": {
-                "fact_ids": [],
-                "recipient": "agent-1",
-                "subject": "work-0000",
-                "wire_bytes": 288
-              },
-              "before_state_hash": "090606ca8fe556ac46d79b02a491bae59780c0cba03c93f2c367173085fa7845",
-              "effect": "communicate",
-              "event_id": "event-000008",
-              "result": {
-                "accepted": true,
-                "message": 4,
-                "wire_bytes": 288
-              },
-              "result_reference": "receipt:event-000008",
-              "status": "ok",
-              "tool": "send"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "c73c4c93c8a15954e041e71d15e4c46e3b04cea3f85d71307738d0340c2f983b",
-              "arguments": {
-                "instruction_destination": "PORT-0003-A",
-                "instruction_quantity": 6,
-                "unit": "work-0000"
-              },
-              "before_state_hash": "371016d527fc464431a0ac51f580f03230c302c3d5a885be713b19e404653060",
-              "effect": "execute",
-              "event_id": "event-000009",
-              "result": {
-                "accepted": true,
-                "amendments": 0,
-                "destination": "PORT-0003-A",
-                "document": "work-0003",
-                "status": "approved"
-              },
-              "result_reference": "receipt:event-000009",
-              "status": "ok",
-              "tool": "amend_and_approve"
-            },
-            {
-              "actor": "agent-1",
-              "after_state_hash": "4f23f7f074229c1abfb5737aed36423288d04d077b97ecc5fa4aae0596c3c0ff",
-              "arguments": {
-                "instruction_destination": "PORT-0000-A",
-                "instruction_quantity": 5,
-                "unit": "work-0001"
-              },
-              "before_state_hash": "c73c4c93c8a15954e041e71d15e4c46e3b04cea3f85d71307738d0340c2f983b",
-              "effect": "execute",
-              "event_id": "event-000010",
-              "result": {
-                "accepted": true,
-                "amendments": 0,
-                "destination": "PORT-0000-A",
-                "document": "work-0000",
-                "status": "approved"
-              },
-              "result_reference": "receipt:event-000010",
-              "status": "ok",
-              "tool": "amend_and_approve"
-            },
-            {
-              "actor": "agent-2",
-              "after_state_hash": "28943e2d7ac70d46f9413badedc2310b9d0afb6999d5b1c297a3fdb38e7e58e8",
-              "arguments": {
-                "instruction_destination": "PORT-0001-A",
-                "instruction_quantity": 4,
-                "unit": "work-0002"
-              },
-              "before_state_hash": "4f23f7f074229c1abfb5737aed36423288d04d077b97ecc5fa4aae0596c3c0ff",
-              "effect": "execute",
-              "event_id": "event-000011",
-              "result": {
-                "accepted": true,
-                "amendments": 0,
-                "destination": "PORT-0001-A",
-                "document": "work-0001",
-                "status": "approved"
-              },
-              "result_reference": "receipt:event-000011",
-              "status": "ok",
-              "tool": "amend_and_approve"
-            },
-            {
-              "actor": "agent-3",
-              "after_state_hash": "3f411804d913662397cf1092986c7d512537940bb5d6a3255548c50914a7cd0d",
-              "arguments": {
-                "instruction_destination": "PORT-0002-A",
-                "instruction_quantity": 4,
-                "unit": "work-0003"
-              },
-              "before_state_hash": "28943e2d7ac70d46f9413badedc2310b9d0afb6999d5b1c297a3fdb38e7e58e8",
-              "effect": "execute",
-              "event_id": "event-000012",
-              "result": {
-                "accepted": true,
-                "amendments": 0,
-                "destination": "PORT-0002-A",
-                "document": "work-0002",
-                "status": "approved"
-              },
-              "result_reference": "receipt:event-000012",
-              "status": "ok",
-              "tool": "amend_and_approve"
-            },
-            {
-              "actor": "agent-0",
-              "after_state_hash": "19566ccc62a0eeef0e14943d233ac44994f87a1e69aee72a0da893ccac8a4617",
-              "arguments": {},
-              "before_state_hash": "3f411804d913662397cf1092986c7d512537940bb5d6a3255548c50914a7cd0d",
-              "effect": "execute",
-              "event_id": "event-000013",
-              "result": {
-                "accepted": false,
-                "native_checks": {
-                  "amendments": 0,
-                  "approved_documents": 4,
-                  "blocked_related_bookings": 3,
-                  "by_work": {
-                    "work-0000": 1,
-                    "work-0001": 0,
-                    "work-0002": 0,
-                    "work-0003": 0
-                  },
-                  "loss": 1,
-                  "loss_unit": "stale_documents",
-                  "stale_documents": 1
-                },
-                "status": "blocked"
-              },
-              "result_reference": "receipt:event-000013",
-              "status": "rejected",
-              "tool": "finalize"
-            }
-          ],
-          "execution_status": "completed",
-          "final_state_hash": "19566ccc62a0eeef0e14943d233ac44994f87a1e69aee72a0da893ccac8a4617",
-          "initial_state_hash": "c257318acc3aac0176a0cd2ad9596290dfd5b9d371f17861cb9a34b15dccb8e1",
-          "outcome_basis": "environment_trace_and_state"
-        },
-        "P": {
+        "unrelated_information": {
           "actor_ids": [
             "agent-0",
             "agent-1",
@@ -18255,9 +18255,9 @@
         }
       },
       "expected_final_hashes": {
-        "M": "b94c46c49447f82d8dd8e0c37770f94a47423ab410b24a2b76b1e6843315d9cb",
-        "O": "2a0dce084a8915643b77906a97a91bcc06b96ba77a86e8d22f71eb404f378e82",
-        "P": "b1e83cdc7769376b2084f7bdf26b4c421ab8f8791c44a45602bd70849ae8a7ea"
+        "no_added_information": "2a0dce084a8915643b77906a97a91bcc06b96ba77a86e8d22f71eb404f378e82",
+        "required_information": "b94c46c49447f82d8dd8e0c37770f94a47423ab410b24a2b76b1e6843315d9cb",
+        "unrelated_information": "b1e83cdc7769376b2084f7bdf26b4c421ab8f8791c44a45602bd70849ae8a7ea"
       },
       "privacy_evidence": {
         "actor_ids": [
@@ -18589,5 +18589,5 @@
     }
   ],
   "kind": "synthetic_replay_evidence",
-  "schema_version": 1
+  "schema_version": 2
 }
