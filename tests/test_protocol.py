@@ -8,16 +8,17 @@ from disclosure_causality.protocol import restoration_inputs, validate_action_ev
 
 def restore(state, packets, token_count):
     return restoration_inputs(
-        state, packets, token_count, source_actor="planner-0",
-        recipient_actor_ids=["planner-1"],
+        state, packets, token_count, source_actor="actor-0",
+        recipient_actor_ids=["actor-1"],
     )
+
 
 def frozen_state():
     return {"history": [{"role": "user", "content": "unchanged"}], "task": "fixture",
             "actions": ["inspect", "wait"], "tools": [{"name": "request_record"}],
             "source_access": ["public-index"], "budget": {"max_tool_steps": 20},
-            "environment_state": {"accepted_units": []}, "participant_states": {f"planner-{i}": [] for i in range(4)},
-            "message_queues": {f"planner-{i}": [] for i in range(4)},
+            "environment_state": {"committed_artifacts": []}, "participant_states": {f"actor-{i}": [] for i in range(4)},
+            "message_queues": {f"actor-{i}": [] for i in range(4)},
             "pending_operations": [],
             "exogenous_state": {"event_tape": []},
             "work_product": {"revision": "frozen", "test_results": ["failed-required-check"]}}
@@ -81,20 +82,20 @@ def test_replay_requires_work_product():
 def test_native_world_and_participant_contexts_are_independent_across_branches():
     state = frozen_state()
     branches = restore(state, {"M": "fact-a", "P": "fact-b", "F": "fact-a fact-c"}, len)
-    branches["M"]["environment_state"]["accepted_units"].append("lot-A")
-    branches["M"]["participant_states"]["planner-1"].append("new observation")
-    assert branches["P"]["environment_state"]["accepted_units"] == []
-    assert state["participant_states"]["planner-1"] == []
+    branches["M"]["environment_state"]["committed_artifacts"].append("artifact-A")
+    branches["M"]["participant_states"]["actor-1"].append("new observation")
+    assert branches["P"]["environment_state"]["committed_artifacts"] == []
+    assert state["participant_states"]["actor-1"] == []
 
 
 def action_record():
     # Metadata fixture only: this is not a native environment or empirical run.
     return {"outcome_basis": "environment_trace_and_state", "execution_status": "completed",
-            "actor_ids": [f"planner-{i}" for i in range(4)],
-            "decision_actor_ids": ["planner-1"],
+            "actor_ids": [f"actor-{i}" for i in range(4)],
+            "decision_actor_ids": ["actor-1"],
             "initial_state_hash": "a" * 64, "final_state_hash": "b" * 64,
-            "events": [{"event_id": "event-1", "actor": "planner-1", "tool": "accept_units",
-                        "arguments": {"lot": "fixture"}, "effect": "mutate", "status": "ok",
+            "events": [{"event_id": "event-1", "actor": "actor-1", "tool": "commit_artifact",
+                        "arguments": {"artifact": "fixture"}, "effect": "mutate", "status": "ok",
                         "result_reference": "fixture-receipt",
                         "before_state_hash": "a" * 64, "after_state_hash": "b" * 64}],
             "defect_checks": [{"name": "fixture-check", "oracle_reference": "fixture-oracle",
@@ -137,20 +138,20 @@ def test_failed_execution_is_retained_without_imputing_zero_defects():
 @pytest.mark.parametrize("size", [4, 7, 8, 16, 32, 65])
 def test_routed_metadata_has_no_fixed_actor_count_and_preserves_other_members(size):
     state = frozen_state()
-    state["participant_states"] = {f"planner-{i}": [] for i in range(size)}
-    state["message_queues"] = {f"planner-{i}": [] for i in range(size)}
-    targets = ["planner-1", f"planner-{size - 1}"]
+    state["participant_states"] = {f"actor-{i}": [] for i in range(size)}
+    state["message_queues"] = {f"actor-{i}": [] for i in range(size)}
+    targets = ["actor-1", f"actor-{size - 1}"]
     branches = restoration_inputs(
         state, {"M": "fact-a", "P": "fact-b", "F": "fact-a fact-c"}, len,
-        source_actor="planner-0", recipient_actor_ids=targets,
+        source_actor="actor-0", recipient_actor_ids=targets,
     )
     targets.clear()
     for branch in branches.values():
-        assert branch["evidence_update"]["recipient_actor_ids"] == ["planner-1", f"planner-{size - 1}"]
+        assert branch["evidence_update"]["recipient_actor_ids"] == ["actor-1", f"actor-{size - 1}"]
         assert branch["evidence_update"]["channel"] == "ordinary_sender"
         assert branch["participant_states"] == state["participant_states"]
-    branches["M"]["participant_states"][f"planner-{size - 1}"].append("received")
-    branches["M"]["message_queues"]["planner-2"].append("forwarded")
+    branches["M"]["participant_states"][f"actor-{size - 1}"].append("received")
+    branches["M"]["message_queues"]["actor-2"].append("forwarded")
     branches["M"]["pending_operations"].append("execute")
     assert branches["P"]["participant_states"] == state["participant_states"]
     assert branches["P"]["message_queues"] == state["message_queues"]
@@ -161,12 +162,12 @@ def test_routed_metadata_has_no_fixed_actor_count_and_preserves_other_members(si
     {"source_actor": "unknown"},
     {"recipient_actor_ids": ["unknown"]},
     {"recipient_actor_ids": []},
-    {"recipient_actor_ids": ["planner-1", "planner-1"]},
-    {"recipient_actor_ids": ["planner-0"]},
+    {"recipient_actor_ids": ["actor-1", "actor-1"]},
+    {"recipient_actor_ids": ["actor-0"]},
     {"channel": "broadcast_everywhere"},
 ])
 def test_restoration_rejects_undefined_or_ambiguous_routes(overrides):
-    route = {"source_actor": "planner-0", "recipient_actor_ids": ["planner-1"]}
+    route = {"source_actor": "actor-0", "recipient_actor_ids": ["actor-1"]}
     route.update(overrides)
     with pytest.raises(ValueError):
         restoration_inputs(frozen_state(), {"M": "a", "P": "b", "F": "a b"}, len, **route)
@@ -185,7 +186,7 @@ def test_authenticated_route_is_explicit_and_separate():
     state["participant_states"]["reference-service"] = []
     branches = restoration_inputs(
         state, {"M": "a", "P": "b", "F": "a b"}, len,
-        source_actor="reference-service", recipient_actor_ids=["planner-1"],
+        source_actor="reference-service", recipient_actor_ids=["actor-1"],
         channel="authenticated_reference_update",
     )
     assert branches["M"]["evidence_update"]["source_actor"] == "reference-service"
@@ -193,7 +194,7 @@ def test_authenticated_route_is_explicit_and_separate():
 
 
 def test_nonfocal_or_environment_action_cannot_establish_decision_completion():
-    for actor in ["planner-2", "environment", "unknown"]:
+    for actor in ["actor-2", "environment", "unknown"]:
         record = action_record()
         record["events"][0]["actor"] = actor
         with pytest.raises(ValueError):
@@ -203,7 +204,7 @@ def test_nonfocal_or_environment_action_cannot_establish_decision_completion():
 @pytest.mark.parametrize("size", [4, 7, 16, 32, 65])
 def test_execution_receipt_can_belong_to_any_registered_decision_actor(size):
     record = action_record()
-    record["actor_ids"] = [f"planner-{i}" for i in range(size)]
+    record["actor_ids"] = [f"actor-{i}" for i in range(size)]
     last = record["actor_ids"][-1]
     record["decision_actor_ids"] = [last]
     record["events"][0]["actor"] = last
@@ -211,7 +212,7 @@ def test_execution_receipt_can_belong_to_any_registered_decision_actor(size):
 
 
 @pytest.mark.parametrize("field,value", [
-    ("actor_ids", []), ("actor_ids", ["planner-1", "planner-1"]),
+    ("actor_ids", []), ("actor_ids", ["actor-1", "actor-1"]),
     ("actor_ids", ["environment"]), ("decision_actor_ids", []),
     ("decision_actor_ids", ["unknown"]),
 ])

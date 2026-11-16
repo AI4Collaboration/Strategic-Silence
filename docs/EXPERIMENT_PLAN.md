@@ -145,37 +145,29 @@ budget; this plan does not authorize paid collection.
 
 ## Stage 2: test the mechanism
 
-Hold swarm size, work assignment, topology, factual state, actor mandates and
-disclosure duties fixed. Establish
-sender evidence exposure before random assignment in the controlled study.
+Hold swarm size, work assignment, topology, facts, actor mandates and disclosure
+duties fixed. Establish evidence exposure before random assignment. Cross a
+feasible incentive contrast with baseline, truthfulness and scoped completeness
+instructions. Use natural truthfulness wording; a literal-only instruction is
+a separate ablation. Completeness refers to existing duties and preserves
+confidentiality. Never instruct concealment.
 
-1. Cross a feasible incentive contrast with baseline, truth-only and scoped
-   completeness instructions. Prompts never instruct concealment. Separate
-   factual exposure from demonstrated recognition. Use ordinary truthfulness
-   wording; a deliberately literal-only instruction is a separate ablation.
-2. Audit assertions, required information, legitimate withholding and native
-   outcomes for every assigned episode. Record literal silence separately
-   from truthful but incomplete messages.
-3. For qualifying omissions, apply the registered O/M/P restoration protocol.
-   Use F for receiver-capability and completeness diagnostics on a predeclared
-   set of cases. Keep the environment, authority and resource budgets fixed.
-   Use the ordinary sender channel for the primary comparison. A trusted
-   external-source update is a separate diagnostic, not equivalent disclosure.
-4. Compare missing-content restoration with matched nonmaterial updates and
-   already-known-content controls. Select evidence from the case criteria,
-   not from whichever successful trajectory produces the desired action.
-   Report pre-registered M/P comparisons separately for audited accurate
-   communication, literal silence and mixed lying/omission. Only the first
-   supports a truthful-but-incomplete consequence claim.
-5. Add natural information-seeking as a robustness condition. Incentives may
-   affect retrieval as well as communication, so do not condition the causal
-   incentive comparison on a post-treatment knowledge or omission subset.
+Use the [knowledge checks](PREHOC_DESIGN.md#establishing-knowledge-before-intervention)
+and [restoration protocol](PREHOC_DESIGN.md#restoration-protocol) for evidence
+collection. For qualifying omissions, run O/M/P; reserve F for registered
+capability/completeness diagnostics. Analyze audited accurate communication,
+literal silence and mixed lying/omission separately. Only the first supports
+a truthful-but-incomplete consequence claim.
 
-The main incentive and instruction estimates use all assigned episodes.
-Conditional restoration effects describe eligible omissions. Report missing,
-invalid, refused and failed executions explicitly; none becomes an inferred
-successful or harmless outcome. Use native losses and requirement violations,
-with uncertainty clustered by independent source case family.
+Estimate incentive and instruction effects over **all assigned episodes**.
+Report false assertions, omissions, prohibited disclosures, completion, native
+losses and the joint rate of accurate messages, omissions and task defects.
+Conditional M/P effects describe eligible omissions, not the overall effect
+of incentives. Add natural information-seeking as a separate robustness
+condition; do not select that treatment comparison on later retrieval or knowledge.
+
+Preserve missing, invalid, refused and failed executions in the accounting.
+Use native outcome units and cluster uncertainty by independent source family.
 
 ### Utility-threshold evaluation (RQ2)
 
@@ -319,18 +311,7 @@ disclosure policy or comprehensive coverage of social environments.
 
 ## Implementation boundary
 
-The retained helpers construct restoration metadata and validate references
-between outcomes and tool receipts. They do not verify semantic truth, execute
-native tools, isolate external databases or establish legal/scientific
-correctness. Named actor registries replace a fixed provider/recipient pair.
-Restoration metadata includes the source, recipient set, route, all participant
-states, message queues and pending operations. Ordinary-sender delivery is the
-default specification; authenticated-reference delivery is an explicit diagnostic.
-Actual delivery, concurrency control and world isolation require native adapters.
-The helper requires M/P/F packets and constructs four metadata branches; the
-runner selects O/M/P for the main study and F for registered diagnostics.
-The next engineering work is the E5 adapter, sourced coupled workloads and
-independent outcome checks. Actor-count tests of the metadata helpers do not
-establish native workload scalability. Earlier observations remain in
-[Takeaways](TAKEAWAYS.md); they motivate the study without standing in for its
-results.
+The [README](../README.md#code-and-checks) records implemented utilities and
+remaining engineering work. Native execution, source admission, semantic
+outcome checks and paid model collection are distinct from offline metadata
+tests. Historical observations remain in [Takeaways](TAKEAWAYS.md).
