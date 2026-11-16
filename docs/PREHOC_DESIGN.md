@@ -146,6 +146,9 @@ Freeze the following before collection:
 - Acceptable semantic disclosures, including permitted qualifications.
 - Independent outcome checks, eligible restoration sets and placebo candidates.
 - Assignment rules, analysis denominators and source-family identifiers.
+- For a utility sweep: fixed base score, local KPI, reference score anchors,
+  admitted reward weights, focal sender/fact selection, evidence checkpoints,
+  repeats, execution order and threshold uncertainty rules.
 
 Actors receive their task documents, applicable rules and private information.
 Evaluators retain fact labels, outcome references and intervention metadata.
@@ -190,6 +193,30 @@ If truth-only instructions reduce lies while omissions remain, report that
 dissociation. Claim substitution toward omission only if the absolute omission
 rate increases under the controlled comparison, not merely its share among
 remaining failures.
+
+### Utility sweep and switching thresholds
+
+RQ2 includes the [utility-threshold evaluation](EXPERIMENT_PLAN.md#utility-threshold-evaluation-rq2).
+Changing performance rewards changes utility. Register
+`U_i(z; lambda) = B_i(z) + lambda * R_i * K_i(z)`, with fixed base score,
+positive reference range and local KPI in [0, 1]. Change only the focal sender's
+reward weight across independent continuations of the same pre-incentive state.
+The proposed grid is `{0, 0.25, 0.5, 1, 2, 4}`, capped to task-plausible values
+before collection. Log the score specification, actual weights, randomization,
+all assigned trials and native outcomes. Disclosure duties are fixed across
+weights and are never derived from the reward or from observed behavior.
+
+Estimate required-information withholding and prohibited-information leakage
+on separately registered eligible cohorts. Report the full curves first.
+The 50% upward-crossing range is a descriptive summary within a model, task,
+mode and instruction condition, not a common utility threshold across tasks.
+Bootstrap by source family with cross-weight pairing preserved. Keep baseline
+crossings, no observed crossing, nonmonotone responses and unresolved estimates
+distinct. Failed traces cannot silently become omissions or successful privacy
+protection. Refine a crossing only under the exploration/confirmation rule in
+the experiment plan. Restoration supplies causal diagnosis of missing content;
+the sweep supplies evidence about sensitivity to incentives. Neither comparison
+is a proposed defense or reward-optimization procedure.
 
 ## Experiment 2: does the missing content affect the decision?
 

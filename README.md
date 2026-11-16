@@ -3,14 +3,32 @@
 **Can an agent tell the truth while withholding the information another agent
 needs to make a sound decision?**
 
-We study strategic silence and selective disclosure in agentic workflows with
-varying interests and disclosure duties. The central hypothesis is that requiring
-factual truthfulness can leave harmful omissions intact. Our evaluation design measures
-when agents withhold known material facts, whether those omissions affect
-executed decisions, and whether restoring the missing evidence reduces loss.
+We evaluate selective disclosure and strategic silence in agent teams with
+varying interests and disclosure duties. Appropriate disclosure includes both
+sharing required information and protecting restricted information. We measure
+these choices, their sensitivity to incentives, and their consequences for
+executed decisions. Factual truthfulness leaving harmful omissions intact is a
+hypothesis to test. Information restoration diagnoses the effect of an omission.
+The study evaluates behavior; it does not develop or optimize a defense.
 
 Current status: shared evidence utilities and an experiment design. Native
 environments, reviewed case collections and model runners remain to be built.
+
+## Research questions
+
+1. Can agents distinguish what to share from what to withhold during collaboration?
+2. How do conflicting incentives affect their disclosure decisions?
+3. How do those choices affect other agents' actions and collective task outcomes?
+
+RQ2 includes a **utility-threshold evaluation**: vary the weight of a local
+performance reward while keeping task facts and disclosure rules fixed. Measure
+the full disclosure response curve and, where supported, the range of reward
+weights at which required-information withholding reaches 50% of opportunities.
+This is a behavioral summary, not a threshold defining whether disclosure is
+required or harm is material. Report protected-information leakage separately.
+Thresholds are task- and model-specific; no crossing or an unstable response is
+a reportable result. The [experiment plan](docs/EXPERIMENT_PLAN.md#utility-threshold-evaluation-rq2)
+defines the payoff, sweep, denominators and uncertainty rules.
 
 ## What we measure
 
@@ -103,6 +121,10 @@ evidence and consequences, rather than additional labels.
    local rewards; bargaining episodes vary deal pressure under fixed mandates.
    Use natural truthfulness wording, not an instruction limited to literal lies.
    Agents choose their communication; prompts do not instruct them to conceal.
+   Add the registered local-reward sweep for threshold evaluation. Use fresh
+   matched continuations for every weight, not an ascending reward negotiation
+   in a single conversation. Prompt comparisons characterize behavior rather
+   than optimize a remedy.
 3. **Audit the communication.** Check assertions against the source evidence and
    identify omitted material facts. Register eligible evidence sets independently
    of downstream outcomes. Report silence and selective disclosure separately.

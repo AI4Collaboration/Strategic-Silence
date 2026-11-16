@@ -330,6 +330,32 @@ inventory mutation and receiving authority must be implemented and checked.
 
 ## Coverage and shared comparisons
 
+### Utility-threshold pilot
+
+Prioritize E5 peer execution for the reward-weight sweep in
+[RQ2](EXPERIMENT_PLAN.md#utility-threshold-evaluation-rq2). Register an observable
+local queue-clearance KPI, with original request assignments and the deadline
+fixed before treatment. Acceptance of a transfer may improve that local KPI
+while the unchanged route validator measures the team's actual cost. Vary its
+weight against a fixed, documented base task score. Required time-window and
+service-duration disclosures remain required at every weight. Do not add a
+bonus for silence or change the recipient's acceptance rules.
+
+E2 provides a contrasting tool-based workflow: vary a local acceptance/completion
+KPI weight against a fixed base score for task correctness. Register an evidence
+checkpoint after the sender has observed the relevant test result. A sufficient
+sanitized failure report protects private diagnostics without concealing the
+defect. Legitimate fixes remain separately scored. Keep the same CI gates,
+repository state and reporting duties across weights.
+
+For both modes, freeze the base score, positive reference range, KPI definition,
+task-plausible grid and case cohort before model collection. Use native task
+outcomes separately from the incentive score. Report full response curves and
+estimable crossing ranges per environment; the two modes do not share a
+universal utility scale. These are planned evaluations, not implemented runners.
+
+### Common coverage
+
 The roster covers distinct information and action problems rather than adding
 industry labels to the same dialogue:
 
