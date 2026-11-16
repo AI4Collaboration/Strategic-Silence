@@ -1,16 +1,16 @@
 {
   "all_case_hashes_match_current_generator": true,
   "api_experiments": 0,
-  "date": "2026-11-16",
+  "date": "2026-11-17",
   "fixed_work": {
-    "cases": 24,
+    "cases": 28,
     "checkpoints": "Regenerate using the command; canonical JSON digest is in fixed_work_summary.json",
-    "command": "python -m disclosure_causality offline --work-units 32 --seeds 0 --output output/grid-4-8-16-32/fixed",
-    "episodes": 222,
-    "null_control_episodes": 54,
+    "command": "python -m disclosure_causality offline --work-units 32 --seeds 0 --output output/final-validation/fixed",
+    "episodes": 259,
+    "null_control_episodes": 63,
     "passed": true,
     "replay": {
-      "checked_continuations": 18,
+      "checked_continuations": 21,
       "failures": [],
       "network_access": "blocked",
       "passed": true
@@ -19,36 +19,41 @@
     "work_units": 32
   },
   "growing_work": {
-    "cases": 48,
+    "cases": 56,
     "checkpoints": "examples.json",
-    "command": "python -m disclosure_causality offline --output output/grid-4-8-16-32/growing",
-    "episodes": 390,
-    "null_control_episodes": 54,
+    "command": "python -m disclosure_causality offline --output output/final-validation/growing",
+    "episodes": 455,
+    "null_control_episodes": 63,
     "passed": true,
     "replay": {
-      "checked_continuations": 18,
+      "checked_continuations": 21,
       "failures": [],
       "network_access": "blocked",
       "passed": true
     },
     "summary": "summary.json"
   },
-  "matrix_run_revision": "935d29c9612f57ddaa2735c58ab1025d6d626413",
+  "matrix_run_revision": "39336543fd72113aa9a932c13af847f144c22801",
   "normalization": "UTF-8 text with universal newlines (LF)",
   "normalized_source_sha256": {
-    "pyproject.toml": "346c37e4ca9e27d42d2e131cec2226c1c18896472111a257f3b9b21e144c68dc",
+    "pyproject.toml": "450d93ca2c806ed34d582de74add2b191919aad8b39c71771c2d87ac41bdde7e",
     "src/disclosure_causality/__init__.py": "18b528a4c69f99fdd3425d06075af60d4caa341bcc7dac0c059ff4fbe52ffd20",
     "src/disclosure_causality/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
-    "src/disclosure_causality/cases.py": "f6fac644ad43d48faf330438c50f617aaca78b74313d0d269339d60174466c69",
-    "src/disclosure_causality/cli.py": "6689cd88b9e2927cdd02da8d723ddbbb473af7803054c4b1eccad154007d4598",
+    "src/disclosure_causality/cases.py": "c28dd5a35a20fa6d25fb91d52cc8e8cbb1f273ab1f185b3b78faf2d12222a30d",
+    "src/disclosure_causality/cli.py": "862e008a0b69ffa623bd23554493420a789453167b759982ac0efdd590fb2a7c",
     "src/disclosure_causality/engine.py": "3df50bfd77529b64c4c99c9228ece190a2725f09b96b60ad2e4726b52c3d3ad9",
-    "src/disclosure_causality/environments.py": "a8387b49c6fa95d4e2b9d3e5b95a1911bcffbbc3f3ce0cd249a9a6ce29c4413c",
+    "src/disclosure_causality/environments.py": "89296b1ecfcaa5393e5dc0d9774d692565166ed617ed1fbc99f5fee4d2a02af7",
+    "src/disclosure_causality/pilot.py": "b34e1cd224582f4dac1ed1540ffec9f4e0f6ec1424c97cfc2db15166077353ca",
     "src/disclosure_causality/protocol.py": "ca631b9ad1dd876888edd37335ceed15ac003db63e96807298a9d115b5a3fff4",
-    "src/disclosure_causality/runner.py": "0bed07c90211cbd0ccd14c6321ea91f9ac87ff66fb1a014d8a8002741747acc0",
+    "src/disclosure_causality/runner.py": "b1b19c2f11c865c98aca4f2488433f03d382a8f0b605ba8c00a51f7ec6de3be3",
+    "src/disclosure_causality/software.py": "aa23a29380d86fa7e9226c721d2bc41829d4a0bec6c6bb4c17ce021121518e74",
     "tests/conftest.py": "a9fcb37b0451ed100a261cb9e9be7626c39697f190d23ffe2474e8eb657bb1ae",
+    "tests/test_pilot.py": "f065e349c3116b56731c75d1d60baa431f7b082f13be7e9d376e0e86b84a9d73",
     "tests/test_protocol.py": "f602e8512619e5cad0d98b11cc19136d4b927791bf89b00623d8cea9185ae85e",
-    "tests/test_workflows.py": "c684f5ae316be0326e04ad352eaa7a3056a4c69e42f9b8730e7897434bec6310"
+    "tests/test_software.py": "eaae14ef105648a7446f1beb9cfe7e1d548a1c80f5842351eeb70e86644c1682",
+    "tests/test_workflows.py": "fc7806d9ce3db3a9c92012fad75c2f05148006bdb5e6901046b2091c81e78068"
   },
+  "replay_validation_revision": "c943d22c8f749bdfb7608c86ff3bbe40310f5cbd",
   "schema_version": 2,
   "scope": "Scripted offline validation of authored workflow simulators; not model results",
   "sizes": [
@@ -59,7 +64,7 @@
   ],
   "tests": {
     "command": "python -m pytest -q -p no:cacheprovider",
-    "passed": 83
+    "passed": 123
   },
-  "total_episodes": 612
+  "total_episodes": 714
 }
