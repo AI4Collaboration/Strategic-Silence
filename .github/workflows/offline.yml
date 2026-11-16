@@ -22,3 +22,4 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install -e ".[test]"
       - run: python -m pytest -q
+      - run: python -m disclosure_causality replay results/offline/examples.json

@@ -4,11 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "strategic-silence"
-version = "0.1.0"
-description = "Evidence utilities for research on strategic silence and selective disclosure."
+version = "0.2.0"
+description = "Offline framework and six workflow simulators for evaluating selective disclosure."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
+
+[project.scripts]
+disclosure-eval = "disclosure_causality.cli:main"
 
 [project.optional-dependencies]
 test = ["pytest>=7.4"]

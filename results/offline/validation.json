@@ -1,0 +1,59 @@
+{
+  "all_case_hashes_match_current_generator": true,
+  "api_experiments": 0,
+  "date": "2026-11-16",
+  "fixed_work": {
+    "cases": 30,
+    "checkpoints": "Regenerate output/fixed-work/examples.json using the command; canonical JSON digest is in fixed_work_summary.json",
+    "command": "python -m disclosure_causality offline --sizes 4 7 8 16 32 --seeds 0 --work-units 32 --output output/fixed-work",
+    "episodes": 264,
+    "passed": true,
+    "replay": {
+      "checked_continuations": 18,
+      "failures": [],
+      "network_access": "blocked",
+      "passed": true
+    },
+    "summary": "fixed_work_summary.json",
+    "work_units": 32
+  },
+  "growing_work": {
+    "cases": 60,
+    "checkpoints": "examples.json",
+    "command": "python -m disclosure_causality offline --output output/offline",
+    "episodes": 474,
+    "passed": true,
+    "replay": {
+      "checked_continuations": 18,
+      "failures": [],
+      "network_access": "blocked",
+      "passed": true
+    },
+    "summary": "summary.json"
+  },
+  "normalization": "UTF-8 text with universal newlines (LF)",
+  "normalized_source_sha256": {
+    "pyproject.toml": "346c37e4ca9e27d42d2e131cec2226c1c18896472111a257f3b9b21e144c68dc",
+    "src/disclosure_causality/__init__.py": "f1cb6683cbb7e9b55ff879f471156f1d312ee4d028d396b12bb4f1b8bfd50465",
+    "src/disclosure_causality/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "src/disclosure_causality/cases.py": "f6fac644ad43d48faf330438c50f617aaca78b74313d0d269339d60174466c69",
+    "src/disclosure_causality/cli.py": "0da3bf13ba7747671cbbd55d20d63bb85dc9e22d40537c2d27aab220401fba88",
+    "src/disclosure_causality/engine.py": "3df50bfd77529b64c4c99c9228ece190a2725f09b96b60ad2e4726b52c3d3ad9",
+    "src/disclosure_causality/environments.py": "a8387b49c6fa95d4e2b9d3e5b95a1911bcffbbc3f3ce0cd249a9a6ce29c4413c",
+    "src/disclosure_causality/protocol.py": "296bdfc0164f27bfa2a0d6dc4160100e19f05b52169a4e9d6c1b8cf7bad4cfd3",
+    "src/disclosure_causality/runner.py": "6022b5161a411d577d275bc52992f94b59173229cd5212471ba5ba659bc6a453",
+    "tests/conftest.py": "a9fcb37b0451ed100a261cb9e9be7626c39697f190d23ffe2474e8eb657bb1ae",
+    "tests/test_protocol.py": "244c99c2ad5d11460127da01a2593d220bdd038181ff730fa2327cb6e308a4d5",
+    "tests/test_workflows.py": "7d6eb0e9ccc646debbe535eabd368149b3adda4e4199b25f573f621de1eb1f24"
+  },
+  "package_build": {
+    "command": "python -m pip wheel . --no-deps --wheel-dir output/dist",
+    "passed": true
+  },
+  "schema_version": 1,
+  "scope": "Scripted offline validation of authored workflow simulators; not model results",
+  "tests": {
+    "command": "python -m pytest -q -p no:cacheprovider",
+    "passed": 107
+  }
+}

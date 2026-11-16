@@ -5,12 +5,13 @@ Current user instructions override earlier plans. The contribution is the common
 evaluation framework. Its six selected workflow configurations are M1-M3 and
 L1-L3: manufacturing and logistics, each covering flow, sharing and fit. Follow
 README's knowledge, action, authority, failure-opportunity and scaling contracts;
-source references do not establish implemented or validated environments.
+source references establish workflow grounding, not production fidelity.
 Every core environment must pass README's requirement for both required
 disclosure and protected information within the same task.
 
-Keep code, claims and documentation aligned. Distinguish implemented utilities,
-proposed backends, admitted data and actual model results. Preserve the historical
+Keep code, claims and documentation aligned. The shared offline framework and
+six workflow kernels are implemented. Distinguish scripted validation, synthetic
+cases, operational fidelity and actual model results. Preserve the historical
 evidence in `docs/TAKEAWAYS.md`; it does not define current experiments.
 
 Put design changes in README rather than creating additional planning documents.
