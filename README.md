@@ -51,51 +51,44 @@ not empirical validation of our proposed LLM environments.
 
 ## Proposed coverage axes
 
-Flow/sharing/fit is one axis, not the full environment taxonomy. Use six
-mechanism-relevant axes to describe each focal information-dependent decision.
-This factorization is our operational proposal; no cited work establishes this
-exact six-axis taxonomy or its exhaustiveness.
+Use two environment-level axes as the current design structure. This corrects
+the previous six-axis list, which mixed environment categories with fact-level
+annotations and experimental conditions.
 
-| Axis | Operational values | What the distinction tests |
+| Axis | Categories | Classification basis |
 | --- | --- | --- |
-| Task dependence | Flow; sharing; fit, with a primary issue and secondary tags | How one owner's work affects another |
-| Commitment authority | The acting owner alone authorizes; one designated other actor authorizes; two or more actors must jointly authorize | Whether information changes execution, oversight or joint agreement |
-| Evidence distribution | No owner observed the focal fact; one owner; a proper subset of multiple owners; all owners | Ignorance control, single points of information, redundancy and already-informed controls |
-| Independent verification | Available through routine inspection before the decision; available through additional query/test before the decision; unavailable independently before the decision | Whether omission survives ordinary evidence recovery; record actual time and cost |
-| Disclosure obligation | Required; permitted but optional; prohibited, for this fact, recipient, purpose and time | Harmful omission versus legitimate selection or protection |
-| Objective alignment | Shared reward; mixed interests with local tradeoffs; fixed-sum opposition as a boundary condition | Disclosure reliability versus incentive-sensitive withholding |
+| Coordination dependence | Flow; sharing; fit | How activities depend on one another's outputs or resources, following Malone et al. |
+| Application domain | Current candidates: software engineering; scientific data analysis; computing operations | The task's primary deliverable and source workflow; this is a provisional domain roster, not an exhaustive industry taxonomy |
 
-For authority, define the authorized actor set for the concrete commitment, so
-owner-only, other-only and joint approval do not overlap. For distribution,
-record the actual set of owners exposed to the fact and whether it includes the
-recipient; exposure is not proof of understanding. Complementary pieces of
-evidence require a set of facts, each with its own holder set. They are not a
-fourth kind of holder count. Unresolved disclosure duties remain unresolved;
-conditional duties are evaluated at the registered decision, not treated as a
-separate industry or permanent property of an agent.
+A domain can contain all three dependency types. The same dependency can occur
+in multiple domains. Assign a primary domain from the deliverable, not the tools:
+running scientific analysis on a cluster remains scientific data analysis,
+whereas allocating the cluster's capacity is a computing-operations task.
+Use a primary dependency for the tested issue and retain secondary tags.
 
-Context-specific information norms are supported by
-[Nissenbaum (2004), Privacy as Contextual Integrity](https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/).
-The three disclosure labels above are our coding scheme; actual obligations
-must come from the task's documented mandate. Record principal identities as
-context: an opposing organization is not part of the focal swarm merely because
-it also uses agents. Fixed-sum opposition is not a required core cooperation task.
+The current source-backed candidates occupy only three cells:
 
-These axes are not guaranteed independent. Admit only source-supported
-combinations. Already-informed recipients, for example, cannot establish loss
-from a missing fact they already possess. Separately record operating parameters:
-agent count/workload/dependency density; communication routes, artifact visibility
-and budgets; and task timing, uncertainty, deadlines and reversibility.
-Instruction conditions and O/M/P updates are experimental treatments, not
-additional environment types.
+| Domain | Flow | Sharing | Fit |
+| --- | --- | --- | --- |
+| Scientific data analysis | NOAA data-production candidate | No source task selected | No source task selected |
+| Computing operations | No source task selected | Alibaba scheduling-replay candidate | No source task selected |
+| Software engineering | No source task selected | No source task selected | Babel migration candidate |
 
-The three candidates below mainly target execution within a shared organization,
-required or optional disclosure, and shared versus locally conflicting rewards.
-They do not yet supply validated oversight, joint-authorization, confidentiality
-or diverse verification coverage. Treat them as initial engineering candidates,
-not a fixed final environment count. Before adding environments, map admitted
-source tasks to the six axes and identify missing mechanisms. A new domain name
-alone does not fill a coverage gap, and a full Cartesian product is not the goal.
+This diagonal selection confounds domain with dependency type. Develop coverage
+across both axes: seek multiple dependencies within a domain and the same
+dependency across multiple domains. Fill cells only with real, executable source
+tasks; an empty cell is a coverage gap, not an invitation to invent a workflow.
+The matrix organizes coverage but does not by itself identify causal effects.
+Final scenario and adapter counts follow source admission rather than the three
+values of the dependency axis. A third top-level axis would require an independent
+environment-level classification with explicit grounding.
+
+Authority rules, information-holder sets, verification access, disclosure duties
+and local incentives remain case metadata, behavioral conditions or experimental
+treatments. Preserve them in the input and evaluation protocol rather than
+counting them as additional top-level environment axes. Agent count, graph
+structure, timing and communication budgets are operating parameters.
+Instruction variants and O/M/P continuations do not create new environments.
 
 ## Initial environment candidates
 
