@@ -1,10 +1,11 @@
 # Working rules
 
 Read `README.md` first. It is the sole current design and experiment specification.
-Current user instructions override earlier plans. Flow, sharing and fit classify
-dependencies; the domain roster is open. Select workflows from README's target
-failure opportunities. Retained source checks do not define the domain set or
-establish native-environment validity.
+Current user instructions override earlier plans. The contribution is the common
+evaluation framework. Its six selected workflow configurations are M1-M3 and
+L1-L3: manufacturing and logistics, each covering flow, sharing and fit. Follow
+README's knowledge, action, authority, failure-opportunity and scaling contracts;
+source references do not establish implemented or validated environments.
 Every core environment must pass README's requirement for both required
 disclosure and protected information within the same task.
 
