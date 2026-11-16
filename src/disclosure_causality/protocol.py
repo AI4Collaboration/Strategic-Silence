@@ -1,10 +1,7 @@
-"""Shared evidence checks and restoration inputs for future native environments."""
+"""Validate action receipts and native outcome evidence."""
 from __future__ import annotations
 
-from copy import deepcopy
-import json
 import re
-from typing import Callable, Mapping
 
 def require(condition: bool, message: str) -> None:
     if not condition:
@@ -71,54 +68,3 @@ def validate_action_evidence(record: dict) -> None:
                     and bool(check.get("unit")), "observed defects require state evidence and units")
         else:
             require(check.get("value") is None, "unresolved defects cannot be scored as zero")
-
-
-def restoration_inputs(
-    checkpoint_state: dict,
-    packets: Mapping[str, str],
-    token_count: Callable[[str], int],
-    *,
-    source_actor: str,
-    recipient_actor_ids: list[str] | tuple[str, ...],
-    channel: str = "ordinary_sender",
-) -> dict[str, dict]:
-    """Clone checkpoint metadata; only the initial evidence payload may change.
-
-    Arm labels belong to the return keys (audit metadata), never actor inputs.
-    The caller must establish minimality, placebo irrelevance and authorization,
-    fork native tool state, and deliver the update on the specified route. This
-    helper copies metadata; it does not deliver messages or execute a swarm.
-    """
-    require("evidence_update" not in checkpoint_state, "state already has an intervention")
-    require(set(packets) == {"M", "P", "F"}, "reviewed M/P/F packets required")
-    require(all(isinstance(value, str) and value.strip() for value in packets.values()), "empty evidence packet")
-    require(packets["M"] != packets["P"], "target and placebo cannot be identical")
-    for field in ("history", "task", "work_product", "environment_state", "participant_states",
-                  "message_queues", "pending_operations", "exogenous_state",
-                  "actions", "tools", "source_access", "budget"):
-        require(field in checkpoint_state, "frozen checkpoint missing " + field)
-    participants = checkpoint_state["participant_states"]
-    require(isinstance(participants, dict), "participant states must be an actor registry")
-    actors = _actor_ids(list(participants), "checkpoint actor IDs")
-    recipients = _actor_ids(recipient_actor_ids, "recipient actor IDs")
-    require(source_actor in actors, "source actor must be a registered participant")
-    require(recipients <= actors, "recipients must be registered participants")
-    require(source_actor not in recipients, "source must differ from update recipients")
-    require(channel in {"ordinary_sender", "authenticated_reference_update"},
-            "supported evidence channel required")
-    branches = {}
-    for arm, payload in {"O": "", **packets}.items():
-        branch = deepcopy(checkpoint_state)
-        branch["evidence_update"] = {
-            "channel": channel,
-            "source_actor": source_actor,
-            "recipient_actor_ids": list(recipient_actor_ids),
-            "content": payload,
-        }
-        branches[arm] = branch
-    serialized = {
-        arm: json.dumps(state, ensure_ascii=False, sort_keys=True)
-        for arm, state in branches.items()
-    }
-    require(token_count(serialized["M"]) == token_count(serialized["P"]), "M/P serialized input lengths differ")
-    return branches

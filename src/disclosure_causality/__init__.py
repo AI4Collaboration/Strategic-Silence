@@ -2,6 +2,6 @@
 
 from .cases import Case, build_case
 from .engine import Action, Session
-from .protocol import restoration_inputs, validate_action_evidence
+from .protocol import validate_action_evidence
 
-__all__ = ["Case", "build_case", "Action", "Session", "restoration_inputs", "validate_action_evidence"]
+__all__ = ["Case", "build_case", "Action", "Session", "validate_action_evidence"]
