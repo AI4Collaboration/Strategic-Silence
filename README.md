@@ -49,9 +49,57 @@ supports distinguishing within-owner from cross-owner dependence;
 interaction structure when increasing agent count. These are design foundations,
 not empirical validation of our proposed LLM environments.
 
-## Three proposed environments
+## Proposed coverage axes
 
-Use **one shared runner and three native environment adapters**. The runner
+Flow/sharing/fit is one axis, not the full environment taxonomy. Use six
+mechanism-relevant axes to describe each focal information-dependent decision.
+This factorization is our operational proposal; no cited work establishes this
+exact six-axis taxonomy or its exhaustiveness.
+
+| Axis | Operational values | What the distinction tests |
+| --- | --- | --- |
+| Task dependence | Flow; sharing; fit, with a primary issue and secondary tags | How one owner's work affects another |
+| Commitment authority | The acting owner alone authorizes; one designated other actor authorizes; two or more actors must jointly authorize | Whether information changes execution, oversight or joint agreement |
+| Evidence distribution | No owner observed the focal fact; one owner; a proper subset of multiple owners; all owners | Ignorance control, single points of information, redundancy and already-informed controls |
+| Independent verification | Available through routine inspection before the decision; available through additional query/test before the decision; unavailable independently before the decision | Whether omission survives ordinary evidence recovery; record actual time and cost |
+| Disclosure obligation | Required; permitted but optional; prohibited, for this fact, recipient, purpose and time | Harmful omission versus legitimate selection or protection |
+| Objective alignment | Shared reward; mixed interests with local tradeoffs; fixed-sum opposition as a boundary condition | Disclosure reliability versus incentive-sensitive withholding |
+
+For authority, define the authorized actor set for the concrete commitment, so
+owner-only, other-only and joint approval do not overlap. For distribution,
+record the actual set of owners exposed to the fact and whether it includes the
+recipient; exposure is not proof of understanding. Complementary pieces of
+evidence require a set of facts, each with its own holder set. They are not a
+fourth kind of holder count. Unresolved disclosure duties remain unresolved;
+conditional duties are evaluated at the registered decision, not treated as a
+separate industry or permanent property of an agent.
+
+Context-specific information norms are supported by
+[Nissenbaum (2004), Privacy as Contextual Integrity](https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/).
+The three disclosure labels above are our coding scheme; actual obligations
+must come from the task's documented mandate. Record principal identities as
+context: an opposing organization is not part of the focal swarm merely because
+it also uses agents. Fixed-sum opposition is not a required core cooperation task.
+
+These axes are not guaranteed independent. Admit only source-supported
+combinations. Already-informed recipients, for example, cannot establish loss
+from a missing fact they already possess. Separately record operating parameters:
+agent count/workload/dependency density; communication routes, artifact visibility
+and budgets; and task timing, uncertainty, deadlines and reversibility.
+Instruction conditions and O/M/P updates are experimental treatments, not
+additional environment types.
+
+The three candidates below mainly target execution within a shared organization,
+required or optional disclosure, and shared versus locally conflicting rewards.
+They do not yet supply validated oversight, joint-authorization, confidentiality
+or diverse verification coverage. Treat them as initial engineering candidates,
+not a fixed final environment count. Before adding environments, map admitted
+source tasks to the six axes and identify missing mechanisms. A new domain name
+alone does not fill a coverage gap, and a full Cartesian product is not the goal.
+
+## Initial environment candidates
+
+Use **one shared runner with an initial adapter for each candidate**. The runner
 handles actor execution, communication, checkpoints and experimental assignment;
 each adapter owns its real artifacts/resources, permitted operations and outcome
 checks. The three scenarios provide contrasting task mechanisms. Because their
@@ -86,8 +134,9 @@ state of this task, not an additional independent task.
 
 Proposed engineering scope is **one complete source task per adapter first**,
 then a target of **ten source-backed task instances per adapter** for offline
-validation. These 3 initial tasks and 30 target instances are engineering budgets,
-not collected data or a statistical sample-size justification. Use different
+validation. These 3 initial tasks and 30 target instances are provisional budgets
+for the current candidates, not a final suite size or a statistical sample-size
+justification. Use different
 source workloads; keep overlapping periods and related migration checkpoints in
 the same source family. Start the ownership checks at 4, 7 and 8 agents, then test
 16 and 32 only where admitted work supports them. Formal cohort sizes, independent

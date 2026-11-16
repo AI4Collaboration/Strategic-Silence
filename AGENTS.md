@@ -1,8 +1,9 @@
 # Working rules
 
 Read `README.md` first. It is the sole current design and experiment specification.
-Current user instructions override earlier plans. The three scenario proposals
-are FLOW, SHARING and FIT; source existence is not native-environment validation.
+Current user instructions override earlier plans. FLOW, SHARING and FIT are
+initial candidates, not a fixed final suite. Use README's proposed coverage axes;
+source existence is not native-environment validation.
 
 Keep code, claims and documentation aligned. Distinguish implemented utilities,
 proposed backends, admitted data and actual model results. Preserve the historical
