@@ -51,9 +51,8 @@ not empirical validation of our proposed LLM environments.
 
 ## Proposed coverage axes
 
-Use two environment-level axes as the current design structure. This corrects
-the previous six-axis list, which mixed environment categories with fact-level
-annotations and experimental conditions.
+Use two environment-level axes to organize coverage after tasks pass the
+admission checklist below.
 
 | Axis | Categories | Classification basis |
 | --- | --- | --- |
@@ -89,6 +88,55 @@ treatments. Preserve them in the input and evaluation protocol rather than
 counting them as additional top-level environment axes. Agent count, graph
 structure, timing and communication budgets are operating parameters.
 Instruction variants and O/M/P continuations do not create new environments.
+
+## First-principles environment admission
+
+An environment must let agents choose what to disclose while doing genuinely
+interdependent work, and let us trace how that choice changes collaborators'
+information, actions and outcomes. The mechanism to test is:
+
+**Local evidence and objectives -> disclosure choice -> recipient information
+and action -> native task outcomes.**
+
+Communication duties determine which disclosures are appropriate. The checklist
+below operationalizes our research questions; it is not an additional taxonomy
+attributed to coordination theory. Domain and flow/sharing/fit classify admitted
+tasks. They do not establish task validity.
+
+| Gate | Evidence required for admission |
+| --- | --- |
+| 1. Real work | A pinned source workload, useful deliverable and native acceptance criteria. Separate source facts from authored assignments, incentives and policies. A domain label or real dataset alone is insufficient. |
+| 2. Genuine interdependence | Every counted agent owns substantive work and executable authority. Demonstrate cross-owner consequences in a connected task graph. Removing an owner requires reassigning actual work; observers and independent pairs do not establish a swarm. |
+| 3. Traceable information differences | Map evidence holders, retrieval rights, delivery and decision deadlines. Identify source facts that can matter to another owner's action. Distinguish available, read, understood and already-shared information, including shared artifacts. |
+| 4. Free disclosure choices | Agents can disclose, qualify or omit through ordinary channels before a consequential decision. Preserve normal queries, verification, repair and refusal. Do not name an expected secret, assign a deceiver or disable natural discovery to force concealment. |
+| 5. Grounded disclosure boundaries | Register required, permitted and prohibited content by recipient, purpose and deadline, with a task or authorization basis. Include legitimate-omission controls. Claim privacy coverage only for cases with actual protected information and access rules. |
+| 6. Defensible strategic comparison | For the incentive cohort, specify a task-relevant local objective that can conflict with collective performance, an aligned control and justified reward scales. Vary incentives without changing facts, duties or tools; never reward withholding directly. |
+| 7. Observable action consequences | Tools produce state changes and receipts. Measure recipient actions, individual outcomes and collective outcomes with native checks. Preserve automated gates; distinguish an attempted action, a blocked defect and realized loss. |
+| 8. Information-only counterfactual | Reproduce the complete pre-decision state and fork matched continuations. Restore only missing authorized evidence, with a matched nonmaterial update. Hold artifacts, permissions, budgets and prior actions fixed at the fork. |
+| 9. Feasibility and diagnostic controls | Execute a valid coordinated reference under normal rights and budgets. Include adequate-information, already-informed and nonmaterial-information controls; separate unread evidence and tool failures from concealment. The task must admit success without requiring any tested model to succeed. |
+| 10. Substantive scaling | Construct multiple supported integer team sizes from connected source work, retaining nonempty assignments and cross-owner effects. Validate both fixed-work and growing-work regimes. Record source families, snapshots, seeds and supported limits; duplicated roles do not count as scaling. |
+
+Record **PASS, FAIL or UNVERIFIED**, with an evidence reference, for each gate.
+No aggregate score compensates for a failed gate. Gates 1-5 and 7-10 admit a task
+to disclosure evaluation; gate 6 additionally admits it to the strategic-incentive
+cohort. A utility-threshold analysis also requires defensible numerical anchors.
+Reference checks and matched-fork checks must run before paid model collection.
+
+Admission tests the opportunity and our ability to measure it. It does not
+require observed silence, incentive sensitivity or improvement after restoration.
+Freeze eligibility before model outcomes; retain null and adverse findings.
+Recipient/team benefit and sender cost are separate from permission to disclose:
+an outcome improvement alone does not establish a duty to reveal information.
+
+**Current admission status: none of the three candidates has passed all required
+gates.** FLOW must demonstrate substantive multi-product analysis beyond a
+scripted quality-flag filter. SHARING must validate replay and show that peer
+information affects owners' available choices under ordinary scheduling rules;
+retain normal submission and query options. FIT must reproduce an actual
+cross-package migration and compatibility checks. All three still need executable
+references, matched forks and scaling checks. A source defect and its
+non-disclosure are separate events: restoration leaves the defect unchanged at
+the fork and tests the additional effect of information about it.
 
 ## Initial environment candidates
 
@@ -261,18 +309,6 @@ has 150 package directories;
 depends on parser, traverse, generator and types. This directory count is not a
 supported agent count. The actual pre-migration baseline, coupled campaign,
 failing fixtures and valid reference solution remain to be selected and executed.
-
-### Native validity gates
-
-FLOW needs a genuine multi-product analysis with downstream choices about input
-use, recomputation or release. A single scripted quality-flag filter establishes
-data processing, not substantive swarm work. FIT needs an actual cross-package
-change and a reproduced compatibility check, not an invented broken interface.
-SHARING needs validated rescheduling semantics and information that can affect
-owners' choices. For every adapter, verify a feasible coordinated solution and
-source-backed cross-owner consequences before model use. A bad source artifact
-and its non-disclosure are separate events: restoration holds the artifact fixed
-and measures the additional effect of information about it.
 
 ## Scaling and case admission
 
