@@ -58,7 +58,7 @@ content omission. Invalid output, refusal, lack of knowledge and permitted
 confidentiality must be recorded separately. Elicited plans are supporting
 artifacts, not independent proof of strategic intent.
 
-## Conditions to test in the new environments
+## Hypotheses retained from earlier pilots
 
 | Condition | Proposed comparison | Current evidence status |
 | --- | --- | --- |
@@ -70,9 +70,10 @@ artifacts, not independent proof of strategic intent.
 | Another informed party can contest the account | Introduce an independently informed counterparty under fixed case facts | Open hypothesis |
 | Instructions require accuracy versus material completeness | Baseline, truth only, truth plus authorized material disclosure | Reported pilot lead; needs controlled replication |
 
-The [pre-hoc design](PREHOC_DESIGN.md) starts by distinguishing justified
-withholding from omissions that undermine the recipient's authorized decision.
-The conditions above are testable hypotheses, not classes of environment.
+The current [evaluation protocol](../README.md#evaluation-protocol) distinguishes
+justified withholding from omissions that undermine an authorized decision.
+The conditions above are historical hypotheses, not additional current
+environments or experiments.
 
 The working hypothesis is that withholding becomes attractive when disclosing a
 known material fact would move the recipient's decision against the sender's
