@@ -4,6 +4,8 @@ Read `README.md` first. It is the sole current design and experiment specificati
 Current user instructions override earlier plans. FLOW, SHARING and FIT are
 initial candidates, not a fixed final suite. Use README's proposed coverage axes;
 source existence is not native-environment validation.
+Every core environment must pass README's requirement for both required
+disclosure and protected information within the same task.
 
 Keep code, claims and documentation aligned. Distinguish implemented utilities,
 proposed backends, admitted data and actual model results. Preserve the historical
