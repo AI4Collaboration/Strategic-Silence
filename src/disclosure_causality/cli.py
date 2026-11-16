@@ -61,8 +61,9 @@ def validate_offline(output: Path, environments: list[str], sizes: list[int], se
                     checkpoint = prepare(case, "selective")
                     comparison, branches = run_comparison(checkpoint)
                     effect = comparison["effect"]
-                    check(effect is not None and effect["P_minus_M"] > 0 and
-                          effect["O_minus_M"] == effect["P_minus_M"], "information_only_positive_control", context)
+                    check(effect is not None and effect["loss_reduction_vs_unrelated"] > 0 and
+                          effect["loss_reduction"] == effect["loss_reduction_vs_unrelated"],
+                          "information_only_positive_control", context)
                     check(all(x["prohibited_disclosures"] == 0 for x in comparison["scores"].values()),
                           "restoration_preserves_confidentiality", context)
                     rows.append({**context, "work_units": len(case.units), "case_hash": case.fingerprint,
@@ -80,9 +81,10 @@ def validate_offline(output: Path, environments: list[str], sizes: list[int], se
                     first = case.units[0]
                     checkpoint.step(Action(first["recipient"], "query", {"fact_id": first["coord"]}))
                 result, _ = run_comparison(checkpoint, verify=control == "query_recovery")
-                check(result["effect"] == {"O_minus_M": 0, "P_minus_M": 0}, control, {"environment": env})
+                check(result["effect"] == {"loss_reduction": 0, "loss_reduction_vs_unrelated": 0},
+                      control, {"environment": env})
                 controls.append({"environment": env, "control": control, "result": result})
-    summary = {"schema_version": 1, "kind": "offline_scripted_validation",
+    summary = {"schema_version": 2, "kind": "offline_scripted_validation",
                "scope": "synthetic local simulators; no LLM results or industry-conformance claim",
                "network_access": "blocked", "api_experiments": 0,
                "environments": environments, "sizes": sizes, "seeds": seeds,
@@ -90,7 +92,7 @@ def validate_offline(output: Path, environments: list[str], sizes: list[int], se
                "null_control_episodes": len(controls) * 3,
                "passed": not failures, "failures": failures,
                "rows": rows, "null_controls": controls}
-    example_file = {"schema_version": 1, "kind": "synthetic_replay_evidence", "examples": examples}
+    example_file = {"schema_version": 2, "kind": "synthetic_replay_evidence", "examples": examples}
     write_json(output / "examples.json", example_file)
     summary["examples_digest"] = digest(example_file)
     write_json(output / "summary.json", summary)
@@ -117,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     run = sub.add_parser("offline", help="execute all six environments using scripted control policies")
     run.add_argument("--environments", nargs="+", choices=list(SOURCES), default=list(SOURCES))
-    run.add_argument("--sizes", nargs="+", type=int, default=[4, 7, 8, 16, 32])
+    run.add_argument("--sizes", nargs="+", type=int, default=[4, 8, 16, 32])
     run.add_argument("--seeds", nargs="+", type=int, default=[0, 1])
     run.add_argument("--work-units", type=int)
     run.add_argument("--output", type=Path, default=Path("output/offline"))

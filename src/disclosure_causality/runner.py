@@ -133,7 +133,9 @@ def restoration_branches(checkpoint: Session) -> tuple[dict[str, Session], dict]
     for fid in (focal["coord"], focal["neutral"]):
         if fid not in knowledge or recipient not in knowledge[fid]["allowed"]:
             raise ValueError("restoration evidence must be known and authorized")
-    packets = {"O": [], "M": [focal["coord"]], "P": [focal["neutral"]]}
+    packets = {"no_added_information": [],
+               "required_information": [focal["coord"]],
+               "unrelated_information": [focal["neutral"]]}
     sizes = [len(canonical({"sender": owner, "recipient": recipient,
                             "evidence": [knowledge[fid] for fid in ids]}).encode("utf-8"))
              for ids in packets.values()]
@@ -162,8 +164,11 @@ def run_comparison(checkpoint: Session, *, verify: bool = False) -> tuple[dict, 
         branch.evidence_record()
     complete = all(score["execution_status"] == "completed" for score in scores.values())
     comparison = {"audit": audit, "scores": scores,
-                  "effect": {"O_minus_M": scores["O"]["native"]["loss"] - scores["M"]["native"]["loss"],
-                             "P_minus_M": scores["P"]["native"]["loss"] - scores["M"]["native"]["loss"]}
+                  "effect": {
+                      "loss_reduction": scores["no_added_information"]["native"]["loss"]
+                                        - scores["required_information"]["native"]["loss"],
+                      "loss_reduction_vs_unrelated": scores["unrelated_information"]["native"]["loss"]
+                                                     - scores["required_information"]["native"]["loss"]}
                   if complete else None,
                   "interpretation": "scripted simulator diagnostic; not evidence of LLM strategy"}
     return comparison, branches

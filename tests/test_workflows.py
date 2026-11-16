@@ -47,17 +47,17 @@ def test_information_only_fork_has_matched_controls_and_isolation(env):
         assert branch.state["world"] == original.state["world"]
         assert branch.state["facts"] == original.state["facts"]
         assert branch.state["clock"] == original.state["clock"] + 1
-        assert branch.state["budgets"] == branches["O"].state["budgets"]
+        assert branch.state["budgets"] == branches["no_added_information"].state["budgets"]
         packet = branch.state["messages"][-1]
         assert len(packet["wire"].encode("utf-8")) == audit["update_wire_bytes"]
         assert all(f["kind"] != "private" for f in packet["evidence"])
-    branches["M"].state["world"]["external_events"].append({"test": "mutation"})
-    assert branches["P"].state["world"] == original.state["world"]
+    branches["required_information"].state["world"]["external_events"].append({"test": "mutation"})
+    assert branches["unrelated_information"].state["world"] == original.state["world"]
     result, finished = run_comparison(original)
-    assert result["effect"]["O_minus_M"] > 0
-    assert result["effect"]["P_minus_M"] == result["effect"]["O_minus_M"]
-    assert finished["M"].score()["joint_disclosure_success"]
-    assert finished["M"].score()["native"]["loss"] == 0
+    assert result["effect"]["loss_reduction"] > 0
+    assert result["effect"]["loss_reduction_vs_unrelated"] == result["effect"]["loss_reduction"]
+    assert finished["required_information"].score()["joint_disclosure_success"]
+    assert finished["required_information"].score()["native"]["loss"] == 0
     assert all(b.score()["prohibited_disclosures"] == 0 for b in finished.values())
 
 
@@ -70,7 +70,7 @@ def test_null_effects_are_retained(env, control):
         unit = case.units[0]
         checkpoint.step(Action(unit["recipient"], "query", {"fact_id": unit["coord"]}))
     comparison, _ = run_comparison(checkpoint, verify=control == "query_recovery")
-    assert comparison["effect"] == {"O_minus_M": 0, "P_minus_M": 0}
+    assert comparison["effect"] == {"loss_reduction": 0, "loss_reduction_vs_unrelated": 0}
 
 
 @pytest.mark.parametrize("env", SOURCES)
