@@ -1,6 +1,8 @@
 # Working rules
 
-- README is the current design: one framework, M1–M3 and L1–L3 only.
+- README is the current design: nine value-chain scenarios in one framework.
+- M1–M3 and L1–L3 are the six runnable simulators; distinguish them from planned scenarios.
+- Keep business functions, flow/sharing/fit dependencies and candidate industries separate.
 - Every task tests required disclosure and protected information together.
 - Keep replies and README concise. Do not restore superseded setups or plans.
 - Separate scripted validation from model results. Keep evidence auditable.

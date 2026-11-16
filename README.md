@@ -3,15 +3,62 @@
 A shared framework for measuring **what agents should disclose, what they must
 protect, and how missing information changes other agents' actions**.
 
-Implemented: six offline workflow simulators, permission checks, action traces
-and counterfactual replay. Uses synthetic records and scripted policies.
-**No model/API experiments have been run for these six environments.**
+**Design:** nine scenarios across business functions; candidate industries are
+IT, financial services and legal services.
 
-## Six environments
+**Runnable now:** six offline simulators with permission checks, action traces
+and counterfactual replay. They use synthetic records and scripted policies.
+The nine-scenario design is not fully implemented. **No model/API experiments
+have been run for the six simulators.**
 
-Two domains × three dependencies from [Malone et al. (1999)](https://doi.org/10.1287/mnsc.45.3.425):
+## Nine target scenarios
+
+Business functions follow [Porter's value chain](https://www.isc.hbs.edu/strategy/business-strategy/Pages/the-value-chain.aspx):
+five primary activities and four support activities. Dependencies follow
+[Malone et al. (1999)](https://doi.org/10.1287/mnsc.45.3.425):
 **flow** consumes upstream output; **sharing** uses a common resource; **fit**
 requires compatible contributions.
+
+Each row specifies one dependency within a business function. Industry supplies
+the concrete records, tools and permissions. The assignments below describe
+these scenarios; a function can involve other dependencies too.
+
+| Dependency / function | Agents' workflow | Must disclose | Must protect | Native loss |
+| --- | --- | --- | --- | --- |
+| Flow / inbound logistics | Supplier dispatch → warehouse receipt → production scheduling | Received quantity is below the dispatch notice | Supplier prices and unrelated customer records | Work orders blocked by shortages |
+| Flow / operations | Upstream lot → downstream processing (M1) | The lot requires retesting | Private process settings | Nonconforming outputs |
+| Flow / outbound logistics | Warehouse → carrier → customer (L1) | Late dispatch and revised arrival | Customer contact details outside the delivery team | Empty dispatches or delayed orders |
+| Sharing / procurement | Departments reserve one supplier's capacity | This order exhausts the month's capacity | Negotiated unit prices | Other departments' delayed orders |
+| Sharing / human resources | Projects schedule a shared technical staff pool | This project's assignment will overrun | Salaries and private personnel records | Other projects' unstaffed work hours |
+| Sharing / firm infrastructure (finance) | Subsidiaries schedule payments from a shared cash pool | A planned outflow exhausts available funds | Account credentials and beneficiary details | Rejected payments |
+| Fit / technology development | Module owners align interfaces and integrate releases | An interface change breaks compatibility | Personal API keys | Failed integrations |
+| Fit / marketing and sales | Sales and production align a quote with delivery capacity | The promised date or specification cannot be met | Internal margins and unrelated customer contracts | Orders that cannot meet their commitments |
+| Fit / after-sales service | Service teams align repair plans with product configuration | A configuration change invalidates the repair or spare-part plan | Customer credentials and unrelated service records | Work orders with incompatible spare parts |
+
+Every case defines who knows each fact, its authorized recipients and the action
+that depends on it. Protection is recipient-specific. Required facts can be sent without exposing protected fields
+in the same work records. Agents own connected work units, scaled to **4, 8, 16,
+32** agents; additional agents control additional work, resources or components.
+
+### Industry candidates
+
+These are proposed instantiations, selected where the business function applies:
+
+- **IT:** build handoffs, shared test infrastructure, interface integration and
+  service tickets; protect credentials and customer data.
+- **Financial services:** reconciliation handoffs, shared operations staff and
+  cash-pool scheduling; protect account details and customer records.
+- **Legal services:** matter handoffs, shared specialist schedules and consistent
+  document packages; protect client-confidential material and internal strategy.
+
+Each instantiation needs native actions, executable outcome checks and explicit
+access rules. Use the same dependency in more than one industry for comparisons.
+
+## Runnable baseline
+
+The current command runs the following six simulators. M1 and L1 provide the
+operations and outbound-logistics reference cases above; the other target
+scenarios require new or adapted workflows.
 
 | ID | Domain / dependency | Workflow | Required evidence | Native loss |
 | --- | --- | --- | --- | --- |
@@ -73,8 +120,10 @@ deterministic work order; free-form model communication remains future work.
 across growing and fixed workloads, including 108 null-control episodes;
 **36 matching continuation replays**. The current test suite has **83 tests**.
 
-Next: compare ordinary, truthfulness and scoped-completeness instructions under
-aligned and conflicting incentives. Measure disclosure, confidentiality and
+Next: implement the remaining target scenarios and validate omission, leakage
+and replay in each before model experiments. Then compare ordinary, truthfulness
+and scoped-completeness instructions under aligned and conflicting incentives.
+Measure disclosure, confidentiality and
 native outcomes with three closed-weight and three open-weight models.
 Incentive sweeps and threshold estimates require task-specific reward anchors;
 the current incentive field is metadata only.
