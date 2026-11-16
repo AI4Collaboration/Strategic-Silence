@@ -117,7 +117,7 @@ def replay_examples(path: Path) -> dict:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    run = sub.add_parser("offline", help="execute all six environments using scripted control policies")
+    run = sub.add_parser("offline", help="execute registered environments using scripted control policies")
     run.add_argument("--environments", nargs="+", choices=list(SOURCES), default=list(SOURCES))
     run.add_argument("--sizes", nargs="+", type=int, default=[4, 8, 16, 32])
     run.add_argument("--seeds", nargs="+", type=int, default=[0, 1])

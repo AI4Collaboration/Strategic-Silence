@@ -1,4 +1,4 @@
-"""Counterexamples and full-state replay for the six executable local workflows."""
+"""Counterexamples and full-state replay for registered executable workflows."""
 from copy import deepcopy
 import json
 import socket

@@ -1,4 +1,4 @@
-"""Two local domain backends with six different executable state transitions."""
+"""Native workflow state transitions and executable software integration checks."""
 from __future__ import annotations
 
 from .cases import Case
@@ -9,7 +9,8 @@ class InvalidAction(ValueError):
 
 
 TOOLS = {"M1": "assemble_lot", "M2": "reserve_production", "M3": "commit_configuration",
-         "L1": "dispatch_leg", "L2": "book_port_call", "L3": "amend_and_approve"}
+         "L1": "dispatch_leg", "L2": "book_port_call", "L3": "amend_and_approve",
+         "T1": "commit_adapter"}
 LIVE_HANDOFF = {"M1", "L1", "L2"}
 
 
@@ -73,7 +74,7 @@ class Backend:
         require(not world["finalized"], "already finalized")
         current = self.outcomes(case, state)
         # The terminal check prevents releasing a known bad product/configuration.
-        accepted = current["loss"] == 0 if case.environment in {"M1", "M3", "L3"} else True
+        accepted = current["loss"] == 0 if case.environment in {"M1", "M3", "L3", "T1"} else True
         world["finalized"] = True
         world["release_accepted"] = accepted
         if case.environment == "L3":
@@ -245,5 +246,45 @@ class Logistics(Backend):
         return {"loss": sum(losses.values()), "loss_unit": unit, "by_work": losses, **details}
 
 
+class Software(Backend):
+    def local_work(self, case: Case, state: dict, actor: str) -> list[dict]:
+        from .software import legacy_adapter
+        return [{"id": unit["id"], "index": index, "previous": unit["previous"],
+                 "recipient": unit["recipient"], "operation": "commit_adapter",
+                 "handoff": unit["coord"], "progress": unit["progress"],
+                 "private": unit["private"], "neutral": unit["neutral"],
+                 "starting_adapter": legacy_adapter(),
+                 "output_contract": {"total": "decimal currency amount", "currency": "USD",
+                                     "available": "boolean"}}
+                for index, unit in enumerate(case.units) if unit["owner"] == actor]
+
+    def T1(self, case: Case, state: dict, unit: dict, args: dict, index: int) -> dict:
+        from .software import evaluate_adapter
+        source = args.get("source")
+        require(isinstance(source, str), "adapter source is required")
+        provider = state["world"]["items"][unit["previous"]]["service"]
+        try:
+            checks = evaluate_adapter(provider, source)
+        except ValueError as exc:
+            raise InvalidAction(str(exc)) from exc
+        item = state["world"]["items"][unit["id"]]
+        item.update(adapter_source=source, integration_checks=checks)
+        return {"accepted": True, "adapter": unit["id"], "status": "candidate_committed",
+                "integration_passed": checks["passed"], "failed_tests": checks["failed_tests"]}
+
+    def outcomes(self, case: Case, state: dict) -> dict:
+        items = state["world"]["items"]
+        losses = {key: int(item["integration_checks"] is not None and
+                           not item["integration_checks"]["passed"])
+                  for key, item in items.items()}
+        return {"loss": sum(losses.values()), "loss_unit": "failed_integrations",
+                "by_work": losses,
+                "failed_tests": sum((item["integration_checks"] or {}).get("failed_tests", 0)
+                                    for item in items.values()),
+                "committed_adapters": sum(item["adapter_source"] is not None for item in items.values())}
+
+
 def backend_for(case: Case) -> Backend:
+    if case.environment == "T1":
+        return Software()
     return Manufacturing() if case.environment.startswith("M") else Logistics()

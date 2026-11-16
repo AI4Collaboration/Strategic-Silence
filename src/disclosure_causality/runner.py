@@ -34,6 +34,9 @@ class ScriptedPolicy:
             args["depart_at"] = previous.get("arrival", work["planned_input_time"]) if work["index"] else 0
         elif kind == "L2":
             args["arrive_at"] = previous.get("available_after", work["planned_input_time"]) if work["index"] else 0
+        elif kind == "T1":
+            from .software import adapter_for_contract, legacy_adapter
+            args["source"] = adapter_for_contract(previous) if previous else legacy_adapter()
         else:
             args["instruction_destination"] = previous.get("destination", work["instruction_value"])
             args["instruction_quantity"] = previous.get("quantity", work["instruction_quantity"])

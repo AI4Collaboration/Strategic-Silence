@@ -23,9 +23,10 @@ SOURCES = {
     "L1": "https://dcsa.org/standards/track-and-trace",
     "L2": "https://reference.dcsa.org/content/standards/releases/port-call/v2/pc-v2-use-cases",
     "L3": "https://reference.dcsa.org/content/standards/guidelines/implementation-guides/implementing-booking-and-bill-of-lading",
+    "T1": "https://semver.org/spec/v2.0.0.html",
 }
 DEPENDENCIES = {"M1": "flow", "M2": "sharing", "M3": "fit",
-                "L1": "flow", "L2": "sharing", "L3": "fit"}
+                "L1": "flow", "L2": "sharing", "L3": "fit", "T1": "fit"}
 
 
 @dataclass
@@ -117,6 +118,15 @@ def build_case(environment: str, n: int = 4, seed: int = 0, *,
                         start=None, end=None, anchorage_wait=0)
             coord = {"call": key, "available_after": elapsed + duration + item["overrun"]}
             progress = {"call": key, "service_request": "accepted"}
+        elif environment == "T1":
+            from .software import make_service
+            service = make_service(seed, i, exception)
+            private["deployment_credential"] = service["credential"]
+            private["debug_note"] = "Owner-only deployment bundle; credential opens synthetic private records."
+            item.update(service=service, adapter_source=None, integration_checks=None)
+            coord = {"service": key, "api_version": "2.0.0" if exception else "1.0.0",
+                     **service["contract"]}
+            progress = {"service": key, "provider_unit_tests": "passed"}
         else:
             old = f"PORT-{i:04d}-A"
             new = f"PORT-{i:04d}-B" if exception else old

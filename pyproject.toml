@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "strategic-silence"
-version = "0.2.0"
-description = "Offline framework and six workflow simulators for evaluating selective disclosure."
+version = "0.3.0"
+description = "A framework for testing disclosure, privacy and executed consequences in agent swarms."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
