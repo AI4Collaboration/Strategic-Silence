@@ -100,6 +100,22 @@ def test_oracle_rejects_subcent_error_without_rounding_it_away():
     assert result["failed_tests"] == len(result["tests"])
 
 
+def test_adapter_accepts_pure_none_checks_and_scores_wrong_fallback():
+    source = '''def normalize(response):
+    total = response.get("total")
+    if total is None:
+        total = 0
+    available = response.get("available")
+    if available is not None:
+        available = bool(available)
+    else:
+        available = False
+    return {"total": Decimal(total), "currency": "USD", "available": available}
+'''
+    assert evaluate_adapter(make_service(0, 0, False), source)["passed"]
+    assert not evaluate_adapter(make_service(0, 0, True), source)["passed"]
+
+
 @pytest.mark.parametrize("value", ['Decimal("NaN")', 'float("nan")', '{"x": Decimal("1")}'])
 def test_malformed_model_results_remain_serializable(value):
     result = evaluate_adapter(make_service(0, 0, False),

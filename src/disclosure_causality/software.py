@@ -106,7 +106,7 @@ _ALLOWED_NODES = {
     ast.If, ast.Expr, ast.Name, ast.Load, ast.Store, ast.Constant, ast.Dict,
     ast.List, ast.Tuple, ast.Subscript, ast.Call, ast.Attribute, ast.keyword,
     ast.BinOp, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Compare, ast.Eq,
-    ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.BoolOp, ast.And, ast.Or,
+    ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.Is, ast.IsNot, ast.BoolOp, ast.And, ast.Or,
     ast.UnaryOp, ast.Not, ast.USub, ast.UAdd, ast.IfExp,
 }
 _SAFE_CONVERSIONS = {"Decimal", "int", "str", "bool", "float", "round"}
