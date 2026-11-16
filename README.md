@@ -51,6 +51,50 @@ not empirical validation of our proposed LLM environments.
 
 ## Three proposed environments
 
+Use **one shared runner and three native environment adapters**. The runner
+handles actor execution, communication, checkpoints and experimental assignment;
+each adapter owns its real artifacts/resources, permitted operations and outcome
+checks. The three scenarios provide contrasting task mechanisms. Because their
+domains also differ, a difference between them does not identify a causal effect
+of dependency type; causal disclosure comparisons stay within the same task.
+
+### Input package and engineering scope
+
+An environment instance starts from a versioned task package:
+
+| Input component | Contents and visibility |
+| --- | --- |
+| Source state | Actual records or checkout, provenance, versions and native constraints; each owner receives its assigned part and retrieval rights |
+| Shared task | Deliverable, acceptance criteria, responsibilities and ordinary handoff duties, visible to the team |
+| Work ownership | Nonempty work packages, their dependencies, and each owner's read/write/commit permissions |
+| Local evidence | Records, diagnostics and progress available to that owner; distinguish received, retrievable and inaccessible information |
+| Action interface | Executable inspection, work, communication and commitment tools; state transitions produce receipts |
+| Runtime and incentives | Fixed budgets, scheduling/transaction rules, stopping conditions and assigned local rewards |
+| Evaluator-only material | Reviewed fact/recipient/deadline labels, reference checks, intervention packets, source-family IDs and randomization |
+
+Agent input is the shared task plus its work assignment, evidence, permissions
+and objectives. Reference solutions, future trace realizations and labels naming
+the expected omission stay outside agent input. Agents can disclose, investigate,
+repair or refuse within ordinary rules; no prompt demands a particular omission.
+
+Run a repeated **observe, work, communicate, commit, receive feedback** loop until
+the native deliverable is accepted or the budget is exhausted. Owners can message
+specific peers or publish through ordinary shared artifacts. Record failed and
+rejected actions as well as successful operations. Required evidence becomes
+scorable only at its registered decision deadline. An internal checkpoint is a
+state of this task, not an additional independent task.
+
+Proposed engineering scope is **one complete source task per adapter first**,
+then a target of **ten source-backed task instances per adapter** for offline
+validation. These 3 initial tasks and 30 target instances are engineering budgets,
+not collected data or a statistical sample-size justification. Use different
+source workloads; keep overlapping periods and related migration checkpoints in
+the same source family. Start the ownership checks at 4, 7 and 8 agents, then test
+16 and 32 only where admitted work supports them. Formal cohort sizes, independent
+families and repeats are set from outcome variability and precision requirements
+before model collection. Do not multiply all sizes, reward weights and controls
+into a full factorial as the first run.
+
 ### FLOW: distributed climate data production
 
 **Task.** Produce quality-controlled station-month statistics, coverage counts
@@ -132,6 +176,12 @@ on matched machines; test its sensitivity and reject inconsistent profiles.
 Account separately for background load to avoid counting the same job twice.
 The source tables have not yet been acquired or admitted.
 
+Admit this scenario only if owners possess task-relevant plans or progress that
+are not already fully resolved by the ordinary shared queue. If submitting all
+jobs to the fixed scheduler removes any role for peer information, that workload
+does not test the proposed disclosure mechanism. Full submission and inspection
+remain available actions; do not disable them to force a communication failure.
+
 ### FIT: coordinated migration of a real software repository
 
 **Task.** Migrate connected packages while preserving integrated behavior. Use
@@ -170,6 +220,18 @@ depends on parser, traverse, generator and types. This directory count is not a
 supported agent count. The actual pre-migration baseline, coupled campaign,
 failing fixtures and valid reference solution remain to be selected and executed.
 
+### Native validity gates
+
+FLOW needs a genuine multi-product analysis with downstream choices about input
+use, recomputation or release. A single scripted quality-flag filter establishes
+data processing, not substantive swarm work. FIT needs an actual cross-package
+change and a reproduced compatibility check, not an invented broken interface.
+SHARING needs validated rescheduling semantics and information that can affect
+owners' choices. For every adapter, verify a feasible coordinated solution and
+source-backed cross-owner consequences before model use. A bad source artifact
+and its non-disclosure are separate events: restoration holds the artifact fixed
+and measures the additional effect of information about it.
+
 ## Scaling and case admission
 
 The adapter design is `build_case(source, n, assignment, budgets, seed)`; it is
@@ -195,12 +257,11 @@ rule rather than a universal definition of swarm.
   them. Unsupported sizes remain unsupported. Source capacity, admitted sizes
   and tested sizes must be reported separately.
 
-Freeze a case manifest containing source/version/license and authored additions;
-task graph and artifacts/resources; actor IDs, objectives, work and authority;
-initial/retrievable evidence; communication visibility and receipts; fact-level
-disclosure duties, recipient and deadline; native state, event tape, budgets and
-outcome oracles; and experimental assignment/seeds. Agents receive task documents,
-not evaluator fact labels, reference solutions or instructions to hide anything.
+Freeze the input package above, together with communication visibility, delivery
+receipts, native event tape and experimental seeds, before collection. Compare
+literal silence, selective reporting, timely disclosure and legitimate omission
+as observed behaviors inside each environment, rather than treating them as
+different environments or preassigned agent roles.
 
 ## Evaluation protocol
 
