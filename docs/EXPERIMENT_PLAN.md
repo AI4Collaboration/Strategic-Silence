@@ -62,19 +62,20 @@ omission share among fewer remaining failures.
 
 ## Stage 1: validate one native workflow
 
-The [environment catalog](ENVIRONMENTS.md) specifies six scalable application
-families organized by flow, sharing and fit dependencies. The adapter accepts
+The [environment catalog](ENVIRONMENTS.md) specifies three active scenarios:
+FLOW climate data production, SHARING shared compute scheduling and FIT
+repository migration. The adapter accepts
 `n` active work owners, a sourced task graph and an allocation of evidence and
 authority. Every counted member must own substantive operations in one connected
-problem. Counterparties and judges are recorded separately. A larger batch of
+problem. External services and validators are recorded separately. A larger batch of
 independent dyads does not qualify.
 
-Start with E5 distributed dispatch, then E2 software migration after admitting
-connected change campaigns. E3 scientific reanalysis, E4 civil evidence
-production, E1 coordinated procurement and E6 assembly conformance require
-additional source and review work. Keep source-size ceilings distinct from
-adapter capability. The existing three-component assembly and small single-issue
-code tasks cannot support arbitrary swarm sizes by duplication.
+Start with FLOW: freeze a public multi-station subset, an analysis policy and
+independent reference calculations, then implement versioned artifact execution
+and the whole-swarm checkpoint. Next admit SHARING's production-trace subset and
+replay assumptions, and FIT's connected migration campaign and executable test
+suite. Only source documentation and small source checks have been completed.
+Keep source-size ceilings distinct from adapter capability and tested scale.
 
 Every admitted case records each member's evidence, tools, decision rights and
 dependencies. Check a native coupling witness, a valid coordinated solution,
@@ -88,12 +89,12 @@ tools, state isolation and evidence packets offline. Use more than one plausible
 outcome, including justified acceptance and rejection. Receivers may investigate,
 ask follow-up questions and refuse unsupported requests.
 
-Every environment includes required material information and clear legitimate-
-withholding controls. Put them in the same dossier when authentic task rules
-support both; otherwise use matched boundary cases. Do not fabricate secret
-fields just to fill a matrix. A valid solution communicates the former without
-leaking the latter. Accept authorized qualifications and redacted evidence.
-The task must not be solvable by universal disclosure or blanket refusal.
+Every environment includes required material information and decision-irrelevant
+content that can be omitted. The current public sources establish no private
+business or personal information duties. Add privacy-boundary cases only with
+verified source mandates and report their separate denominator; zero eligible
+cases means not applicable. Accept adequate qualifications and redacted evidence
+where authorized. Blanket refusal does not count as task success.
 
 The subsequent model preflight checks whether receivers can use adequate
 authorized evidence and whether senders can identify and communicate it.
@@ -117,8 +118,9 @@ supports them. Unsupported sizes remain missing coverage, not fabricated cases.
 | Growing workload | Task family, target work and compute per owner, registered generation/selection rules | Connected workload and number of owners | Behavior as the whole system grows |
 
 Size changes the allocation of information and responsibilities. Report the
-actual resulting dependency degrees, path lengths, role mix and communication
-opportunities. Preserve native constraints; stratify or match natural graph
+actual resulting dependency degrees, path lengths, maximum constraint arity,
+work per owner, role mix, resource pressure and communication opportunities.
+Preserve native constraints; stratify or match natural graph
 structure rather than rewiring facts. Randomize run order. For fixed-workload
 comparisons, pair sizes by the same source task; do not restrict analysis to
 cases that succeed at every size. Bootstrap source families, keeping all size,
@@ -206,11 +208,12 @@ The primary sweep uses the fixed baseline instruction. Truthfulness and scoped
 completeness comparisons are prespecified behavioral evaluations, not a search
 for an optimized prompt. They receive separate curves if run.
 
-Start with E5 distributed dispatch, where local workload and team routing outcomes
-can differ. Use E2 as a contrasting software-migration swarm after its
-backend is validated. Preserve the distinction between these interaction
-structures. Other environments enter only with justified payoff anchors;
-separate domain curves do not imply comparable utility scales.
+Use the local KPI specified for each admitted scenario: on-time data products
+in FLOW, early job completion in SHARING and accepted package progress in FIT.
+Register a defensible common-outcome base score and fixed reference anchors
+before enabling its sweep. If those anchors cannot be justified, retain the
+ordinary disclosure comparison without a utility threshold. Separate scenario
+curves do not imply comparable utility scales.
 
 **Outcomes and denominators.** Select a focal required fact and, where available,
 a focal protected fact using a rule fixed before treatment. All weights share
@@ -284,7 +287,7 @@ These are interpretation rules, not fixed significance thresholds. Case counts,
 power, smallest effects of interest and analysis choices are frozen after
 offline task validation and before substantive collection.
 
-The catalog states what each family and its focal dependency add to coverage. Admit
+The catalog states what each scenario and its focal dependency add to coverage. Admit
 each through the same evidence and execution checks. Publish the implemented
 roster and case counts explicitly; an unfinished environment cannot count as
 an experimental replication.
@@ -294,20 +297,6 @@ rules. Keep workflow features and application sectors as separate metadata.
 Near-duplicate cases and stages from the same dossier cannot inflate independent
 domain or case counts. Document importance through concrete stakes and real
 workflow provenance, not a high-stakes label.
-
-## Questions for later studies
-
-The broader program includes:
-
-- Appropriate disclosure when duties conflict, privacy is graded or negotiation
-  involves genuinely disputed disclosure obligations or incomparable interests.
-- Communication protocols, verification rights, incentives or training that
-  improve decisions while preserving justified confidentiality.
-- Repeated interactions and endogenous formation or dissolution of coalitions.
-
-These require different evidence and may become separate papers. The first
-paper keeps clear privacy controls but does not promise a general optimal
-disclosure policy or comprehensive coverage of social environments.
 
 ## Implementation boundary
 

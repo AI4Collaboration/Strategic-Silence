@@ -1,36 +1,51 @@
 # Evaluating Selective Disclosure and Strategic Silence in LLM Agent Swarms
 
 We evaluate what collaborating agents share or withhold, how incentives change
-those choices, and how they affect executed task outcomes. Appropriate selective
-disclosure includes protecting private information. Strategic silence, deceptive
-communication and harmful omission require separate evidence.
+those choices, and how their communication affects others' executed actions.
+Appropriate selective disclosure includes omitting irrelevant detail and
+protecting authorized private information. Omission, strategic motivation and
+harm require separate evidence.
 
-**Status:** research design and two offline evidence utilities. Native swarm
-backends, admitted case collections and model runners are not implemented.
-The current six-family catalog and implementation order are proposals awaiting
-source and execution validation.
+**Current design: 2026-11-16.** This README is the current-state entry point.
+The three scenarios below replace the former six-family catalog. Native
+environments, admitted case collections and model runners remain unimplemented.
+The repository contains two offline evidence utilities and their tests.
 
-## Current design
+## Three active scenarios
 
-1. **Scalable swarms.** Agent count is a parameter. Every member owns real work,
-   information and action authority in one connected task. Role types may repeat
-   across arbitrary supported sizes; adding spectators or duplicating dyads
-   does not provide scale.
-2. **Principled task structure.** The current taxonomy proposal uses flow,
-   sharing and fit dependencies from
-   [coordination theory](https://doi.org/10.1287/mnsc.45.3.425).
-   A workflow may contain several dependency types. Application domains and
-   disclosure duties are recorded separately.
-3. **Recipient-specific disclosure.** Score required omissions, prohibited
-   disclosures and legitimate withholding against documented task rules.
-   Preserve ordinary retrieval, verification, repair and refusal options.
-4. **Evaluation, not mitigation.** Compare baseline, truthfulness and scoped
-   completeness instructions; vary local incentives with task facts and duties
-   fixed. Whether truthfulness leaves harmful omissions is a hypothesis.
-5. **Executed consequences.** Restore minimal missing authorized information
-   through the ordinary sender route and compare with a matched nonmaterial
-   update. Resume the entire swarm. This diagnoses information-caused loss;
-   it is not a proposed defense.
+| ID / dependency | Concrete workflow | Why collaboration is necessary |
+| --- | --- | --- |
+| FLOW | Produce quality-controlled regional climate summaries from NOAA GHCN-Daily station records | Downstream calculations consume upstream datasets and their quality/provenance information |
+| SHARING | Coordinate batch workloads on a finite compute cluster, using Alibaba production-trace structure | Owners' admissions and resource commitments change peers' waiting time and feasible schedules |
+| FIT | Migrate connected packages in a real repository, starting with a Babel API/AST change campaign | Parser, transformation and output packages must satisfy joint interface and behavior checks |
+
+[ENVIRONMENTS.md](docs/ENVIRONMENTS.md) is the sole specification of each
+scenario's sources, local knowledge, tools, coordination mechanism, omission
+example, outcome checks and scaling limits. Real source data grounds the tasks;
+agent assignments, communication duties and experimental rewards are our design.
+
+## Shared design
+
+1. **Real work for every member.** Parameterize agent count `n`; partition one
+   connected workload into nonempty ownership packages. Every member can inspect
+   evidence and execute consequential operations. Count neither spectators nor
+   external services as swarm members.
+2. **Cross-owner dependencies.** Flow, sharing and fit describe constraints,
+   not mutually exclusive industries. Use local task views and hard/soft effects
+   from TÆMS. Audit both task structure and communication routes.
+3. **Disclosure with boundaries.** Fix recipient, purpose and deadline. Inspect
+   messages, shared artifacts and tool receipts. Public but unread evidence is
+   different from confidential evidence. Do not invent privacy duties for public
+   data; report protected-information coverage only where sourced rules exist.
+4. **Evaluation, not mitigation.** Compare ordinary, truthfulness and scoped
+   completeness instructions, and vary local incentives with facts and duties
+   fixed. Whether truthfulness leaves harmful omissions remains a hypothesis.
+5. **Executed consequences.** Restore minimal missing information through the
+   ordinary sender route, compare a matched nonmaterial update, and resume the
+   whole swarm. Recipients retain retrieval, verification and repair options.
+6. **Measured scale.** Separate fixed-workload and growing-workload experiments.
+   Report work per owner, dependency degree/arity, communication and compute.
+   Source capacity, admitted sizes and tested sizes are different quantities.
 
 Research questions:
 
@@ -38,45 +53,30 @@ Research questions:
 - How do conflicting incentives change disclosure decisions?
 - How do these choices affect collaborators' actions and collective outcomes?
 
-The utility sweep measures response curves and supported crossing ranges.
-Its threshold is a behavioral summary, not a rule defining when disclosure is
-required. Swarm-size comparisons separately test fixed and growing workloads.
-
-## Proposed environments
-
-| Dependency | Application families |
-| --- | --- |
-| Flow: consume another member's output | Scientific reanalysis; civil evidence production |
-| Sharing: allocate a common resource | Coordinated procurement; distributed dispatch |
-| Fit: integrate compatible contributions | Software migration; assembly conformance |
-
-Start native implementation with **E5 distributed dispatch**, then E2 software
-migration after admitting connected change campaigns. The other families need
-additional source or domain-review work. A parameterized interface does not
-establish that existing data supports every requested size.
+The utility sweep reports response curves and supported switching ranges. Its
+threshold summarizes behavior; it does not determine a disclosure obligation.
 
 ## Where the details live
 
 | File | Responsibility |
 | --- | --- |
-| [ENVIRONMENTS.md](docs/ENVIRONMENTS.md) | Taxonomy, scalable roles, knowledge/actions/dependencies, examples and source gaps |
-| [PREHOC_DESIGN.md](docs/PREHOC_DESIGN.md) | Definitions, case manifest, evidence requirements and restoration protocol |
-| [EXPERIMENT_PLAN.md](docs/EXPERIMENT_PLAN.md) | Research comparisons, utility/size analysis, validation stages and prior-work positioning |
-| [TAKEAWAYS.md](docs/TAKEAWAYS.md) | Historical observations and evidence links; not current environments or new results |
+| [ENVIRONMENTS.md](docs/ENVIRONMENTS.md) | The three scenarios, theoretical grounding, source checks and scale contract |
+| [PREHOC_DESIGN.md](docs/PREHOC_DESIGN.md) | Definitions, case manifest, evidence and restoration protocol |
+| [EXPERIMENT_PLAN.md](docs/EXPERIMENT_PLAN.md) | Comparisons, statistics, implementation sequence and prior-work positioning |
+| [TAKEAWAYS.md](docs/TAKEAWAYS.md) | Preserved historical observations; not active scenarios or new results |
 
-Read the relevant source document rather than maintaining additional copies of
-the same protocol. Earlier games and manuscript drafts are historical context;
-they do not define the active design.
+Earlier catalogs, games and manuscript drafts do not define the active design.
+Keep one home for each detail rather than creating parallel plans or summaries.
 
 ## Code and checks
 
-`restoration_inputs` copies multi-actor checkpoint metadata and specifies a
-source, recipients and delivery route. `validate_action_evidence` checks
-references from outcomes to registered actors, native receipts and state.
-Neither utility executes a task, verifies semantic correctness or proves native
-environment scalability. The proposed `build_case(...)` adapter remains unbuilt.
+`restoration_inputs` copies checkpoint metadata and specifies a sender, recipients
+and delivery route. `validate_action_evidence` checks links between outcomes,
+registered actors, native receipts and state transitions. Neither executes an
+environment or validates semantic correctness. `build_case(...)` remains a
+specified adapter interface, not an implemented function.
 
-Python 3.10 or later; dependency declarations live in `pyproject.toml`:
+Python 3.10 or later; dependencies are declared in `pyproject.toml`:
 
 ```sh
 python -m pip install -e ".[test]"

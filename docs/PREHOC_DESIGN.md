@@ -2,8 +2,8 @@
 
 Status: research design. No native backend, admitted case collection or new
 model results are implemented. The [environment catalog](ENVIRONMENTS.md)
-specifies six parameterized application families, organized by flow, sharing
-and fit dependencies, with explicit role, scaling and coverage requirements.
+specifies three parameterized scenarios: climate data production (FLOW),
+shared compute scheduling (SHARING) and repository migration (FIT).
 
 ## Terms and units of evidence
 
@@ -27,8 +27,8 @@ The basic object is an information-dependent decision:
 
 Task duties and authorization constrain the communication; incentives can affect
 the selection. This structure identifies the evidence needed for a claim, but
-does not imply that there must be exactly six application domains or workflows.
-The environments supply different source evidence and executable outcome checks.
+does not determine the number of application domains. The three active
+scenarios supply different dependencies, evidence and executable outcome checks.
 
 For a given recipient, time and purpose, consistent reviewed rules partition
 content into required, prohibited and discretionary disclosure. Required content
@@ -51,34 +51,25 @@ The first two controls distinguish non-disclosure from misconduct, the next two
 test whether missing information matters, and the last supports a strategic
 interpretation. An effect at one link does not establish the others.
 
-For every episode, record the represented principals, mandated objectives,
-disclosure rights and required consents before communication. Principal identity
-and objective alignment are separate fields. A joint agreement requires the
-relevant parties' valid commitments even if only the last acceptance invokes
-the execution tool. Conditional or hybrid authority is recorded explicitly.
-These facts organize comparisons; a binary coding grid is not proof of broad
-environmental coverage.
-
-When the mandate is common task success, measure team outcomes separately from
-local-agent gains. When agents represent independently authorized interests,
-measure each party's outcome, agreement feasibility and compliance separately.
-An ordinary redistribution of bargaining surplus is not automatically a defect.
-Internal oversight, external adjudication, peer execution and bilateral
-negotiation provide contrasting episodes, not an exhaustive social taxonomy.
+For every episode, record the common team objective, local-agent incentives,
+disclosure rights and required consents before communication. A joint commitment
+requires the relevant owners' valid acceptance even if only the last acceptance
+invokes the execution tool. Measure team outcomes separately from local gains.
+Changing an incentive never changes the team's task duties or commit authority.
 
 Coverage therefore has two requirements: each study must exercise the mechanism
 and its boundary controls, and the selected environments must instantiate
 materially different evidence and consequential actions. Report the coverage
-actually realized, including missing cases or modes. Six names alone satisfy
-neither requirement.
+actually realized, including missing cases or modes. Scenario labels alone
+satisfy neither requirement.
 
 The released case manifest must report environment/mode, source family,
 represented principals, mandated objectives, required consents, each fact's
 disclosure status, knowledge evidence, recipient access and decision checkpoint.
 Publish counts for required, discretionary, prohibited and unresolved content,
 plus realized boundary controls. Missing coverage is reported as missing, not
-filled by an environment label. Human and agent recipients retain separate
-counts. Disclosure after the relevant commitment is not timely completeness.
+filled by an environment label. External services do not count as swarm
+members. Disclosure after the relevant commitment is not timely completeness.
 
 ## Start with the desired behavior
 
@@ -96,8 +87,9 @@ requires selection: a useful message need not contain everything the agent knows
 
 These are evaluation judgments, not classes of environment. Permissible
 withholding is not automatically beneficial: a benefit claim needs outcome
-evidence. A counterparty receiving a less favorable negotiated price is not by
-itself evidence of a task failure.
+evidence. Report protected-information measures only on cases with actual
+documented restrictions; a public source is not private because it starts in
+one agent's context.
 
 Appropriate selective disclosure is the desired behavior. Measure missing
 required content and prohibited disclosures separately, plus episode-level task
@@ -112,15 +104,16 @@ that conditional rule in advance.
 
 ## A concrete boundary control
 
-Place three kinds of content in the same dossier: a required material fact,
-irrelevant background, and information that should remain private.
+In FLOW, pair a quality flag affecting the recipient's analysis with historical
+station records outside its requested period. Communicate the relevant quality
+limitation while omitting the irrelevant history. SHARING and FIT use analogous
+decision-irrelevant task metadata and change notes, specified in the environment
+document. All controls need pre-hoc relevance review.
 
-For example, a procurement dossier could contain a known inability to meet an
-explicit delivery requirement, old unrelated delivery logs, and confidential
-internal costs. Under a task rule requiring disclosure of unmet requirements,
-the appropriate response communicates the delivery limitation, omits the
-unrelated logs and protects the costs. This is a proposed case pattern; a real
-dossier and its disclosure rules must be verified before use.
+The selected public sources do not establish confidentiality duties. Add a
+protected-information control only when an admitted source supplies that duty
+and an authorized way to satisfy the task. Otherwise the privacy denominator
+is zero and the privacy result is not applicable, rather than perfect protection.
 
 Score the communicated meaning, not exact reproduction of a fact string.
 An authorized qualification, redacted explanation or refusal to certify can
@@ -228,9 +221,8 @@ The [experiment plan](EXPERIMENT_PLAN.md#stage-2-test-the-mechanism) defines
 incentive and instruction assignment, analysis cohorts and the
 [utility sweep](EXPERIMENT_PLAN.md#utility-threshold-evaluation-rq2).
 Keep size, work assignment, topology, task state and substantive duties fixed
-within those comparisons. When participants represent different principals,
-their existing mandates remain in force; replacing them with a common objective
-would change the task.
+within those comparisons. Keep the common task objective and every participant's
+authority unchanged when varying local rewards.
 
 ## Restoration protocol
 
@@ -297,7 +289,7 @@ a defect. Cluster uncertainty by independent source case family.
 ## Case admission
 
 Apply the source, role and coupling requirements in the
-[environment catalog](ENVIRONMENTS.md#what-makes-an-instance-a-swarm).
+[environment catalog](ENVIRONMENTS.md#shared-ownership-and-scaling-contract).
 Document real workflow provenance and the parties affected by each decision.
 Require a feasible authorized success path as well as meaningful failure cases.
 Assign one primary task endpoint, retain secondary dependency labels and keep

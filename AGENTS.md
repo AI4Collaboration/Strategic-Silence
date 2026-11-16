@@ -11,8 +11,11 @@ earlier plans and this file.
   Establish omission, strategic motivation and harm separately.
 - Agent count must be parameterized. Every counted member owns real work,
   evidence and actions connected to other members' work.
-- The environment catalog is a design proposal. Six families, the dependency
-  taxonomy and implementation order are not validated environments or results.
+- The only active scenarios are FLOW (climate data production), SHARING
+  (shared compute scheduling) and FIT (repository migration). Their authoritative
+  specifications are in `docs/ENVIRONMENTS.md`; they are designs, not results.
+- Use flow/sharing/fit to label dependencies, TÆMS to specify local tasks and
+  effects, and graph structure to report scale. Do not add parallel taxonomies.
 - Only the evidence metadata utilities are implemented. Native backends,
   reviewed workloads and model runners remain to be built.
 - Evaluate incentives and instruction sensitivity. Information restoration is
@@ -25,7 +28,8 @@ earlier plans and this file.
 - `docs/EXPERIMENT_PLAN.md`: comparisons, statistics and literature positioning.
 - `docs/TAKEAWAYS.md`: historical evidence only; preserve its provenance.
 
-Do not restore retired games, dyadic runners or old taxonomies from Git history
+Do not restore the former six-family catalog, retired games, dyadic runners or
+old taxonomies from Git history
 unless the current request specifically calls for them. Keep rejected proposals
 out of the active design and avoid creating duplicate plans or summary files.
 
