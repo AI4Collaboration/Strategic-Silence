@@ -1,11 +1,13 @@
 """Scripted bridge tests only; these are not model or subject trials."""
 import json
+import hashlib
+from pathlib import Path
 
 import pytest
 
 from disclosure_causality.cases import build_case
 from disclosure_causality.engine import Session
-from disclosure_causality.pilot import advance_run, fork_run, initialize_run
+from disclosure_causality.pilot import advance_run, fork_run, initialize_run, replay_archive
 from disclosure_causality.runner import restoration_branches
 from disclosure_causality.software import adapter_for_contract, legacy_adapter
 
@@ -263,4 +265,39 @@ def test_fork_selects_restoration_arm_and_retains_parent_provenance(tmp_path):
     assert child_run["stage"] == "query"
     assert child_run["provenance"]["parent_run"] == str(root.resolve())
     assert all((destination / f"inputs/query/agent-{i}.json").is_file() for i in range(4))
+
+
+ARCHIVE = Path(__file__).resolve().parents[1] / "results/luna/episodes.jsonl"
+
+
+def test_saved_pilot_replays_all_inputs_decisions_and_checkpoints():
+    result = replay_archive(ARCHIVE)
+    assert result == {"passed": True, "checked_episodes": 7,
+                      "checked_model_decisions": 72, "failures": [], "network_access": "blocked"}
+
+
+@pytest.mark.parametrize("tamper", ["input", "output", "score"])
+def test_pilot_replay_detects_tampering_even_with_updated_file_hash(tmp_path, tamper):
+    record = json.loads(ARCHIVE.read_text(encoding="utf-8").splitlines()[0])
+    if tamper == "score":
+        record["manifest"]["final"]["score"]["native"]["loss"] = 999
+    else:
+        group = "inputs" if tamper == "input" else "outputs"
+        relative = f"{group}/query/agent-0.json"
+        payload = json.loads(record["files_utf8"][relative])
+        if tamper == "input":
+            payload["task_instructions"] += " Changed task."
+        else:
+            payload["query"] = not payload["query"]
+        raw = json.dumps(payload)
+        record["files_utf8"][relative] = raw
+        hashes = record["manifest"]["source_hashes"][group]
+        key = next(k for k in hashes if k.replace("\\", "/") == relative)
+        hashes[key] = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    path = tmp_path / "tampered.jsonl"
+    path.write_text(json.dumps(record) + "\n", encoding="utf-8")
+    result = replay_archive(path)
+    assert not result["passed"]
+    assert result["checked_episodes"] == 1
+    assert len(result["failures"]) == 1
 

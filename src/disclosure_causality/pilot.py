@@ -7,9 +7,10 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from .cases import build_case
-from .cli import write_json
+from .cli import network_disabled, write_json
 from .engine import Action, Session
 from .runner import restoration_branches
 from .software import evaluate_adapter
@@ -334,6 +335,74 @@ def fork_run(path: str | Path, arm: str, destination: str | Path) -> dict:
             "input_files": [f"inputs/query/{actor}.json" for actor in child.case.actors]}
 
 
+def replay_archive(path: str | Path) -> dict:
+    """Reexecute saved decisions and verify inputs, hashes and outcomes without models."""
+    failures, checked, decisions = [], 0, 0
+    lines = Path(path).read_text(encoding="utf-8").splitlines()
+    for number, line in enumerate(lines, 1):
+        if not line.strip():
+            continue
+        checked += 1
+        try:
+            record = json.loads(line)
+            manifest, files = record["manifest"], record["files_utf8"]
+            kind = record["kind"]
+            if kind not in {"all_model_decisions", "scripted_report_model_continuation"}:
+                raise ValueError("unknown archive record kind")
+            seeded = kind == "scripted_report_model_continuation"
+            stages = ["query", "code"] if seeded else ["report", "query", "code"]
+            if record["model_stages"] != stages or manifest["stage"] != "complete":
+                raise ValueError("incomplete or inconsistent archived stages")
+            actors = [f"agent-{i}" for i in range(manifest["config"]["n"])]
+            for group in ("inputs", "outputs"):
+                for relative, expected in manifest["source_hashes"][group].items():
+                    relative = relative.replace("\\", "/")
+                    if _sha256(files[relative].encode("utf-8")) != expected:
+                        raise ValueError(f"archived {group} hash mismatch: {relative}")
+            with network_disabled(), TemporaryDirectory(prefix="disclosure-replay-") as folder:
+                root = Path(folder) / "run"
+                def submit(destination, stage):
+                    for actor in actors:
+                        relative = f"outputs/{stage}/{actor}.json"
+                        target = destination / relative
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_bytes(files[relative].encode("utf-8"))
+                    advance_run(destination)
+                if seeded:
+                    parent = Path(folder) / "parent"
+                    initialize_run(parent, **manifest["config"])
+                    submit(parent, "report")
+                    fork_run(parent, manifest["provenance"]["arm"], root)
+                else:
+                    initialize_run(root, **manifest["config"])
+                for stage in stages:
+                    for actor in actors:
+                        relative = f"inputs/{stage}/{actor}.json"
+                        if (root / relative).read_bytes() != files[relative].encode("utf-8"):
+                            raise ValueError(f"visible input mismatch: {relative}")
+                    submit(root, stage)
+                reproduced = _read_json(root / _RUN_FILE)
+                if reproduced["final"] != manifest["final"]:
+                    raise ValueError("final evidence or score mismatch")
+                for group, expected in manifest["source_hashes"].items():
+                    normalize = lambda values: {k.replace("\\", "/"): v for k, v in values.items()}
+                    if normalize(reproduced["source_hashes"][group]) != normalize(expected):
+                        raise ValueError(f"replayed {group} hashes differ")
+                for name, saved in record.get("checkpoints", {}).items():
+                    if name not in {"initialized.json", "query.json", "code.json", "complete.json"}:
+                        raise ValueError("unknown checkpoint name")
+                    Session.from_snapshot(saved)
+                    if _read_json(root / "checkpoints" / name) != saved:
+                        raise ValueError(f"checkpoint mismatch: {name}")
+            decisions += len(actors) * len(stages)
+        except (ValueError, KeyError, TypeError, OSError, RuntimeError) as exc:
+            failures.append({"line": number, "error": str(exc)})
+    if checked == 0:
+        failures.append({"error": "archive has no records"})
+    return {"passed": not failures, "checked_episodes": checked,
+            "checked_model_decisions": decisions, "failures": failures, "network_access": "blocked"}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -351,16 +420,20 @@ def main(argv: list[str] | None = None) -> int:
     fork.add_argument("path", type=Path)
     fork.add_argument("arm", choices=ARMS)
     fork.add_argument("destination", type=Path)
+    replay = sub.add_parser("replay", help="verify archived decisions without model calls")
+    replay.add_argument("path", type=Path)
     args = parser.parse_args(argv)
     if args.command == "init":
         result = initialize_run(args.path, args.n, args.seed, args.incentive_weight,
                                 args.query_cost, args.instruction, args.guidance)
     elif args.command == "advance":
         result = advance_run(args.path)
-    else:
+    elif args.command == "fork":
         result = fork_run(args.path, args.arm, args.destination)
+    else:
+        result = replay_archive(args.path)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, allow_nan=False))
-    return 0
+    return 0 if result.get("passed", True) else 1
 
 
 if __name__ == "__main__":

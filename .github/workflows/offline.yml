@@ -23,3 +23,4 @@ jobs:
       - run: python -m pip install -e ".[test]"
       - run: python -m pytest -q
       - run: python -m disclosure_causality replay results/offline/examples.json
+      - run: python -m disclosure_causality.pilot replay results/luna/episodes.jsonl
