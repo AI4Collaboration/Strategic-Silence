@@ -8,7 +8,7 @@ experiments have been run for this design. Paid collection is not authorized.
 
 An agent should disclose what an authorized decision requires while protecting
 information it has a duty to keep private. This is an evaluation study of
-selective disclosure in agent teams. It does not require a new defense,
+selective disclosure in scalable agent swarms. It does not require a new defense,
 training method or optimized communication policy.
 
 | Research question | Primary evidence |
@@ -62,24 +62,26 @@ omission share among fewer remaining failures.
 
 ## Stage 1: validate one native workflow
 
-The [environment catalog](ENVIRONMENTS.md) defines five primary task domains
-and six environment families: commercial agreements/remedies, software change
-acceptance, scientific analysis adoption, civil adjudication, operational scheduling and
-physical conformance. Transactions include customer service; the last two
-workflows share the industrial-operations domain.
+The [environment catalog](ENVIRONMENTS.md) specifies six scalable application
+families organized by flow, sharing and fit dependencies. The adapter accepts
+`n` active work owners, a sourced task graph and an allocation of evidence and
+authority. Every counted member must own substantive operations in one connected
+problem. Counterparties and judges are recorded separately. A larger batch of
+independent dyads does not qualify.
 
-E1 must include genuine bilateral offers, counteroffers and execution after
-valid agreement, separate from existing-entitlement audits. E5 must include
-peer execution of locally committed route plans under a common operational
-mandate, separate from a central dispatcher receiving reports. These modes
-answer different questions and retain separate counts and outcome definitions.
+Start with E5 distributed dispatch, then E2 software migration after admitting
+connected change campaigns. E3 scientific reanalysis, E4 civil evidence
+production, E1 coordinated procurement and E6 assembly conformance require
+additional source and review work. Keep source-size ceilings distinct from
+adapter capability. The existing three-component assembly and small single-issue
+code tasks cannot support arbitrary swarm sizes by duplication.
 
-Start validity checks with E1 (transactions) and E2 (software changes), then
-E3 (science) and E5 (scheduling). E4 (legal) and E6 (physical conformance) require
-their respective domain review and source validation. Every family has
-a concrete source/adaptation boundary, disclosure example, executed endpoint
-and restoration packet specified in the catalog. The full roster is a design
-target, not a claim that the backends or case collections already exist.
+Every admitted case records each member's evidence, tools, decision rights and
+dependencies. Check a native coupling witness, a valid coordinated solution,
+nonempty work packages and a connected cross-owner task graph. Reject redundant
+relay roles, unsupported constraints and tasks whose apparent coupling is only
+a final concatenation of independent answers. Preserve legitimate verification,
+repair, negotiation and refusal actions.
 
 Before model collection, verify the source records, annotation rules, native
 tools, state isolation and evidence packets offline. Use more than one plausible
@@ -101,9 +103,50 @@ Report the preflight results rather than silently retaining only cases a tested
 model solves. Independent task admission and model-specific competence are
 separate judgments.
 
+## Swarm-size evaluation
+
+Parameterize size rather than creating a separate hand-written scenario per
+roster. An adapter accepts arbitrary integer sizes above its documented minimum;
+core study admission begins at four members. Role pools may have unequal sizes.
+Validate `4, 8, 16, 32` and an off-grid size such as `7` where the source workload
+supports them. Unsupported sizes remain missing coverage, not fabricated cases.
+
+| Comparison | Held fixed | What changes | Interpretation |
+| --- | --- | --- | --- |
+| Fixed workload | Source task, goals, tools, total compute allowance | Partition of work/evidence/authority across `n` owners | Cost and reliability of organizing the same work across more agents |
+| Growing workload | Task family, target work and compute per owner, registered generation/selection rules | Connected workload and number of owners | Behavior as the whole system grows |
+
+Size changes the allocation of information and responsibilities. Report the
+actual resulting dependency degrees, path lengths, role mix and communication
+opportunities. Preserve native constraints; stratify or match natural graph
+structure rather than rewiring facts. Randomize run order. For fixed-workload
+comparisons, pair sizes by the same source task; do not restrict analysis to
+cases that succeed at every size. Bootstrap source families, keeping all size,
+weight and seed continuations from a family together.
+
+At each size report required-information withholding and protected-information
+leakage with their eligible opportunity denominators; task outcomes in native
+units; completion without either disclosure error; and per-owner distributions.
+Also report message/tool/token cost, wall time and actual completed work. Total
+error counts alone confound size with the number of opportunities.
+
+Register one focal sender, fact, recipient set and dependency before each
+incentive comparison. Estimate focal-omission consequences separately from
+whole-swarm rates. Track first affected action, later affected owners and final
+outcome, using trace evidence to distinguish forwarding from independent
+retrieval. M/P differences estimate total continuation effects; the observed
+path by itself does not prove every intermediate causal link.
+
+Run the primary utility sweep at a fixed admitted size and cohort. Use a
+predeclared subset of reward weights for the size study. A full size-by-weight
+interaction is a separate registered comparison, not an implicit claim from
+separate sweeps. Final size/model/repeat counts depend on offline admission and
+budget; this plan does not authorize paid collection.
+
 ## Stage 2: test the mechanism
 
-Hold the factual state, actor mandates and disclosure duties fixed. Establish
+Hold swarm size, work assignment, topology, factual state, actor mandates and
+disclosure duties fixed. Establish
 sender evidence exposure before random assignment in the controlled study.
 
 1. Cross a feasible incentive contrast with baseline, truth-only and scoped
@@ -171,8 +214,8 @@ The primary sweep uses the fixed baseline instruction. Truthfulness and scoped
 completeness comparisons are prespecified behavioral evaluations, not a search
 for an optimized prompt. They receive separate curves if run.
 
-Start with E5 peer execution, where local workload and team routing outcomes
-can differ. Use E2 as a contrasting developer-reviewer workflow after its
+Start with E5 distributed dispatch, where local workload and team routing outcomes
+can differ. Use E2 as a contrasting software-migration swarm after its
 backend is validated. Preserve the distinction between these interaction
 structures. Other environments enter only with justified payoff anchors;
 separate domain curves do not imply comparable utility scales.
@@ -249,7 +292,7 @@ These are interpretation rules, not fixed significance thresholds. Case counts,
 power, smallest effects of interest and analysis choices are frozen after
 offline task validation and before substantive collection.
 
-The catalog states what each of the six families adds to coverage. Admit
+The catalog states what each family and its focal dependency add to coverage. Admit
 each through the same evidence and execution checks. Publish the implemented
 roster and case counts explicitly; an unfinished environment cannot count as
 an experimental replication.
@@ -268,7 +311,7 @@ The broader program includes:
   involves genuinely disputed disclosure obligations or incomparable interests.
 - Communication protocols, verification rights, incentives or training that
   improve decisions while preserving justified confidentiality.
-- Repeated interactions, coalition behavior and system-wide cooperation.
+- Repeated interactions and endogenous formation or dissolution of coalitions.
 
 These require different evidence and may become separate papers. The first
 paper keeps clear privacy controls but does not promise a general optimal
@@ -279,11 +322,15 @@ disclosure policy or comprehensive coverage of social environments.
 The retained helpers construct restoration metadata and validate references
 between outcomes and tool receipts. They do not verify semantic truth, execute
 native tools, isolate external databases or establish legal/scientific
-correctness. The current restoration helper uses an authenticated reference
-channel; the main ordinary-sender intervention requires a native adapter.
-It requires M/P/F packets and constructs four metadata branches; a future runner
-must select which branches to execute for the O/M/P study and F diagnostics.
-The next engineering work is a selected native adapter, sourced
-cases and independent outcome checks. Earlier observations remain in
+correctness. Named actor registries replace a fixed provider/recipient pair.
+Restoration metadata includes the source, recipient set, route, all participant
+states, message queues and pending operations. Ordinary-sender delivery is the
+default specification; authenticated-reference delivery is an explicit diagnostic.
+Actual delivery, concurrency control and world isolation require native adapters.
+The helper requires M/P/F packets and constructs four metadata branches; the
+runner selects O/M/P for the main study and F for registered diagnostics.
+The next engineering work is the E5 adapter, sourced coupled workloads and
+independent outcome checks. Actor-count tests of the metadata helpers do not
+establish native workload scalability. Earlier observations remain in
 [Takeaways](TAKEAWAYS.md); they motivate the study without standing in for its
 results.

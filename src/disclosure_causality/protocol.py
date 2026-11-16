@@ -11,6 +11,14 @@ def require(condition: bool, message: str) -> None:
         raise ValueError(message)
 
 
+def _actor_ids(value: object, label: str) -> set[str]:
+    require(isinstance(value, (list, tuple)) and bool(value), label + " required")
+    require(all(isinstance(actor, str) and actor.strip() and actor != "environment"
+                for actor in value), label + " must contain named participants")
+    require(len(set(value)) == len(value), label + " must be unique")
+    return set(value)
+
+
 def validate_action_evidence(record: dict) -> None:
     """Validate trace structure, not the semantic correctness of a native oracle.
 
@@ -19,6 +27,9 @@ def validate_action_evidence(record: dict) -> None:
     """
     require(record.get("outcome_basis") == "environment_trace_and_state",
             "a model answer alone is not execution evidence")
+    actors = _actor_ids(record.get("actor_ids"), "actor IDs")
+    decision_actors = _actor_ids(record.get("decision_actor_ids"), "decision actor IDs")
+    require(decision_actors <= actors, "decision actors must be registered participants")
     status = record.get("execution_status")
     require(status in {"completed", "deferred", "exhausted", "failed", "no_action"}, "execution status required")
     for field in ("initial_state_hash", "final_state_hash"):
@@ -31,7 +42,7 @@ def validate_action_evidence(record: dict) -> None:
         identifier = event.get("event_id")
         require(isinstance(identifier, str) and identifier and identifier not in identifiers, "unique event ID required")
         identifiers.add(identifier)
-        require(event.get("actor") in {"provider", "recipient", "environment"}, "event actor required")
+        require(event.get("actor") in actors | {"environment"}, "registered event actor required")
         require(isinstance(event.get("tool"), str) and event["tool"]
                 and isinstance(event.get("arguments"), dict), "executed tool and arguments required")
         require(event.get("effect") in {"observe", "mutate", "execute", "communicate"}, "tool effect required")
@@ -42,9 +53,9 @@ def validate_action_evidence(record: dict) -> None:
         require(re.fullmatch(r"[0-9a-f]{64}", previous) is not None, "post-action snapshot hash required")
     require(previous == record["final_state_hash"], "final snapshot does not match the execution trace")
     if status == "completed":
-        require(any(e["actor"] == "recipient" and e["status"] == "ok"
+        require(any(e["actor"] in decision_actors and e["status"] == "ok"
                     and e["effect"] in {"mutate", "execute"} for e in events),
-                "completion requires an executed recipient operation")
+                "completion requires an executed decision-actor operation")
     checks = record.get("defect_checks")
     require(isinstance(checks, list), "native defect checks required")
     if status == "completed":
@@ -63,28 +74,45 @@ def validate_action_evidence(record: dict) -> None:
 
 
 def restoration_inputs(
-    recipient_state: dict,
+    checkpoint_state: dict,
     packets: Mapping[str, str],
     token_count: Callable[[str], int],
+    *,
+    source_actor: str,
+    recipient_actor_ids: list[str] | tuple[str, ...],
+    channel: str = "ordinary_sender",
 ) -> dict[str, dict]:
     """Clone checkpoint metadata; only the initial evidence payload may change.
 
     Arm labels belong to the return keys (audit metadata), never actor inputs.
-    The caller must establish minimality/placebo irrelevance and separately fork
-    mutable files and native tool state. Later agent actions may change each branch.
+    The caller must establish minimality, placebo irrelevance and authorization,
+    fork native tool state, and deliver the update on the specified route. This
+    helper copies metadata; it does not deliver messages or execute a swarm.
     """
-    require("evidence_update" not in recipient_state, "state already has an intervention")
+    require("evidence_update" not in checkpoint_state, "state already has an intervention")
     require(set(packets) == {"M", "P", "F"}, "reviewed M/P/F packets required")
     require(all(isinstance(value, str) and value.strip() for value in packets.values()), "empty evidence packet")
     require(packets["M"] != packets["P"], "target and placebo cannot be identical")
     for field in ("history", "task", "work_product", "environment_state", "participant_states",
-                  "exogenous_state", "actions", "tools", "source_access", "budget"):
-        require(field in recipient_state, "frozen recipient state missing " + field)
+                  "message_queues", "pending_operations", "exogenous_state",
+                  "actions", "tools", "source_access", "budget"):
+        require(field in checkpoint_state, "frozen checkpoint missing " + field)
+    participants = checkpoint_state["participant_states"]
+    require(isinstance(participants, dict), "participant states must be an actor registry")
+    actors = _actor_ids(list(participants), "checkpoint actor IDs")
+    recipients = _actor_ids(recipient_actor_ids, "recipient actor IDs")
+    require(source_actor in actors, "source actor must be a registered participant")
+    require(recipients <= actors, "recipients must be registered participants")
+    require(source_actor not in recipients, "source must differ from update recipients")
+    require(channel in {"ordinary_sender", "authenticated_reference_update"},
+            "supported evidence channel required")
     branches = {}
     for arm, payload in {"O": "", **packets}.items():
-        branch = deepcopy(recipient_state)
+        branch = deepcopy(checkpoint_state)
         branch["evidence_update"] = {
-            "channel": "authenticated_reference_update",
+            "channel": channel,
+            "source_actor": source_actor,
+            "recipient_actor_ids": list(recipient_actor_ids),
             "content": payload,
         }
         branches[arm] = branch

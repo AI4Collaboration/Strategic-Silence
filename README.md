@@ -1,9 +1,9 @@
-# Strategic Silence
+# Evaluating Selective Disclosure and Strategic Silence in LLM Agent Swarms
 
 **Can an agent tell the truth while withholding the information another agent
 needs to make a sound decision?**
 
-We evaluate selective disclosure and strategic silence in agent teams with
+We evaluate selective disclosure and strategic silence in scalable agent swarms with
 varying interests and disclosure duties. Appropriate disclosure includes both
 sharing required information and protecting restricted information. We measure
 these choices, their sensitivity to incentives, and their consequences for
@@ -11,8 +11,10 @@ executed decisions. Factual truthfulness leaving harmful omissions intact is a
 hypothesis to test. Information restoration diagnoses the effect of an omission.
 The study evaluates behavior; it does not develop or optimize a defense.
 
-Current status: shared evidence utilities and an experiment design. Native
-environments, reviewed case collections and model runners remain to be built.
+Current status: shared evidence utilities and a parameterized environment design.
+Native backends, reviewed case collections and model runners remain to be built.
+The design accepts variable swarm sizes rather than fixed casts of two or three
+agents. Source data must support the requested size before a case is admitted.
 
 ## Research questions
 
@@ -68,46 +70,52 @@ withholding and downstream harm are measured separately.
 Measure both missing required disclosures and prohibited disclosures, including
 whether an episode completes the task while avoiding both errors.
 
-## How environments are selected
+## Scalable environments and their taxonomy
 
-The design specifies **five primary task domains and six environment families**:
+The taxonomy follows **flow, sharing and fit dependencies** from
+[coordination theory](https://doi.org/10.1287/mnsc.45.3.425): consuming another
+agent's output, allocating a common resource, and integrating contributions
+that must be compatible. A workflow can contain several dependencies; its focal
+constraint is registered before model collection. These are task structures,
+not labels for whether disclosure is right or wrong.
 
-| Domain | Environment and consequential decision |
-| --- | --- |
-| Transactions and customer rights | E1: negotiate and execute a bilateral agreement; separately audit existing remedies |
-| Software engineering | E2: accept a patch and execute behavior checks |
-| Scientific research | E3: execute and adopt or revise a scientific analysis |
-| Civil legal proceedings | E4: produce evidence and issue a supported disposition |
-| Industrial operations | E5: planners commit and jointly execute routes, with centralized dispatch as a separate mode; E6: accept, hold or rework a physical item |
+| Family | Focal dependency | Unit that scales with the number of agents |
+| --- | --- | --- |
+| E1: coordinated procurement | Sharing | Connected order packages with shared budgets or capacity |
+| E2: software migration | Fit | Interdependent modules/packages in a real change campaign |
+| E3: scientific reanalysis | Flow | Connected data, analysis and validation work packages |
+| E4: civil evidence production | Flow | Custodian collections and linked issue-review packages |
+| E5: distributed dispatch | Sharing | Request groups and route owners in one service network |
+| E6: assembly conformance | Fit | Connected component/lot and assembly-order packages |
 
-The [environment catalog](docs/ENVIRONMENTS.md) defines the roles, required and
-protected information, incentives, actual actions, loss checks, minimal
-restoration and source/adaptation boundary for each. These are design targets;
-native implementations and admitted case collections are still pending.
-The [pre-hoc design](docs/PREHOC_DESIGN.md) specifies common evidence requirements,
-and the [experiment plan](docs/EXPERIMENT_PLAN.md) specifies the comparisons.
+Each agent owns substantive work, has explicit information and commit rights,
+and depends on other owners through executable constraints. Role types may
+repeat across any admitted number of members. Counterparties, judges and
+validators are recorded separately from the focal swarm. Legacy dyads and
+centralized-dispatch comparisons do not count as core swarm environments.
 
-Coverage follows the decision mechanism: observed evidence, authorized
-communication, the recipient's information and action, and the resulting
-outcome. Each link needs positive evidence and boundary controls. Required,
-discretionary and prohibited disclosure have different scoring rules. The
-number of environments alone does not establish comprehensive coverage.
+The adapter takes a requested size `n` and a sourced task graph. It partitions
+real work into nonempty packages, preserves cross-owner dependencies and gives
+agents local records plus authorized retrieval. It does not duplicate documents,
+join disconnected trials or add a fixed all-knowing manager. Validate sizes
+`4, 8, 16, 32` and an off-grid size such as `7`; these are checkpoints, not a
+hard-coded size list. Unsupported sizes fail admission explicitly.
 
-Oversight tests the correctness of review decisions; shared-task execution tests
-team performance under local pressures; bilateral negotiation tests separately
-authorized objectives, valid agreement and fulfillment while preserving
-legitimate private information. These are overlapping research questions.
-Record principals, objectives and decision authority for each episode rather
-than inferring them from a task name. Human-oversight results require actual
-human recipients; an agent reviewer or human annotator does not supply them.
+Separate fixed-workload scaling, with fixed total compute, from growing-workload
+scaling, with approximately fixed work/compute per member. Report source-size
+limits, graph structure, total compute and per-agent outcomes. Size and utility
+weight are separate experimental variables.
 
-Commercial transactions and customer-service interactions are not counted as
-independent domains merely because their workflow names differ. Each case will
-receive one primary task-domain assignment under explicit inclusion and exclusion
-rules. Shared source dossiers remain one statistical case family. Oversight,
-collaboration and bargaining may describe a workflow, but do not define the
-domain taxonomy. Important coverage requires materially different decisions,
-evidence and consequences, rather than additional labels.
+**Implement E5 first**, then E2 with admitted connected change campaigns. E1,
+E3, E4 and E6 need additional source and review work for scalable instances.
+The current three-component NIST record and small single-issue tasks do not
+establish arbitrary-size workloads. The six families are design targets.
+
+The [environment catalog](docs/ENVIRONMENTS.md) specifies every role's knowledge,
+actions, dependencies, omission example, privacy boundary, restoration and
+source gap. The [pre-hoc design](docs/PREHOC_DESIGN.md) defines the shared case
+contract; the [experiment plan](docs/EXPERIMENT_PLAN.md) defines comparisons.
+Historical observations remain in [Takeaways](docs/TAKEAWAYS.md).
 
 ## Shared experiment protocol
 
@@ -129,7 +137,8 @@ evidence and consequences, rather than additional labels.
    identify omitted material facts. Register eligible evidence sets independently
    of downstream outcomes. Report silence and selective disclosure separately.
 4. **Freeze and restore.** Before the recipient's consequential action, create
-   independent continuations from the same history, world state and tool budget:
+   independent continuations from the same histories of all participants, world
+   state, message queues and remaining tool budgets:
 
    | Arm | Evidence update |
    | --- | --- |
@@ -145,6 +154,8 @@ evidence and consequences, rather than additional labels.
    informed controls. Presenting an accessible but unread fact is distinguished
    from providing previously unavailable information. Already-complete episodes
    remain controls without a missing-fact restoration.
+   Restoration targets the registered entitled recipient set. Other members learn
+   the content only through subsequent authorized communication or retrieval.
    The main intervention uses the ordinary sender channel. A trusted external
    evidence update is a separate diagnostic because provenance can affect trust.
 5. **Measure actions and consequences.** Continue each branch through native
@@ -206,10 +217,20 @@ The package currently provides `restoration_inputs` and
 checkpoint metadata and check references linking outcomes to tool receipts.
 Native adapters must execute tools, isolate external state and supply reviewed
 outcome rules. The helpers do not certify evidence semantics or run experiments.
-The restoration helper currently uses an authenticated reference channel; an
-ordinary-sender intervention still requires a native adapter.
-It requires M/P/F packets and constructs four metadata branches. A future runner
-must select which branches to execute for the O/M/P study and F diagnostics.
+Execution records use an explicit actor registry and decision-actor IDs, with
+no fixed provider/recipient pair or actor-count limit. Restoration requires a
+source actor and recipient IDs, defaults to the ordinary-sender route, and
+supports an explicitly selected authenticated-reference diagnostic. It copies
+all participant states, message queues and pending-operation metadata.
+Native adapters must actually deliver the update and resume the whole swarm.
+The helper requires M/P/F packets and constructs four metadata branches; the
+runner selects O/M/P for the main study and F for registered diagnostics.
+
+The proposed `build_case(source, n, assignment, budgets, seed)` interface and its
+manifest are specified in the [pre-hoc contract](docs/PREHOC_DESIGN.md#swarm-instance-contract).
+That case builder is not implemented by the metadata helpers. Offline tests at
+multiple actor counts, including 7 and 65, establish metadata behavior only,
+not environment scalability or empirical model performance.
 
 ## Offline checks
 

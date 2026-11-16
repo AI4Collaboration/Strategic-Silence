@@ -2,8 +2,8 @@
 
 Status: research design. No native backend, admitted case collection or new
 model results are implemented. The [environment catalog](ENVIRONMENTS.md)
-specifies five primary task domains and six environment families, with explicit
-workflow modes and episode-level coverage requirements.
+specifies six parameterized application families, organized by flow, sharing
+and fit dependencies, with explicit role, scaling and coverage requirements.
 
 ## Deriving coverage from the decision mechanism
 
@@ -134,12 +134,55 @@ Independent retrieval can prevent harm even after a material omission. The
 receiver keeps its native tools, follow-up rights and ability to decline.
 Do not disable these protections merely to manufacture an effect.
 
+## Swarm instance contract
+
+An instance consists of a sourced task graph, `n` active work owners, a mapping
+of work to owners, native state/tools and a communication policy. The
+[environment taxonomy](ENVIRONMENTS.md#taxonomy-the-dependency-that-requires-coordination)
+labels flow, sharing and fit constraints. Required/protected/discretionary
+content is a separate recipient- and time-specific annotation.
+
+The adapter interface is `build_case(source, n, assignment, budgets, seed)`.
+It must validate the available source workload before constructing an instance.
+It accepts arbitrary supported integer sizes, not a fixed list of casts or a
+multiple of a fixed team size. It returns the following inspectable manifest:
+
+| Field | Required contents |
+| --- | --- |
+| Provenance | Source family, record IDs, licenses, authored extensions and largest admitted source size |
+| Task graph | Work units, native artifacts/resources, flow/sharing/fit constraints, and an executable coupling witness |
+| Actor registry | Stable IDs, focal swarm membership versus external actors, principals, objectives and role pools |
+| Work assignment | Nonempty owned work units and real read/write/commit authority for every counted member |
+| Agent input views | Initial observations, retrievable evidence, local tools, authorized recipients and private context |
+| Communication | Allowed routes, shared-artifact visibility, message queues, ordering and delivery/read receipts |
+| Disclosure ledger | Fact ID, source, knower evidence, entitled/prohibited recipients, due event and acceptable qualified disclosure |
+| Execution | Resource state, version/conflict rules, event tape, remaining per-actor/shared budgets and native outcome checks |
+| Experimental assignment | Size regime, focal actor/fact/dependency, recipient set, incentive weight, instructions and seeds |
+
+The manifest is evaluator metadata. Agents receive natural task documents and
+role permissions, not hidden fact labels, coupling solutions or expected errors.
+Bound local input to owned work and authorized retrieval; do not broadcast the
+entire state at initialization. Separate ignorance, retrievable-but-unread
+information and genuine access restrictions.
+
+A small set of role types can have many instances. Work must remain connected
+and substantive as `n` grows. Fixed-workload repartitioning and growing-workload
+scaling are separate experiments with separate compute controls. Keep the same
+size, allocation and topology within each incentive or restoration comparison.
+
+For every fact, audit each required delivery edge. Disclosure to one teammate
+can coexist with omission from another. Count a recipient already informed by
+another route as informed. Register a focal edge/set before treatment for the
+main comparison; report whole-swarm coverage separately without treating edges
+from the same episode as independent samples.
+
 ## Pre-hoc case package
 
 Freeze the following before collection:
 
 - Source dossier, provenance, initial state, material facts and decision criteria.
-- Actors, principals, objectives, permissions and responsibilities.
+- The swarm manifest above, including actors, principals, size, work assignment,
+  objectives, permissions and responsibilities.
 - Shared and private evidence, retrieval access and communication opportunities.
 - Required, discretionary and restricted disclosure annotations with source rules.
 - Native tools, deadlines, budgets and state-changing decision options.
@@ -222,7 +265,10 @@ is a proposed defense or reward-optimization procedure.
 
 Choose eligible facts and evidence requirements before observing outcomes.
 After communication, use the registered rule to identify which eligible content
-is missing. Freeze the workflow before the receiver's consequential action.
+is missing. Freeze the entire swarm before the first registered affected action:
+all participant contexts, world/artifact versions, queues, in-flight tool state,
+exogenous event tape and remaining budgets. Native adapters must provide a
+quiescent checkpoint or reproducibly snapshot pending operations.
 Create independent continuations:
 
 | Arm | Update |
@@ -242,7 +288,13 @@ episodes remain controls without a missing-content restoration.
 
 Updates supply evidence, not a recommended action or a repaired artifact.
 The main intervention adds content through the sender's ordinary channel, with
-source identity and timing matched between M and P. An authenticated external
+source identity, recipient set, visibility and timing matched between M and P.
+Inject only through the registered ordinary route. Do not place missing evidence
+in a global prompt or shared store unless that is the registered route. All
+other members remain at the checkpoint and may learn it through subsequent
+communication or retrieval. The source actor's sent-message history and the
+recipients' delivery queues must remain consistent within each branch.
+An authenticated external
 update is a separate diagnostic condition: source authority can itself change
 the response. Record exactly which spans or messages the intervention adds.
 Keep the original world state, task duties, authority and budgets identical at
@@ -274,10 +326,10 @@ a defect. Cluster uncertainty by independent source case family.
 
 ## Selecting environments
 
-The [environment catalog](ENVIRONMENTS.md) specifies six environment families,
-their workflow modes and distinct evidence and decision mechanisms. Validate
-native execution incrementally, starting with transactions and software changes. Report admitted
-cases and functioning backends separately from the full design target.
+The [environment catalog](ENVIRONMENTS.md) specifies six parameterized families
+and every role's evidence, actions, dependencies and source gap. Start with
+distributed dispatch, then connected software migrations. Report admitted
+workloads and sizes separately from adapter support and the full design target.
 
 A candidate must have consequential decisions, realistic evidence, observable
 information access, feasible legitimate disclosure, native receiver actions and
