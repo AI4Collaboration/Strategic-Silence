@@ -19,7 +19,7 @@ def expense_record(world, actor):
         "Internal migration team | prepaid; no incremental invoice | none | none\n"
         f"Contractor migration | USD 600 | {actor} | {contractor_source}\n"
         f"Acceptance confirmation | USD 300 | {actor} | project purchasing authority\n"
-        f"Changed or new acceptance booking | USD 25 additional | {actor} | project purchasing authority\n"
+        f"Confirmation at a changed or newly booked slot | USD 25 additional | {actor} | project purchasing authority\n"
         f"Late migration credit to client | USD 100 per late hour | {credit_account} | contractual liability; no purchasing-authority debit\n"
         f"Missed, canceled or unfunded acceptance credit to client | USD 400 | {actor} | contractual liability; no purchasing-authority debit\n"
         f"Late completed acceptance credit to client | USD 10 per late hour | {actor} | contractual liability; no purchasing-authority debit\n"

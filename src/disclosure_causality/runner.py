@@ -36,9 +36,6 @@ def workspace(run, actor):
         return run["world"]["projects"][actor]["files"].copy()
     files = {f"clients/{name}/contract.txt": p["files"]["client/brief.txt"]
              for name, p in run["world"]["projects"].items()}
-    if run["world"].get("protocol", 1) >= 9:
-        from .appointments import expense_record
-        files["finance/cost-allocation.txt"] = expense_record(run["world"], "serviced project's cost center")
     for m in run["messages"]:
         if m["recipient"] == "scheduler":
             for path, content in m["attachments"].items():
@@ -137,6 +134,9 @@ def packet(run, actor):
             "scope": "This window is a new work package. Its work records, registered schedule and charges belong to this window. Previous completed windows are included below.",
             "completed_windows": run["config"]["history"][actor],
         }
+    if world.get("protocol", 1) >= 9:
+        from .appointments import expense_record
+        result["finance_record"] = expense_record(world, "serviced project's cost center" if actor == "scheduler" else actor)
     return result
 
 

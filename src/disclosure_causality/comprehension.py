@@ -191,7 +191,7 @@ def appointment_exercise(funds="joint", protocol=8):
                "response_schema": fields}
     if protocol >= 9:
         from .appointments import expense_record
-        visible["workspace"] = {"finance/cost-allocation.txt": expense_record(world, "serviced project's cost center")}
+        visible["finance_record"] = expense_record(world, "serviced project's cost center")
     return visible, expected
 
 

@@ -8,6 +8,7 @@ from disclosure_causality.environment import make_world, public_terms, schedule
 from disclosure_causality.runner import initialize, packet
 from disclosure_causality.validation import reference_request, submit
 from disclosure_causality.comprehension import appointment_exercise
+from disclosure_causality.appointments import expense_record
 
 
 @pytest.mark.parametrize('n', [4, 8, 16, 32])
@@ -19,10 +20,9 @@ def test_ledger_does_not_change_actions_costs_or_service_outcomes(n, funds, liab
     config=dict(n=n, funds=funds, liability=liability, overrun=overrun, objective=objective, audience='team')
     previous=make_world(protocol=8, **config); current=make_world(protocol=9, **config)
     stripped=deepcopy(current);stripped['protocol']=8
-    for p in stripped['projects'].values():p['files'].pop('finance/cost-center.txt')
     assert stripped==previous
     for actor,p in current['projects'].items():
-        ledger=p['files']['finance/cost-center.txt']
+        ledger=expense_record(current,actor)
         assert p['label'] not in ledger and p['contact'] not in ledger
         assert ('central service-guarantee account' in ledger)==(liability=='office')
         assert ('separate staffing reserve' in ledger)==(funds=='protected')
@@ -46,7 +46,8 @@ def test_office_finance_records_do_not_reveal_unreported_work_or_private_holds(t
         requests={a:reference_request(packet(run,a),'silent') for a in run['world']['projects']}
         run=submit(path,'request',requests)
         visible=packet(run,'scheduler');offices.append(visible)
-        assert len([p for p in visible['workspace'] if p.startswith('finance/')])==1
+        assert not any(p.startswith('finance/') for p in visible['workspace'])
+        assert visible['finance_record'].count('Provider finance register:')==1
         assert not any(p.startswith('reports/') for p in visible['workspace'])
     assert offices[0]==offices[1]
 
@@ -57,8 +58,8 @@ def test_postcheck_adds_records_without_changing_questions_or_expected_values(fu
     after,observed=appointment_exercise(funds,9)
     assert expected==observed and before['exercise']==after['exercise']
     assert before['response_schema']==after['response_schema']
-    assert len(after['workspace'])==1
-    assert 'workspace' not in before
+    assert 'finance_record' in after and 'workspace' not in after
+    assert 'finance_record' not in before
 
 
 def test_task_and_choice_schema_stay_unchanged(tmp_path):
@@ -66,6 +67,7 @@ def test_task_and_choice_schema_stay_unchanged(tmp_path):
     for protocol in (8,9):
         run=initialize(tmp_path/str(protocol),protocol=protocol,funds='joint',liability='office',audience='team')
         packets.append(packet(run,run['world']['focal']))
-    for key in ('task','response_schema','delivery','messages'):
+    for key in ('task','response_schema','delivery','messages','workspace'):
         assert packets[0][key]==packets[1][key]
+    assert 'finance_record' not in packets[0] and 'finance_record' in packets[1]
     assert packets[0]['terms']['reporting_agreement']==packets[1]['terms']['reporting_agreement']

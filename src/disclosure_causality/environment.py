@@ -54,10 +54,6 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
         world["funds"] = funds
     if protocol >= 6:
         world["audience"] = audience
-    if protocol >= 9:
-        from .appointments import expense_record
-        for name, project in projects.items():
-            project["files"]["finance/cost-center.txt"] = expense_record(world, name)
     return world
 
 
