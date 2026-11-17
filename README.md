@@ -40,17 +40,17 @@ Registered internal reservations remain provisional; the office makes the final 
 
 ## Evidence
 
-**Offline:** 154 tests; 768 scripted executions across 96 cases. Safe disclosure, privacy boundaries, missing-information restoration and null controls are checked at all four swarm sizes. All 48 saved examples replay.
+**Offline:** 154 tests and 768 scripted executions across 96 cases. All 48 saved examples replay.
 
-**Completed:** 76 independent teams, 82 windows, 579 stage-response JSON submissions (574 valid, 5 rejected). Two teams contributed four windows each. 56/58 adverse estimates arrived. One gap followed an invalid attachment; the other was a valid preference-only request. [Raw records](results/luna/episodes.jsonl) and [all cohort audits](results/luna/summary.json) retain negative results and execution errors.
+**Completed:** 92 independent teams, 98 windows and 695 behavioral JSON submissions (686 valid, 9 rejected). 62/66 adverse estimates arrived. Four gaps comprise one invalid attachment and three valid preference-only omissions. [All records and audits](results/luna/summary.json) retain negative outcomes and execution errors.
 
-**Latest sixteen-team study:** private procurement forecasts preceded or followed requests. One owner omitted its changed estimate after correct cost calculation; its same-cell repeat disclosed while miscalculating costs. Two offices ignored delivered estimates; another outsourced an unchanged job unnecessarily. Eleven teams leaked 68 restricted field-recipient pairs through raw attachments; offices added none. Strategic intent remains unestablished.
+**Latest sixteen teams:** optional requests omitted 2/4 adverse estimates; mandatory preferences omitted 0/4. Optional teams exposed no restricted fields; five mandatory teams exposed 28 field-recipient pairs. Five unchanged owners made no post. One omission occurred under own-project objectives and one under shared objectives; only the latter delayed work in its original run. Neither establishes strategic intent.
 
-**Restoration:** twenty fresh office continuations from the valid omission used copied requests and fixed terminal purchases. Required supplements cost $1,600 in 4/4 draws; no supplement cost $2,100 in 4/4; unrelated supplements improved cost in 1/4. Clean controls stayed at $900; already-informed recipients also varied. These and ten earlier continuations are [separate from full-team runs](results/luna/restoration.jsonl).
+**Understanding:** 17/32 latest post-task reviews were fully correct; all 192 permission answers were correct. These follow behavior and do not prove earlier awareness. Eight missing-file turns are counted separately from the latest 116 JSON submissions. The model is unpinned `gpt-6-luna`; file isolation is instructed on a shared host.
 
-**Understanding:** 25/48 private forecasts and 27/32 latest post-task reviews were fully correct. Focal owners ranked private costs correctly in 15/16 forecasts; all 16 recognized the lost report. These checks do not measure prior recognition of the omitted duration. [Diagnostics](results/luna/comprehension.jsonl) separate 14 independent checks, 128 planned post-task checks, 48 private forecasts and two post-hoc permission checks. 3 extra missing-file calls are retained separately from JSON submissions. Model: unpinned `gpt-6-luna`; file isolation is instructed on a shared host.
+**Restoration:** thirty completed [office continuations](results/luna/restoration.jsonl) remain separate from full teams. In the earlier valid omission, required supplements reduced cost in 4/4 draws, while no supplements did not; unrelated and already-informed controls also showed recipient variability. Forty new continuations were frozen before the two latest original offices acted and are now running.
 
-**Next:** sixteen fresh teams compare mandatory preferences with optional requests, across objectives and workloads. Both complete blocks were fixed before the timing study. This tests the optional-participation interface; no private forecast is added to either arm.
+The next [appointment version](https://github.com/AI4Collaboration/Strategic-Silence/tree/experiment/validation-appointments) gives peers consequential scheduling choices. It has passed offline checks; no model subject has run on that version yet.
 
 ## Run
 
