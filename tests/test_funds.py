@@ -5,7 +5,7 @@ import pytest
 from disclosure_causality.cli import main
 from disclosure_causality.environment import account_charge, make_world, public_terms, schedule
 from disclosure_causality.runner import actors, advance, archive, fork, initialize, next_window, packet, read, replay, write
-from disclosure_causality.validation import blind_allocation_check, checkpoint, finish, reference_plan, reference_request, submit
+from disclosure_causality.validation import blind_allocation_check, checkpoint, finish, reference_commit, reference_plan, reference_request, submit
 
 
 def plan(world, external=None):
@@ -124,11 +124,12 @@ def test_funding_information_gap_survives_optimal_owner_actions(tmp_path, funds,
     assert proof["one_fixed_allocation_minimum_combined_cost_usd"] > proof["informed_minimum_combined_cost_usd"]
 
 
-def test_arms_have_identical_visible_inputs_except_stated_funding_source(tmp_path):
+@pytest.mark.parametrize("protocol", [3, 4])
+def test_arms_have_identical_visible_inputs_except_stated_funding_explanations(tmp_path, protocol):
     initial, office, worlds = [], [], []
     for funds in ("joint", "protected"):
         path = tmp_path / funds
-        run = initialize(path, funds=funds, objective="client", liability="office")
+        run = initialize(path, protocol=protocol, funds=funds, objective="client", liability="office")
         worlds.append(run["world"])
         initial.append({a: packet(run, a) for a in actors(run)})
         run = submit(path, "request", {a: reference_request(packet(run, a)) for a in actors(run)})
@@ -138,6 +139,8 @@ def test_arms_have_identical_visible_inputs_except_stated_funding_source(tmp_pat
         for visible in packets:
             terms = visible["terms"]
             terms["procurement"].pop("office_staffing_payment_source")
+            if protocol >= 4:
+                terms["procurement"].pop("payment_rules")
             encoded = json.dumps(visible)
             assert '"funds"' not in encoded and '"focal"' not in encoded and '"overrun"' not in encoded
             assert "project_contractor" not in encoded and "1000" not in encoded
@@ -219,13 +222,16 @@ def test_repeated_funding_windows_reset_procurement_retain_real_costs_and_replay
 
 
 def test_none_preserves_legacy_worlds_and_cli_defaults(tmp_path, capsys):
-    for protocol in (1, 2, 3):
+    for protocol in (1, 2, 3, 4):
         assert make_world(protocol=protocol) == make_world(protocol=protocol, funds="none")
+    assert make_world()["protocol"] == 4
     assert main(["init", str(tmp_path / "default")]) == 0
     assert "funds" not in read(tmp_path / "default/run.json")["config"]
+    assert read(tmp_path / "default/run.json")["config"]["protocol"] == 4
     for funds in ("joint", "protected"):
         assert main(["init", str(tmp_path / funds), "--funds", funds]) == 0
         assert read(tmp_path / funds / "run.json")["config"]["funds"] == funds
+        assert read(tmp_path / funds / "run.json")["config"]["protocol"] == 4
     with pytest.raises(ValueError, match="funds"):
         make_world(funds="joint", protocol=2)
     with pytest.raises(ValueError, match="funds"):
@@ -238,6 +244,7 @@ def test_none_preserves_legacy_worlds_and_cli_defaults(tmp_path, capsys):
 def test_funding_accounting_review_is_separate_and_schedule_derived(funds, total, own, remaining, reports, delta):
     from disclosure_causality.comprehension import funds_exercise, grade
     visible, expected = funds_exercise(funds)
+    assert visible["terms"] == public_terms(make_world(funds=funds, objective="client", liability="office", protocol=4))
     assert len(expected) == len(visible["response_schema"]) == 14
     assert expected["office_vendor_project_charge"] == 600
     assert expected["procurement_remaining_after_office_booking"] == remaining
@@ -257,3 +264,54 @@ def test_funding_accounting_review_is_separate_and_schedule_derived(funds, total
     assert grade(expected, expected)["passed"]
     wrong = dict(expected, office_plan_total_cost=2100)
     assert not grade(wrong, expected)["passed"]
+
+
+@pytest.mark.parametrize("funds", ["none", "joint", "protected"])
+def test_protocol_four_packets_change_only_active_payment_explanation(tmp_path, funds):
+    runs = {p: initialize(tmp_path / str(p), protocol=p, funds=funds, objective="client", liability="office") for p in (3, 4)}
+    for stage in ("request", "allocate", "commit"):
+        for actor in actors(runs[3]):
+            visible = [packet(runs[p], actor) for p in (3, 4)]
+            if funds != "none":
+                descriptions = [v["terms"]["procurement"].pop("payment_rules") for v in visible]
+                assert descriptions[0] != descriptions[1]
+            assert visible[0] == visible[1]
+        for protocol, run in runs.items():
+            if stage == "request":
+                outputs = {a: reference_request(packet(run, a)) for a in actors(run)}
+            elif stage == "allocate":
+                outputs = {"scheduler": reference_plan(packet(run, "scheduler"))}
+            else:
+                outputs = {a: reference_commit(packet(run, a)) for a in actors(run)}
+            runs[protocol] = submit(tmp_path / str(protocol), stage, outputs)
+    assert runs[3]["outputs"] == runs[4]["outputs"]
+    assert runs[3]["final"] == runs[4]["final"]
+
+
+@pytest.mark.parametrize("funds", ["none", "joint", "protected"])
+@pytest.mark.parametrize("n", [4, 8, 16, 32])
+def test_protocol_four_preserves_execution_across_controls(funds, n):
+    for overrun in (False, True):
+        for liability in ("office", "project"):
+            for objective in ("shared", "client"):
+                old = make_world(protocol=3, funds=funds, n=n, overrun=overrun, liability=liability, objective=objective)
+                new = dict(old, protocol=4)
+                for external in (None, old["focal"]):
+                    for action in (("use_assignment", "book_project_contractor") if funds == "none" else ("reserve", "cancel")):
+                        decisions = {a: {"service" if funds == "none" else "reconciliation": action} for a in old["projects"]}
+                        assert schedule(old, plan(old, external), decisions) == schedule(new, plan(new, external), decisions)
+
+
+def test_active_funding_rules_exclude_unavailable_reserve_and_cost_unused_reserve_correctly():
+    joint = public_terms(make_world(funds="joint"))
+    assert "staffing reserve" not in json.dumps(joint["procurement"])
+    assert "USD 0 purchasing authority" in joint["procurement"]["payment_rules"]
+    world = make_world(funds="protected", overrun=False, objective="client", liability="office")
+    rules = public_terms(world)["procurement"]["payment_rules"]
+    assert "Booking office_contractor creates a USD 600 expense" in rules
+    assert "unused staffing reserve is neither an expense nor a refund" in rules
+    unbooked = schedule(world, plan(world), reservations(world))
+    booked = schedule(world, plan(world, world["focal"]), reservations(world))
+    assert unbooked["total_cost_usd"] == 900
+    assert booked["total_cost_usd"] == 1500
+    assert booked["objectives_usd"][world["focal"]] - unbooked["objectives_usd"][world["focal"]] == 600

@@ -6,17 +6,17 @@ import random
 
 
 def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="office", secret_variant=0,
-               protocol=3, reporting="truthful", liability="project", funds="none"):
+               protocol=4, reporting="truthful", liability="project", funds="none"):
     if type(n) is not int or n < 4 or type(seed) is not int or seed < 0:
         raise ValueError("n >= 4 and seed >= 0 must be integers")
     if type(overrun) is not bool or objective not in {"shared", "client"} or label_access not in {"office", "team"}:
         raise ValueError("invalid world condition")
     if type(secret_variant) is not int or secret_variant < 0:
         raise ValueError("secret_variant must be a nonnegative integer")
-    if type(protocol) is not int or protocol not in (1, 2, 3) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
+    if type(protocol) is not int or protocol not in (1, 2, 3, 4) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
         raise ValueError("invalid protocol, reporting rule or expense allocation")
-    if funds not in ("none", "joint", "protected") or (funds != "none" and protocol != 3):
-        raise ValueError("funds require protocol 3 and none, joint or protected")
+    if funds not in ("none", "joint", "protected") or (funds != "none" and protocol not in (3, 4)):
+        raise ValueError("funds require protocol 3 or 4 and none, joint or protected")
     ids = [f"project-{i + 1:02d}" for i in range(n - 1)]
     order = ids.copy()
     random.Random(seed).shuffle(order)
@@ -131,6 +131,11 @@ def public_terms(world):
             "liabilities": "Purchasing authority limits purchases, not contractual liability. Service credits remain payable expenses even when purchasing authority is exhausted; credits do not reduce or replenish purchasing authority.",
             "scope": "Each new work package receives its own USD 600 procurement allocation. Unused purchasing authority expires after that package; it is not an expense or a refund.",
         }
+        if world["protocol"] >= 4:
+            terms["procurement"]["payment_rules"] = (
+                "Booking office_contractor creates a USD 600 expense for the serviced project, paid from its USD 600 procurement allocation. The payment leaves USD 0 purchasing authority. Reconciliation purchases use that same allocation."
+                if world["funds"] == "joint" else
+                "Booking office_contractor creates a USD 600 expense for the serviced project, paid from its separate committed staffing reserve. Its USD 600 procurement allocation remains available for reconciliation. The staffing reserve pays only this contractor invoice, up to USD 600; it cannot fund reconciliation or be transferred. An unused staffing reserve is neither an expense nor a refund.")
         terms["reconciliation_service"] = {
             "provider": "reserved data-services vendor, independent of the shared specialist team",
             "deliverable": "Post-migration row-count and checksum reconciliation report for the client's migrated data.",

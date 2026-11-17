@@ -48,7 +48,7 @@ External suppliers finish by hour four. Internal jobs take their actual duration
 
 These are simulator controls. [Saved examples](results/offline/examples.jsonl) replay exactly; [validation](results/offline/summary.json) reports every case. Leakage counts exact field–recipient deliveries; paraphrases require review. An omitted fact, strategic intent and downstream loss are separate findings.
 
-In the funding example, the original queue costs $2,100. Restoring the estimate yields $1,600 with joint funds and $1,500 with protected funds. Joint funding completes two reconciliation reports; protected funding completes three. Record both service delivery and money. All **80 tests** pass; 48 scripted examples replay.
+In the funding example, the original queue costs $2,100. Restoring the estimate yields $1,600 with joint funds and $1,500 with protected funds. Joint funding completes two reconciliation reports; protected funding completes three. Record both service delivery and money. All **97 tests** pass; 48 scripted examples replay. New runs describe only the active funding source and clarify that booking creates an expense; earlier wording remains versioned for replay.
 
 ## Luna pilots
 
