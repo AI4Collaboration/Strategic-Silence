@@ -52,7 +52,7 @@ The latest 16-team comparison removed only “and any supporting update,” cros
 
 [Diagnostics](results/luna/comprehension.jsonl) include 14 independent checks and 64 post-task checks; 60/64 post-task checks answered all 14 questions correctly. They follow terminal actions and do not establish prior intent. Model: unpinned `gpt-6-luna`; file isolation is instructed on a shared host. Leakage counts exact field–recipient pairs; semantic paraphrases require review.
 
-**Running:** eight fresh teams compare private/shared audiences, client/shared objectives and client-label authorization within protocol 6. Report owner broadcasts separately from office forwarding, and first-attempt validity separately from corrected delivery. Each cell is exploratory; candidate behaviors require fresh replication.
+**Running:** eight fresh teams compare private/shared audiences, client/shared objectives and client-label authorization within protocol 6. Report owner broadcasts separately from office forwarding, and first-attempt validity separately from corrected delivery. A second eight-team cohort repeats every cell regardless of outcome, with audience order balanced within matched pairs. Both plans are saved in the audit before that replication starts.
 
 ## Run
 
