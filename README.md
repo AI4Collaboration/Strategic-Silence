@@ -48,7 +48,7 @@ Registered internal reservations remain provisional; the office makes the final 
 
 **Understanding:** 17/32 latest post-task reviews were fully correct; all 192 permission answers were correct. These follow behavior and do not prove earlier awareness. Eight missing-file turns are counted separately from the latest 116 JSON submissions. The model is unpinned `gpt-6-luna`; file isolation is instructed on a shared host.
 
-**Restoration:** thirty completed [office continuations](results/luna/restoration.jsonl) remain separate from full teams. In the earlier valid omission, required supplements reduced cost in 4/4 draws, while no supplements did not; unrelated and already-informed controls also showed recipient variability. Forty new continuations were frozen before the two latest original offices acted and are now running.
+**Restoration:** 69 completed [office continuations](results/luna/restoration.jsonl), plus one retained execution failure, remain separate from full teams. The latest 40 assignments yielded mean costs of $1,762.50 with the required fact (8/8 valid), $1,787.50 with an unrelated addition (8/8), and $2,028.57 without an addition (7/8). Required information improved effort forecasts, but its cost advantage over unrelated information was small. Already-informed and unchanged controls also produced allocation errors.
 
 The next [appointment version](https://github.com/AI4Collaboration/Strategic-Silence/tree/experiment/validation-appointments) gives peers consequential scheduling choices. It has passed offline checks; no model subject has run on that version yet.
 
