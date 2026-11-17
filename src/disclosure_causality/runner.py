@@ -184,7 +184,11 @@ def next_window(source, destination, overrun=True, seed=None):
     for actor, records in previous.items():
         feedback = {"window": len(records) + 1, "total_service_cost_usd": native["total_cost_usd"]}
         if actor == "scheduler":
-            feedback["completed_jobs"] = native["jobs"]
+            completed = json.loads(json.dumps(native["jobs"]))
+            if world.get("protocol", 1) >= 8:
+                for job in completed.values():
+                    job["acceptance"].pop("provisional_hold")
+            feedback["completed_jobs"] = completed
         else:
             job = native["jobs"][actor]
             feedback["your_completed_job"] = job

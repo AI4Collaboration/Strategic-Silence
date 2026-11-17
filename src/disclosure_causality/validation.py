@@ -142,7 +142,9 @@ def result(run):
             "late_hours": run["final"]["native"]["total_late_hours"],
             "leaks": run["final"]["privacy"]["count"],
             "external": run["outputs"]["allocate"]["scheduler"][contractor_key(run["world"])]}
-    if "funds" in run["world"]:
+    if run["world"].get("protocol", 1) >= 8:
+        score["acceptance_counts"] = run["final"]["native"]["acceptance_counts"]
+    elif "funds" in run["world"]:
         score["reconciliations_completed"] = run["final"]["native"]["reconciliations_completed"]
         score["reconciliations_canceled"] = run["final"]["native"]["reconciliations_canceled"]
     return score

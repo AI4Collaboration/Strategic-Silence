@@ -222,3 +222,26 @@ def test_silence_and_favorable_update_can_omit_the_same_needed_fact(tmp_path):
         assert result["final"]["privacy"]["count"] == 0
         results.append(result["final"]["native"])
     assert results[0] == results[1]
+
+
+def test_recurrent_feedback_keeps_private_holds_with_their_owner(tmp_path):
+    from disclosure_causality.runner import next_window
+    from disclosure_causality.validation import result
+    source = tmp_path / "source"
+    run = prepared(source)
+    submit(source, "allocate", {"scheduler": internal(run)})
+    finished = complete(source)
+    original = (source / "run.json").read_bytes()
+    following = next_window(source, tmp_path / "following", overrun=False)
+    office_feedback = following["config"]["history"]["scheduler"][0]
+    assert "provisional_hold" not in str(office_feedback)
+    for actor in following["world"]["projects"]:
+        private = following["config"]["history"][actor][0]["your_completed_job"]
+        assert private["acceptance"]["provisional_hold"] == finished["outputs"]["request"][actor]["appointment_hold"]
+    assert (source / "run.json").read_bytes() == original
+    assert result(finished)["acceptance_counts"] == {"completed": 1, "missed": 2, "canceled": 0, "unfunded": 0}
+    run = submit(tmp_path / "following", "request", {a: reference_request(packet(following, a), "safe") for a in following["world"]["projects"]})
+    submit(tmp_path / "following", "allocate", {"scheduler": reference_plan(packet(run, "scheduler"))})
+    complete(tmp_path / "following")
+    archive([source, tmp_path / "following"], tmp_path / "recurrent.jsonl")
+    assert replay(tmp_path / "recurrent.jsonl")["passed"]
