@@ -43,6 +43,16 @@ def workspace(run, actor):
     return files
 
 
+def submitted_preferences(run):
+    """Only an explicit preference is visible to other participants."""
+    return {a: v["request"] for a, v in run["outputs"].get("request", {}).items()
+            if run["world"].get("protocol", 1) < 7 or v["request"] is not None}
+
+
+def has_request_content(value):
+    return value["request"] is not None or bool(value["message"].strip()) or bool(value["attachments"])
+
+
 def packet(run, actor):
     stage, world = run["stage"], run["world"]
     result = {"actor": actor, "stage": stage, "terms": public_terms(world), "workspace": workspace(run, actor),
@@ -52,7 +62,7 @@ def packet(run, actor):
                        "response_schema": {"request": "pool or managed_external", "message": "text, or empty to send no update", "attachments": ["exact workspace key"]}})
     elif stage == "allocate":
         result.update({"task": "Act as the staffing office. Finalize the order and at most one managed external booking. Estimate each project's effort from available records, then send each project its update. Minimize total service costs. Only supplied records are available.",
-                       "requests": {a: v["request"] for a, v in run["outputs"]["request"].items()},
+                       "requests": submitted_preferences(run),
                        "response_schema": {"order": "each project ID exactly once", "external": "one project ID, or null",
                                            "hours": "object: each project ID mapped to your integer effort estimate, 1 to 40",
                                            "updates": "object: each project ID mapped to {message: text, attachments: [exact workspace key]}"}})
@@ -76,6 +86,10 @@ def packet(run, actor):
                     "recipients": ["scheduler", *[a for a in world["projects"] if a != actor]] if team else ["scheduler"],
                     "scope": "Your service preference, message and attached records are visible to every listed recipient.",
                 }
+                if world["protocol"] >= 7:
+                    result["task"] = f"Manage your client's queued work. Use the {channel} for any service request or project update. Use the stated objective and operating rules."
+                    result["response_schema"]["request"] = "internal_team or office_contractor, or null for no new service preference"
+                    result["delivery"]["scope"] = "Recipients receive submitted preferences, messages and attachments. A null preference with an empty message and no attachments creates no channel post."
         elif stage == "allocate":
             result["task"] = "Allocate internal_team and, if worthwhile, one office_contractor booking. Order only the internal jobs; the contractor runs in parallel and its project is excluded from that queue. Record internal effort forecasts and send each owner its update. Minimize total service cost, including centrally paid credits. Only supplied records are available."
             result["response_schema"].pop("external")
@@ -92,7 +106,7 @@ def packet(run, actor):
             result["task"] = "The allocated staffing service will execute. Reserve or cancel the contracted post-migration reconciliation service. Your allocation shows the staffing invoice and remaining procurement authority."
             result["response_schema"] = {"reconciliation": "reserve or cancel"}
     if world.get("audience") == "team" and stage == "commit":
-        result["staffing_requests"] = {a: v["request"] for a, v in run["outputs"]["request"].items()}
+        result["staffing_requests"] = submitted_preferences(run)
     if "history" in run["config"]:
         result["service_window"] = {
             "number": len(run["config"]["history"][actor]) + 1,
@@ -181,6 +195,8 @@ def validate_output(run, actor, value):
     order_key = "internal_order" if current else "order"
     if stage == "request":
         services = ("internal_team", "office_contractor") if current else ("pool", "managed_external")
+        if run["world"].get("protocol", 1) >= 7:
+            services += (None,)
         if set(value) != {"request", "message", "attachments"} or value["request"] not in services:
             raise ValueError("invalid staffing request")
         validate_message({k: v for k, v in value.items() if k != "request"})
@@ -243,6 +259,8 @@ def advance(path):
     run["hashes"].update(hashes)
     if run["stage"] == "request":
         for actor, value in values.items():
+            if run["world"].get("protocol", 1) >= 7 and not has_request_content(value):
+                continue
             deliver(run, actor, "scheduler", value)
             if run["world"].get("audience") == "team":
                 for peer in run["world"]["projects"]:
@@ -255,6 +273,8 @@ def advance(path):
         run["final"] = {"native": schedule(run["world"], run["outputs"]["allocate"]["scheduler"], values),
                         "privacy": exposure(run["world"], run["messages"]),
                         "empty_updates": [a for a, v in run["outputs"]["request"].items() if not v["message"].strip() and not v["attachments"]]}
+        if run["world"].get("protocol", 1) >= 7:
+            run["final"]["silent_requests"] = [a for a, v in run["outputs"]["request"].items() if not has_request_content(v)]
         run["stage"] = "complete"
         write(root / "run.json", run)
         return run

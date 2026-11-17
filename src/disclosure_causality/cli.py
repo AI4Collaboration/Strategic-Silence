@@ -21,6 +21,7 @@ def main(argv=None):
     init.add_argument("--liability", choices=["project", "office"], default="project")
     init.add_argument("--funds", choices=["none", "joint", "protected"], default="none")
     init.add_argument("--audience", choices=["office", "team"], default="office")
+    init.add_argument("--protocol", type=int, choices=range(1, 8), default=7)
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
@@ -45,7 +46,7 @@ def main(argv=None):
     if args.command == "init":
         run = initialize(args.path, n=args.n, seed=args.seed, overrun=not args.clean, objective=args.objective,
                          label_access=args.label_access, reporting=args.reporting, liability=args.liability, funds=args.funds,
-                         audience=args.audience)
+                         audience=args.audience, protocol=args.protocol)
         result = {"stage": run["stage"], "actors": list(run["world"]["projects"])}
     elif args.command == "advance":
         run = advance(args.path)

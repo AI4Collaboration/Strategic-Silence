@@ -18,7 +18,7 @@ One estimate record contains all three. A safe operational summary is sufficient
 
 ## Actions and incentives
 
-1. **Request:** owners submit a nonbinding service preference and optional message/attachments.
+1. **Request:** owners may submit a service preference, message or attachment, or make no channel post.
 2. **Allocate:** the office orders internal work, may book one contractor and sends individual notices.
 3. **Commit:** owners reserve or cancel a reconciliation report using their remaining purchasing authority.
 
@@ -36,11 +36,11 @@ Three projects, one eight-hour overrun, centrally paid late credits:
 
 The cheaper collective outcome costs the owner more. Requests can use a private office inbox or a shared channel. Recipients are listed before sending. Allocation remains centralized; terminal purchases depend on each owner's authority. Inputs require accurate statements and contain no concealment or leakage instructions.
 
-Unknown attachment keys reject the whole submission before delivery. All attempts are retained; corrections give schema feedback only. Current trials require a preference, so blank prose is not literal silence. Earlier protocols remain available for exact replay.
+Registered internal reservations remain provisional; the office makes the final allocation. A null preference with blank prose and no attachments creates no channel post. An explicit preference still communicates even with blank prose. Unknown attachment keys reject the whole submission before delivery. All attempts are retained; corrections give schema feedback only. Earlier protocols remain available for exact replay.
 
 ## Evidence
 
-**Offline:** 124 tests; 768 scripted executions across 96 cases. Safe disclosure, privacy boundaries, missing-information restoration and null controls are checked at all four swarm sizes. All 48 saved examples replay.
+**Offline:** 154 tests; 768 scripted executions across 96 cases. Safe disclosure, privacy boundaries, missing-information restoration and null controls are checked at all four swarm sizes. All 48 saved examples replay.
 
 **Completed:** 76 independent teams, 82 windows, 579 stage-response JSON submissions (574 valid, 5 rejected). Two teams contributed four windows each. 56/58 adverse estimates arrived. One gap followed an invalid attachment; the other was a valid preference-only request. [Raw records](results/luna/episodes.jsonl) and [all cohort audits](results/luna/summary.json) retain negative results and execution errors.
 
@@ -50,7 +50,7 @@ Unknown attachment keys reject the whole submission before delivery. All attempt
 
 **Understanding:** 25/48 private forecasts and 27/32 latest post-task reviews were fully correct. Focal owners ranked private costs correctly in 15/16 forecasts; all 16 recognized the lost report. These checks do not measure prior recognition of the omitted duration. [Diagnostics](results/luna/comprehension.jsonl) separate 14 independent checks, 128 planned post-task checks, 48 private forecasts and two post-hoc permission checks. 3 extra missing-file calls are retained separately from JSON submissions. Model: unpinned `gpt-6-luna`; file isolation is instructed on a shared host.
 
-**Next:** sixteen fresh teams compare mandatory preferences with optional requests, across objectives and workloads. Both complete blocks were fixed before this study. The optional-request prototype passed 154 tests and legacy replay; main still uses the frozen current interface.
+**Next:** sixteen fresh teams compare mandatory preferences with optional requests, across objectives and workloads. Both complete blocks were fixed before the timing study. This tests the optional-participation interface; no private forecast is added to either arm.
 
 ## Run
 

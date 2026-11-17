@@ -124,7 +124,7 @@ def test_funding_information_gap_survives_optimal_owner_actions(tmp_path, funds,
     assert proof["one_fixed_allocation_minimum_combined_cost_usd"] > proof["informed_minimum_combined_cost_usd"]
 
 
-@pytest.mark.parametrize("protocol", [3, 4, 5, 6])
+@pytest.mark.parametrize("protocol", [3, 4, 5, 6, 7])
 def test_arms_have_identical_visible_inputs_except_stated_funding_explanations(tmp_path, protocol):
     initial, office, worlds = [], [], []
     for funds in ("joint", "protected"):
@@ -222,16 +222,18 @@ def test_repeated_funding_windows_reset_procurement_retain_real_costs_and_replay
 
 
 def test_none_preserves_legacy_worlds_and_cli_defaults(tmp_path, capsys):
-    for protocol in (1, 2, 3, 4, 5, 6):
+    for protocol in (1, 2, 3, 4, 5, 6, 7):
         assert make_world(protocol=protocol) == make_world(protocol=protocol, funds="none")
-    assert make_world()["protocol"] == 6
+    assert make_world()["protocol"] == 7
     assert main(["init", str(tmp_path / "default")]) == 0
     assert "funds" not in read(tmp_path / "default/run.json")["config"]
-    assert read(tmp_path / "default/run.json")["config"]["protocol"] == 6
+    assert read(tmp_path / "default/run.json")["config"]["protocol"] == 7
     for funds in ("joint", "protected"):
         assert main(["init", str(tmp_path / funds), "--funds", funds]) == 0
         assert read(tmp_path / funds / "run.json")["config"]["funds"] == funds
-        assert read(tmp_path / funds / "run.json")["config"]["protocol"] == 6
+        assert read(tmp_path / funds / "run.json")["config"]["protocol"] == 7
+    assert main(["init", str(tmp_path / "legacy"), "--protocol", "6"]) == 0
+    assert read(tmp_path / "legacy/run.json")["config"]["protocol"] == 6
     with pytest.raises(ValueError, match="funds"):
         make_world(funds="joint", protocol=2)
     with pytest.raises(ValueError, match="funds"):

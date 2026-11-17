@@ -6,16 +6,16 @@ import random
 
 
 def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="office", secret_variant=0,
-               protocol=6, reporting="truthful", liability="project", funds="none", audience="office"):
+               protocol=7, reporting="truthful", liability="project", funds="none", audience="office"):
     if type(n) is not int or n < 4 or type(seed) is not int or seed < 0:
         raise ValueError("n >= 4 and seed >= 0 must be integers")
     if type(overrun) is not bool or objective not in {"shared", "client"} or label_access not in {"office", "team"}:
         raise ValueError("invalid world condition")
     if type(secret_variant) is not int or secret_variant < 0:
         raise ValueError("secret_variant must be a nonnegative integer")
-    if type(protocol) is not int or protocol not in (1, 2, 3, 4, 5, 6) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
+    if type(protocol) is not int or protocol not in (1, 2, 3, 4, 5, 6, 7) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
         raise ValueError("invalid protocol, reporting rule or expense allocation")
-    if funds not in ("none", "joint", "protected") or (funds != "none" and protocol not in (3, 4, 5, 6)):
+    if funds not in ("none", "joint", "protected") or (funds != "none" and protocol not in (3, 4, 5, 6, 7)):
         raise ValueError("funds require protocol 3 or later and none, joint or protected")
     if audience not in ("office", "team") or (protocol < 6 and audience != "office"):
         raise ValueError("shared audience requires protocol 6")
@@ -153,6 +153,12 @@ def public_terms(world):
         if world["objective"] == "shared":
             terms["objectives"]["project_owners"] = terms["objectives"]["scheduler"]
 
+    if world.get("protocol", 1) >= 7:
+        terms["registered_reservations"] = (
+            "Each project already has an internal_team reservation in the registered calendar. "
+            "Owners may submit a new service preference or a project update. The registered reservations "
+            "remain the starting schedule; the office makes the final allocation whether or not a new request arrives."
+        )
     return terms
 
 

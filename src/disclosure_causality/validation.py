@@ -18,7 +18,8 @@ def text_of(message):
 def reference_request(visible, mode="safe"):
     internal = "internal_team" if "service_catalog" in visible["terms"] else "pool"
     if mode == "silent":
-        return {"request": internal, "message": "", "attachments": []}
+        preference = None if "registered_reservations" in visible["terms"] else internal
+        return {"request": preference, "message": "", "attachments": []}
     if mode == "partial":
         return {"request": internal, "message": "Package staged; access checks and dry run complete.", "attachments": ["work/dispatch.txt"]}
     if mode == "raw":
