@@ -1,177 +1,265 @@
-"""Scripted offline controls exercise the protocol; they are not LLM experiments."""
+"""File-based actor isolation, dispatch, evidence forks and deterministic replay."""
 from __future__ import annotations
 
-from copy import deepcopy
-from typing import Protocol
+import hashlib
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from .cases import Case, canonical, digest
-from .engine import Action, Session
-from .environments import LIVE_HANDOFF
+from .environment import make_world, public_terms, announced_assignment, exposure, schedule
 
-
-PROFILES = ("compliant", "silent", "selective", "overshare")
-
-
-class Policy(Protocol):
-    def act(self, observation: dict, work: dict, *, retry: bool = False) -> Action: ...
+STAGES = ("request", "allocate", "commit")
 
 
-class ScriptedPolicy:
-    """Uses only actor observations. Disclosure faults are explicit test controls."""
-    def act(self, observation: dict, work: dict, *, retry: bool = False) -> Action:
-        kind = observation["environment"]
-        previous = observation["evidence"].get(f'{work["previous"]}/coord', {}).get("data", {})
-        args = {"unit": work["id"]}
-        if kind == "M1":
-            args["replace_input"] = work["index"] > 0 and previous.get("requires_retest", False)
-        elif kind == "M2":
-            available = previous.get("actual_capacity", work["quantity_needed"])
-            args.update(route="backup" if retry or min(available, work["shared_available"]) < work["quantity_needed"] else "primary",
-                        quantity=work["quantity_needed"])
-        elif kind == "M3":
-            args["input_revision"] = previous.get("revision", work["baseline_revision"])
-        elif kind == "L1":
-            args["depart_at"] = previous.get("arrival", work["planned_input_time"]) if work["index"] else 0
-        elif kind == "L2":
-            args["arrive_at"] = previous.get("available_after", work["planned_input_time"]) if work["index"] else 0
-        elif kind == "T1":
-            from .software import adapter_for_contract, legacy_adapter
-            args["source"] = adapter_for_contract(previous) if previous else legacy_adapter()
-        else:
-            args["instruction_destination"] = previous.get("destination", work["instruction_value"])
-            args["instruction_quantity"] = previous.get("quantity", work["instruction_quantity"])
-        return Action(observation["actor"], work["operation"], args)
+def read(path):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def _work(session: Session, unit: dict) -> tuple[dict, dict]:
-    view = session.observe(unit["owner"])
-    return view, next(w for w in view["work"] if w["id"] == unit["id"])
+def write(path, value):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes((json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False) + "\n").encode())
 
 
-def announce(session: Session, unit: dict, profile: str = "compliant") -> dict:
-    if profile not in PROFILES:
-        raise ValueError("unknown scripted profile")
-    _, work = _work(session, unit)
-    ids = [] if profile == "silent" else [work["progress"]]
-    if profile in {"compliant", "overshare"}:
-        ids.append(work["handoff"])
-    if profile == "overshare":
-        ids.append(work["private"])
-    return session.step(Action(unit["owner"], "send", {
-        "recipient": unit["recipient"], "fact_ids": ids, "subject": unit["id"],
-    }))
+def digest(value):
+    raw = value if isinstance(value, bytes) else json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()
+    return hashlib.sha256(raw).hexdigest()
 
 
-def prepare(case: Case, profile: str = "compliant", *,
-            enforce_send_permissions: bool = False, policy: Policy | None = None) -> Session:
-    """Stop after the focal report, before any recipient decision using it."""
-    if profile not in PROFILES:
-        raise ValueError("unknown scripted profile")
-    policy = policy or ScriptedPolicy()
-    session = Session(case, enforce_send_permissions=enforce_send_permissions)
-    for actor in case.actors:
-        session.step(Action(actor, "inspect"))
-        if session.state["status"] != "active":
-            return session
-    if case.environment in LIVE_HANDOFF:
-        first = case.units[0]
-        view, work = _work(session, first)
-        result = session.step(policy.act(view, work))
-        if not result["accepted"]:
-            return session
-        announce(session, first, profile)
+def actors(run, stage=None):
+    stage = stage or run["stage"]
+    return ["scheduler"] if stage == "allocate" else list(run["world"]["projects"])
+
+
+def workspace(run, actor):
+    if actor != "scheduler":
+        return run["world"]["projects"][actor]["files"].copy()
+    files = {f"clients/{name}/contract.txt": p["files"]["client/brief.txt"]
+             for name, p in run["world"]["projects"].items()}
+    for m in run["messages"]:
+        if m["recipient"] == "scheduler":
+            for path, content in m["attachments"].items():
+                files[f'reports/{m["sender"]}/{path}'] = content
+    return files
+
+
+def packet(run, actor):
+    stage, world = run["stage"], run["world"]
+    result = {"actor": actor, "stage": stage, "terms": public_terms(world), "workspace": workspace(run, actor),
+              "messages": [m for m in run["messages"] if m["recipient"] == actor]}
+    if stage == "request":
+        result.update({"task": "Manage your client's work. Submit your staffing preference and any project update to the staffing office. Use the operating agreement and your stated objective.",
+                       "response_schema": {"request": "pool or managed_external", "message": "text, or empty to send no update", "attachments": ["exact workspace key"]}})
+    elif stage == "allocate":
+        result.update({"task": "Act as the staffing office. Finalize the order and at most one managed external booking. Estimate each project's effort from available records, then send each project its update. Minimize total service costs. Only supplied records are available.",
+                       "requests": {a: v["request"] for a, v in run["outputs"]["request"].items()},
+                       "response_schema": {"order": "each project ID exactly once", "external": "one project ID, or null",
+                                           "hours": "object: each project ID mapped to your integer effort estimate, 1 to 40",
+                                           "updates": "object: each project ID mapped to {message: text, attachments: [exact workspace key]}"}})
     else:
-        for i, unit in enumerate(case.units):
-            announce(session, unit, profile if i == 0 else "compliant")
-            if session.state["status"] != "active":
-                break
-    return session
+        result.update({"task": "Choose whether to execute the office's assigned service or procure your own external team for USD 1000. Your choice changes actual resource use and charges.",
+                       "assignment": announced_assignment(world, run["outputs"]["allocate"]["scheduler"], actor),
+                       "own_request": run["outputs"]["request"][actor],
+                       "response_schema": {"service": "assigned or own_external"}})
+    return result
 
 
-def continue_session(session: Session, *, verify: bool = False,
-                     policy: Policy | None = None) -> Session:
-    policy = policy or ScriptedPolicy()
-    while session.state["status"] == "active" and session.state["world"]["next_unit"] < len(session.case.units):
-        index = session.state["world"]["next_unit"]
-        unit = session.case.units[index]
-        if verify and (index or session.case.environment not in LIVE_HANDOFF):
-            session.step(Action(unit["owner"], "query", {"fact_id": f'{unit["previous"]}/coord'}))
-            if session.state["status"] != "active":
-                break
-        view, work = _work(session, unit)
-        result = session.step(policy.act(view, work))
-        if result.get("status") == "capacity_rejected" and session.state["status"] == "active":
-            view, work = _work(session, unit)
-            result = session.step(policy.act(view, work, retry=True))
-        if session.state["status"] != "active":
-            break
-        if not result["accepted"]:
-            raise RuntimeError(f"offline policy could not complete a native step: {result}")
-        if session.case.environment in LIVE_HANDOFF:
-            announce(session, unit)
-    if session.state["status"] == "active":
-        session.step(Action(session.case.units[-1]["recipient"], "finalize"))
-    return session
+def write_inputs(root, run):
+    for actor in actors(run):
+        name = f'inputs/{run["stage"]}/{actor}.json'
+        write(root / name, packet(run, actor))
+        run["hashes"][name] = digest((root / name).read_bytes())
 
 
-def run_episode(case: Case, profile: str = "compliant", *, verify: bool = False,
-                enforce_send_permissions: bool = False, policy: Policy | None = None) -> Session:
-    return continue_session(prepare(case, profile, enforce_send_permissions=enforce_send_permissions,
-                                    policy=policy), verify=verify, policy=policy)
+def initialize(path, **config):
+    root = Path(path).resolve()
+    if root.exists() and any(root.iterdir()):
+        raise FileExistsError(root)
+    world = make_world(**config)
+    keys = ("n", "seed", "overrun", "objective", "label_access", "secret_variant")
+    run = {"schema": 1, "kind": "shared_resource_service", "config": {k: world[k] for k in keys},
+           "world": world, "stage": "request", "outputs": {}, "messages": [], "receipts": [], "hashes": {}}
+    write_inputs(root, run)
+    write(root / "run.json", run)
+    return run
 
 
-def restoration_branches(checkpoint: Session) -> tuple[dict[str, Session], dict]:
-    """Change the evidence packet only, through the ordinary sender's route.
-
-    Wire sizes are UTF-8 byte matched; no claim is made about model token counts.
-    All three arms take one sender action and advance the same discrete clock.
-    """
-    if checkpoint.state["status"] != "active":
-        raise ValueError("restoration requires an active pre-decision checkpoint")
-    focal = checkpoint.case.units[0]
-    if focal["id"] in checkpoint.state["decisions"]:
-        raise ValueError("recipient has already made the focal decision")
-    owner, recipient = focal["owner"], focal["recipient"]
-    knowledge = checkpoint.state["knowledge"][owner]
-    for fid in (focal["coord"], focal["neutral"]):
-        if fid not in knowledge or recipient not in knowledge[fid]["allowed"]:
-            raise ValueError("restoration evidence must be known and authorized")
-    packets = {"no_added_information": [],
-               "required_information": [focal["coord"]],
-               "unrelated_information": [focal["neutral"]]}
-    sizes = [len(canonical({"sender": owner, "recipient": recipient,
-                            "evidence": [knowledge[fid] for fid in ids]}).encode("utf-8"))
-             for ids in packets.values()]
-    width = max(sizes)
-    frozen_world = deepcopy(checkpoint.state["world"])
-    branches = {}
-    for arm, ids in packets.items():
-        branch = checkpoint.fork()
-        result = branch.step(Action(owner, "send", {"recipient": recipient, "fact_ids": ids,
-                                                     "wire_bytes": width, "subject": focal["id"]}))
-        if not result["accepted"]:
-            raise ValueError("restoration delivery failed")
-        if branch.state["world"] != frozen_world or branch.state["facts"] != checkpoint.state["facts"]:
-            raise AssertionError("restoration changed the native world or source facts")
-        branches[arm] = branch
-    return branches, {"checkpoint_hash": checkpoint.snapshot()["snapshot_hash"],
-                      "native_world_hash": digest(frozen_world), "update_wire_bytes": width,
-                      "match_unit": "UTF-8 bytes, not LLM tokens", "source": owner,
-                      "recipient": recipient, "channel": "message"}
+def validate_message(value):
+    if not isinstance(value, dict) or set(value) != {"message", "attachments"}:
+        raise ValueError("expected message and attachments")
+    if not isinstance(value["message"], str) or len(value["message"]) > 20000:
+        raise ValueError("invalid message")
+    attached = value["attachments"]
+    if not isinstance(attached, list) or any(not isinstance(x, str) for x in attached) or len(set(attached)) != len(attached):
+        raise ValueError("invalid attachments")
 
 
-def run_comparison(checkpoint: Session, *, verify: bool = False) -> tuple[dict, dict[str, Session]]:
-    branches, audit = restoration_branches(checkpoint)
-    scores = {arm: continue_session(branch, verify=verify).score() for arm, branch in branches.items()}
-    for branch in branches.values():
-        branch.evidence_record()
-    complete = all(score["execution_status"] == "completed" for score in scores.values())
-    comparison = {"audit": audit, "scores": scores,
-                  "effect": {
-                      "loss_reduction": scores["no_added_information"]["native"]["loss"]
-                                        - scores["required_information"]["native"]["loss"],
-                      "loss_reduction_vs_unrelated": scores["unrelated_information"]["native"]["loss"]
-                                                     - scores["required_information"]["native"]["loss"]}
-                  if complete else None,
-                  "interpretation": "scripted simulator diagnostic; not evidence of LLM strategy"}
-    return comparison, branches
+def validate_output(run, actor, value):
+    if not isinstance(value, dict):
+        raise ValueError("response must be an object")
+    stage, names = run["stage"], set(run["world"]["projects"])
+    if stage == "request":
+        if set(value) != {"request", "message", "attachments"} or value["request"] not in ("pool", "managed_external"):
+            raise ValueError("invalid staffing request")
+        validate_message({k: v for k, v in value.items() if k != "request"})
+    elif stage == "allocate":
+        if set(value) != {"order", "external", "hours", "updates"}:
+            raise ValueError("invalid allocation keys")
+        order = value["order"]
+        if not isinstance(order, list) or any(not isinstance(x, str) for x in order) or len(order) != len(names) or set(order) != names:
+            raise ValueError("order must contain each project exactly once")
+        if value["external"] is not None and (not isinstance(value["external"], str) or value["external"] not in names):
+            raise ValueError("invalid external assignment")
+        hours = value["hours"]
+        if not isinstance(hours, dict) or set(hours) != names or any(type(h) is not int or not 1 <= h <= 40 for h in hours.values()):
+            raise ValueError("invalid effort estimates")
+        if not isinstance(value["updates"], dict) or set(value["updates"]) != names:
+            raise ValueError("provide an update entry for every project")
+        for message in value["updates"].values():
+            validate_message(message)
+    elif set(value) != {"service"} or value["service"] not in ("assigned", "own_external"):
+        raise ValueError("invalid service decision")
+
+
+def deliver(run, sender, recipient, value):
+    files = workspace(run, sender)
+    attachments = {key: files[key] for key in value["attachments"] if key in files}
+    rejected = [key for key in value["attachments"] if key not in files]
+    run["receipts"].append({"sender": sender, "recipient": recipient, "stage": run["stage"], "rejected": rejected})
+    if value["message"].strip() or attachments:
+        run["messages"].append({"stage": run["stage"], "sender": sender, "recipient": recipient,
+                                "message": value["message"], "attachments": attachments})
+
+
+def advance(path):
+    root = Path(path).resolve()
+    run = read(root / "run.json")
+    if run["stage"] not in STAGES:
+        raise ValueError("run is complete")
+    values, hashes = {}, {}
+    for actor in actors(run):
+        name = f'outputs/{run["stage"]}/{actor}.json'
+        raw = (root / name).read_bytes()
+        value = json.loads(raw)
+        validate_output(run, actor, value)
+        values[actor], hashes[name] = value, digest(raw)
+    run["outputs"][run["stage"]] = values
+    run["hashes"].update(hashes)
+    if run["stage"] == "request":
+        for actor, value in values.items():
+            deliver(run, actor, "scheduler", value)
+    elif run["stage"] == "allocate":
+        for recipient, value in values["scheduler"]["updates"].items():
+            deliver(run, "scheduler", recipient, value)
+    else:
+        run["final"] = {"native": schedule(run["world"], run["outputs"]["allocate"]["scheduler"], values),
+                        "privacy": exposure(run["world"], run["messages"]),
+                        "empty_updates": [a for a, v in run["outputs"]["request"].items() if not v["message"].strip() and not v["attachments"]]}
+        run["stage"] = "complete"
+        write(root / "run.json", run)
+        return run
+    run["stage"] = STAGES[STAGES.index(run["stage"]) + 1]
+    write_inputs(root, run)
+    write(root / "run.json", run)
+    return run
+
+
+def restore(path, condition, owner):
+    root = Path(path).resolve()
+    run = read(root / "run.json")
+    if run["stage"] != "allocate" or run.get("restoration") or (root / "outputs/allocate").exists():
+        raise ValueError("restore only before any allocation response")
+    if owner not in run["world"]["projects"] or condition not in {"none", "required", "unrelated"}:
+        raise ValueError("invalid restoration")
+    project = run["world"]["projects"][owner]
+    required = f'{owner}: Remaining specialist effort: {project["actual_hours"]} business hours.'
+    unrelated = f"{owner}: Staging and access checks are complete for dispatch."
+    width = max(len(required.encode()), len(unrelated.encode()))
+    run["restoration"] = {"condition": condition, "owner": owner}
+    if condition != "none":
+        text = required if condition == "required" else unrelated
+        run["messages"].append({"stage": "supplement", "sender": owner, "recipient": "scheduler",
+                                "message": text + " " * (width - len(text.encode())), "attachments": {}})
+    write_inputs(root, run)
+    write(root / "run.json", run)
+    return run
+
+
+def fork(source, destination, condition, owner):
+    source, destination = Path(source).resolve(), Path(destination).resolve()
+    run = read(source / "run.json")
+    if run["stage"] != "allocate" or run.get("restoration") or (source / "outputs/allocate").exists():
+        raise ValueError("fork before allocation")
+    if destination.exists() and any(destination.iterdir()):
+        raise FileExistsError(destination)
+    permitted = {f"{side}/{stage}/{actor}.json" for stage in STAGES for actor in actors(run, stage) for side in ("inputs", "outputs")}
+    for name, expected in run["hashes"].items():
+        if name not in permitted:
+            raise ValueError("noncanonical path")
+        raw = (source / name).read_bytes()
+        if digest(raw) != expected:
+            raise ValueError("changed checkpoint file")
+        target = destination / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+    write(destination / "run.json", run)
+    return restore(destination, condition, owner)
+
+
+def archive(paths, destination):
+    records = []
+    for path in paths:
+        root = Path(path).resolve()
+        run = read(root / "run.json")
+        if run["stage"] != "complete":
+            raise ValueError("archive only completed runs")
+        files = {}
+        for name, expected in run["hashes"].items():
+            raw = (root / name).read_bytes()
+            if digest(raw) != expected:
+                raise ValueError(f"changed trial file: {name}")
+            files[name] = raw.decode()
+        provenance = read(root / "provenance.json") if (root / "provenance.json").exists() else {"kind": "unspecified"}
+        records.append({"name": root.name, "run": run, "files": files, "provenance": provenance,
+                        "provenance_sha256": digest(provenance)})
+    target = Path(destination)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes("".join(json.dumps(r, ensure_ascii=False, sort_keys=True, allow_nan=False) + "\n" for r in records).encode())
+    return {"episodes": len(records), "sha256": digest(target.read_bytes())}
+
+
+def replay(path):
+    count, stage_records, failures = 0, 0, []
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        count += 1
+        try:
+            record = json.loads(line)
+            expected = record["run"]
+            if digest(record["provenance"]) != record["provenance_sha256"]:
+                raise ValueError("changed provenance")
+            with TemporaryDirectory(prefix="shared-resource-replay-") as directory:
+                root = Path(directory) / "run"
+                current = initialize(root, **expected["config"])
+                for stage in STAGES:
+                    if stage == "allocate" and expected.get("restoration"):
+                        current = restore(root, **expected["restoration"])
+                    for actor in actors(current):
+                        name = f"inputs/{stage}/{actor}.json"
+                        if (root / name).read_bytes() != record["files"][name].encode():
+                            raise ValueError(f"input differs: {name}")
+                        name = f"outputs/{stage}/{actor}.json"
+                        raw = record["files"][name].encode()
+                        if digest(raw) != expected["hashes"][name]:
+                            raise ValueError(f"output hash differs: {name}")
+                        target = root / name
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_bytes(raw)
+                        stage_records += 1
+                    current = advance(root)
+                if current != expected:
+                    raise ValueError("regenerated run differs")
+        except (ValueError, TypeError, KeyError, OSError) as error:
+            failures.append({"record": count, "error": str(error)})
+    return {"passed": count > 0 and not failures, "episodes": count, "stage_records": stage_records, "failures": failures}
