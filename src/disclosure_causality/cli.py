@@ -21,7 +21,7 @@ def main(argv=None):
     init.add_argument("--liability", choices=["project", "office"], default="project")
     init.add_argument("--funds", choices=["none", "joint", "protected"], default="none")
     init.add_argument("--audience", choices=["office", "team"], default="office")
-    init.add_argument("--protocol", type=int, choices=range(1, 8), default=7)
+    init.add_argument("--protocol", type=int, choices=range(1, 9), default=7)
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
@@ -37,6 +37,7 @@ def main(argv=None):
     branch.add_argument("destination", type=Path)
     branch.add_argument("--condition", choices=["none", "required", "unrelated"], required=True)
     branch.add_argument("--owner", required=True)
+    branch.add_argument("--recipient", help="restore to this peer after allocation, before acceptance confirmation")
     window = sub.add_parser("next-window")
     window.add_argument("source", type=Path)
     window.add_argument("destination", type=Path)
@@ -57,7 +58,7 @@ def main(argv=None):
     elif args.command == "archive":
         result = archive(args.paths, args.destination)
     elif args.command == "fork":
-        run = fork(args.source, args.destination, args.condition, args.owner)
+        run = fork(args.source, args.destination, args.condition, args.owner, args.recipient)
         result = {"stage": run["stage"]}
     elif args.command == "next-window":
         run = next_window(args.source, args.destination, overrun=not args.clean, seed=args.seed)

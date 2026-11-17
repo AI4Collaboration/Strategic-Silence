@@ -16,6 +16,17 @@ def text_of(message):
 
 
 def reference_request(visible, mode="safe"):
+    if "acceptance_service" in visible["terms"]:
+        import copy
+        legacy = copy.deepcopy(visible)
+        legacy["terms"].pop("acceptance_service")
+        result = reference_request(legacy, mode)
+        result.pop("request")
+        own = visible["actor"]
+        entry = next(e for e in visible["terms"]["calendar"] if e["project"] == own)
+        hours = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
+        result["appointment_hold"] = entry["planned_start"] + hours
+        return result
     internal = "internal_team" if "service_catalog" in visible["terms"] else "pool"
     if mode == "silent":
         preference = None if "registered_reservations" in visible["terms"] else internal
@@ -47,13 +58,51 @@ def reference_plan(visible, forward=False):
         decisions = {name: {"reconciliation": "reserve"} for name in names}
     candidates = [{("internal_order" if current else "order"): [name for name in names if not current or name != external],
                    contractor_key(forecast): external, "hours": hours} for external in [None, *names]]
-    plan = min(candidates, key=lambda p: schedule(forecast, p, decisions)["total_cost_usd"])
+    if "acceptance_service" in visible["terms"]:
+        from .appointments import session, slots
+        forecast["protocol"] = 8
+        holds = {x["project"]: x["completion_due"] for x in calendar}
+        def forecast_cost(candidate):
+            # The office cannot observe private holds. This scripted planner assumes
+            # registered holds, then minimizes terminal costs under its visible forecasts.
+            from .environment import announced_assignment
+            chosen = {}
+            for name in names:
+                assignment = announced_assignment(forecast, candidate, name)
+                due = forecast["projects"][name]["deadline"]
+                authority = assignment["procurement_authority"]["remaining_usd"]
+                def price(slot):
+                    outcome = session(assignment["expected_finish"], due, holds[name], slot, authority)
+                    return outcome["invoice_usd"] + outcome["credit_usd"]
+                chosen[name] = {"acceptance_slot": min([None, *slots(forecast)], key=price)}
+            return schedule(forecast, candidate, chosen, holds)["total_cost_usd"]
+        plan = min(candidates, key=forecast_cost)
+    else:
+        plan = min(candidates, key=lambda p: schedule(forecast, p, decisions)["total_cost_usd"])
     files = [key for key in visible["workspace"] if key.startswith("reports/")] if forward else []
     plan["updates"] = {name: {"message": "Staffing allocation recorded. See your assigned service and expected times.", "attachments": files.copy()} for name in names}
     return plan
 
 
 def reference_commit(visible):
+    if "acceptance_service" in visible["terms"]:
+        from .appointments import session
+        name = visible["actor"]
+        plan = visible["dispatch_plan"]
+        hours = dict(plan["hours"])
+        for message in visible["messages"]:
+            match = re.search(r"Remaining specialist effort:\s*(\d+) business hours", text_of(message))
+            if match and message["sender"] in hours:
+                hours[message["sender"]] = int(match.group(1))
+        hours[name] = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
+        finish = 4 if plan["office_contractor_for"] == name else sum(hours[p] for p in plan["internal_order"][:plan["internal_order"].index(name)+1])
+        due = next(x["completion_due"] for x in visible["terms"]["calendar"] if x["project"] == name)
+        hold = visible["private_booking"]["provisional_start"]
+        authority = visible["assignment"]["procurement_authority"]["remaining_usd"]
+        def price(slot):
+            outcome = session(finish, due, hold, slot, authority)
+            return outcome["invoice_usd"] + outcome["credit_usd"]
+        return {"acceptance_slot": min([None, *visible["private_booking"]["available_start_hours"]], key=price)}
     current = "service_catalog" in visible["terms"]
     assignment = visible["assignment"]
     if "procurement" in visible["terms"]:

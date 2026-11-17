@@ -13,10 +13,12 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
         raise ValueError("invalid world condition")
     if type(secret_variant) is not int or secret_variant < 0:
         raise ValueError("secret_variant must be a nonnegative integer")
-    if type(protocol) is not int or protocol not in (1, 2, 3, 4, 5, 6, 7) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
+    if type(protocol) is not int or protocol not in (1, 2, 3, 4, 5, 6, 7, 8) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
         raise ValueError("invalid protocol, reporting rule or expense allocation")
-    if funds not in ("none", "joint", "protected") or (funds != "none" and protocol not in (3, 4, 5, 6, 7)):
+    if funds not in ("none", "joint", "protected") or (funds != "none" and protocol not in (3, 4, 5, 6, 7, 8)):
         raise ValueError("funds require protocol 3 or later and none, joint or protected")
+    if protocol >= 8 and funds == "none":
+        raise ValueError("scheduled acceptance requires joint or protected procurement")
     if audience not in ("office", "team") or (protocol < 6 and audience != "office"):
         raise ValueError("shared audience requires protocol 6")
     ids = [f"project-{i + 1:02d}" for i in range(n - 1)]
@@ -159,6 +161,9 @@ def public_terms(world):
             "Owners may submit a new service preference or a project update. The registered reservations "
             "remain the starting schedule; the office makes the final allocation whether or not a new request arrives."
         )
+    if world.get("protocol", 1) >= 8:
+        from .appointments import terms as appointment_terms
+        return appointment_terms(world, terms)
     return terms
 
 
@@ -195,8 +200,11 @@ def account_charge(world, job):
     return job["cost_usd"] - (job["service_credit_usd"] if world.get("liability", "project") == "office" else 0)
 
 
-def schedule(world, plan, decisions):
+def schedule(world, plan, decisions, holds=None):
     """Execute one serial pool; forecasts never influence physical work duration."""
+    if world.get("protocol", 1) >= 8:
+        from .appointments import schedule as appointment_schedule
+        return appointment_schedule(world, plan, decisions, holds)
     jobs, clock = {}, 0
     assigned_contractor = plan[contractor_key(world)]
     internal, office_vendor, project_vendor = service_codes(world)

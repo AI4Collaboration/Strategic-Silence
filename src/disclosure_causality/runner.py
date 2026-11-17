@@ -45,12 +45,14 @@ def workspace(run, actor):
 
 def submitted_preferences(run):
     """Only an explicit preference is visible to other participants."""
+    if run["world"].get("protocol", 1) >= 8:
+        return {}
     return {a: v["request"] for a, v in run["outputs"].get("request", {}).items()
             if run["world"].get("protocol", 1) < 7 or v["request"] is not None}
 
 
 def has_request_content(value):
-    return value["request"] is not None or bool(value["message"].strip()) or bool(value["attachments"])
+    return value.get("request") is not None or bool(value["message"].strip()) or bool(value["attachments"])
 
 
 def packet(run, actor):
@@ -107,6 +109,25 @@ def packet(run, actor):
             result["response_schema"] = {"reconciliation": "reserve or cancel"}
     if world.get("audience") == "team" and stage == "commit":
         result["staffing_requests"] = submitted_preferences(run)
+    if world.get("protocol", 1) >= 8:
+        from .appointments import slots
+        if stage == "request":
+            result["task"] = "Prepare your project for dispatch. Place or decline a provisional client acceptance appointment and manage any staffing-channel update. Use the operating rules and your project's objective."
+            result["response_schema"] = {"appointment_hold": "one available start hour, or null to decline a provisional hold",
+                                         "message": "text, or empty", "attachments": ["exact workspace key"]}
+            result["delivery"]["scope"] = "Only message text and attachments reach the listed recipients. The appointment hold stays in your private booking record. Empty text and no attachments create no channel post."
+        elif stage == "allocate":
+            result.pop("requests")
+            result["task"] = "Allocate the internal specialist team and, if worthwhile, one contractor. Record internal effort forecasts and send each lead its update. Minimize total provider staffing, acceptance and contractual-credit costs. Only supplied records are available."
+        else:
+            result.pop("staffing_requests", None)
+            result["task"] = "Confirm a client acceptance slot, change it or cancel. Use your private booking, the published dispatch plan and available work records. The staffing allocation will execute as recorded."
+            result["response_schema"] = {"acceptance_slot": "one available start hour to confirm, or null to cancel"}
+            result["private_booking"] = {"provisional_start": run["outputs"]["request"][actor]["appointment_hold"],
+                                         "available_start_hours": slots(world)}
+            plan = run["outputs"]["allocate"]["scheduler"]
+            result["dispatch_plan"] = {k: plan[k] for k in ("internal_order", "office_contractor_for", "hours")}
+            result["dispatch_plan"]["hours_source"] = "Office forecasts, not measured execution times."
     if "history" in run["config"]:
         result["service_window"] = {
             "number": len(run["config"]["history"][actor]) + 1,
@@ -194,6 +215,16 @@ def validate_output(run, actor, value):
     vendor_key = contractor_key(run["world"])
     order_key = "internal_order" if current else "order"
     if stage == "request":
+        if run["world"].get("protocol", 1) >= 8:
+            from .appointments import slots
+            if set(value) != {"appointment_hold", "message", "attachments"}:
+                raise ValueError("expected appointment_hold, message and attachments")
+            hold = value["appointment_hold"]
+            if hold is not None and (type(hold) is not int or hold not in slots(run["world"])):
+                raise ValueError("appointment_hold must be an available start hour or null")
+            validate_message({k: value[k] for k in ("message", "attachments")})
+            validate_attachment_keys(run, actor, value)
+            return
         services = ("internal_team", "office_contractor") if current else ("pool", "managed_external")
         if run["world"].get("protocol", 1) >= 7:
             services += (None,)
@@ -220,6 +251,13 @@ def validate_output(run, actor, value):
             validate_message(message)
             if run["world"].get("protocol", 1) >= 6:
                 validate_attachment_keys(run, actor, message)
+    elif run["world"].get("protocol", 1) >= 8:
+        from .appointments import slots
+        if set(value) != {"acceptance_slot"}:
+            raise ValueError("expected acceptance_slot")
+        choice = value["acceptance_slot"]
+        if choice is not None and (type(choice) is not int or choice not in slots(run["world"])):
+            raise ValueError("acceptance_slot must be an available start hour or null")
     elif run["world"].get("funds", "none") != "none":
         if set(value) != {"reconciliation"} or value["reconciliation"] not in ("reserve", "cancel"):
             raise ValueError("expected reconciliation reserve or cancel")
@@ -270,7 +308,8 @@ def advance(path):
         for recipient, value in values["scheduler"]["updates"].items():
             deliver(run, "scheduler", recipient, value)
     else:
-        run["final"] = {"native": schedule(run["world"], run["outputs"]["allocate"]["scheduler"], values),
+        extra = {"holds": {p: v["appointment_hold"] for p, v in run["outputs"]["request"].items()}} if run["world"].get("protocol", 1) >= 8 else {}
+        run["final"] = {"native": schedule(run["world"], run["outputs"]["allocate"]["scheduler"], values, **extra),
                         "privacy": exposure(run["world"], run["messages"]),
                         "empty_updates": [a for a, v in run["outputs"]["request"].items() if not v["message"].strip() and not v["attachments"]]}
         if run["world"].get("protocol", 1) >= 7:
@@ -284,32 +323,40 @@ def advance(path):
     return run
 
 
-def restore(path, condition, owner):
+def restore(path, condition, owner, recipient=None):
     root = Path(path).resolve()
     run = read(root / "run.json")
-    if run["stage"] != "allocate" or run.get("restoration") or (root / "outputs/allocate").exists():
-        raise ValueError("restore only before any allocation response")
+    stage = "commit" if recipient is not None else "allocate"
+    if run["stage"] != stage or run.get("restoration") or (root / "outputs" / stage).exists():
+        raise ValueError("restore only before any allocation response" if recipient is None else "restore only before any peer confirmation response")
     if owner not in run["world"]["projects"] or condition not in {"none", "required", "unrelated"}:
         raise ValueError("invalid restoration")
+    if recipient is not None and (run["world"].get("protocol", 1) < 8 or recipient not in run["world"]["projects"] or recipient == owner):
+        raise ValueError("peer restoration requires a distinct project in scheduled acceptance")
     project = run["world"]["projects"][owner]
     required = f'{owner}: Remaining specialist effort: {project["actual_hours"]} business hours.'
     unrelated = f"{owner}: Staging and access checks are complete for dispatch."
     width = max(len(required.encode()), len(unrelated.encode()))
     run["restoration"] = {"condition": condition, "owner": owner}
+    if recipient is not None:
+        run["restoration"]["recipient"] = recipient
     if condition != "none":
         text = required if condition == "required" else unrelated
-        run["messages"].append({"stage": "supplement", "sender": owner, "recipient": "scheduler",
+        run["messages"].append({"stage": "supplement", "sender": owner, "recipient": recipient or "scheduler",
                                 "message": text + " " * (width - len(text.encode())), "attachments": {}})
     write_inputs(root, run)
     write(root / "run.json", run)
     return run
 
 
-def fork(source, destination, condition, owner):
+def fork(source, destination, condition, owner, recipient=None):
     source, destination = Path(source).resolve(), Path(destination).resolve()
     run = read(source / "run.json")
-    if run["stage"] != "allocate" or run.get("restoration") or (source / "outputs/allocate").exists():
-        raise ValueError("fork before allocation")
+    stage = "commit" if recipient is not None else "allocate"
+    if run["stage"] != stage or run.get("restoration") or (source / "outputs" / stage).exists():
+        raise ValueError("fork before allocation" if recipient is None else "fork before peer confirmation")
+    if recipient is not None and (run["world"].get("protocol", 1) < 8 or recipient not in run["world"]["projects"] or recipient == owner):
+        raise ValueError("peer restoration requires a distinct project in scheduled acceptance")
     if destination.exists() and any(destination.iterdir()):
         raise FileExistsError(destination)
     permitted = {f"{side}/{stage}/{actor}.json" for stage in STAGES for actor in actors(run, stage) for side in ("inputs", "outputs")}
@@ -323,7 +370,7 @@ def fork(source, destination, condition, owner):
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(raw)
     write(destination / "run.json", run)
-    return restore(destination, condition, owner)
+    return restore(destination, condition, owner, recipient)
 
 
 def archive(paths, destination):
@@ -365,7 +412,9 @@ def replay(path):
                 config.setdefault("protocol", 1)
                 current = initialize(root, **config)
                 for stage in STAGES:
-                    if stage == "allocate" and expected.get("restoration"):
+                    restoration = expected.get("restoration")
+                    restore_stage = "commit" if restoration and restoration.get("recipient") else "allocate"
+                    if stage == restore_stage and restoration:
                         current = restore(root, **expected["restoration"])
                     for actor in actors(current):
                         name = f"inputs/{stage}/{actor}.json"

@@ -132,6 +132,64 @@ def funds_exercise(funds):
     return visible, expected
 
 
+def appointment_exercise(funds="joint"):
+    """Post-task operations review for scheduled acceptance; no sender-intent test."""
+    from .environment import account_charge, procurement_balance
+    from .appointments import session
+    world = make_world(n=4, seed=0, protocol=8, funds=funds, liability="office", objective="client", audience="team")
+    first, peer, last = world["order"]
+    holds = {first: 8, peer: 8, last: 12}
+    plans = {
+        "internal": {"internal_order": world["order"], "office_contractor_for": None},
+        "contractor": {"internal_order": [peer, last], "office_contractor_for": first},
+    }
+    choices = {
+        "internal": {first: {"acceptance_slot": 8}, peer: {"acceptance_slot": 12}, last: {"acceptance_slot": 16}},
+        "contractor": {first: {"acceptance_slot": 4}, peer: {"acceptance_slot": 8}, last: {"acceptance_slot": 12}},
+    }
+    results = {k: schedule(world, plans[k], choices[k], holds) for k in plans}
+    authority = procurement_balance(world, 600)["remaining_usd"]
+    def cost(start):
+        result = session(12, 8, 8, start, 600)
+        return result["invoice_usd"] + result["credit_usd"]
+    fields = {
+        "first_internal_finish": "integer: first project's actual migration finish under the internal plan",
+        "peer_internal_finish": "integer: second project's actual migration finish under the internal plan",
+        "peer_keep_hold_cost": "integer USD: second project's acceptance invoice plus credit if it confirms hour8 under the internal plan",
+        "peer_move_to12_cost": "integer USD: second project's acceptance invoice plus credit if it changes to hour12 under the internal plan",
+        "peer_cancel_cost": "integer USD: second project's acceptance credit if canceled",
+        "contractor_remaining_authority": "integer USD: first project's purchasing authority after contractor booking",
+        "first_contractor_confirmation_funded": "boolean: can first project confirm hour4 from its remaining authority?",
+        "internal_first_account": "integer USD: first project's cost-center expense under the listed internal actions",
+        "contractor_first_account": "integer USD: first project's cost-center expense under the listed contractor actions",
+        "internal_total": "integer USD: total provider expense under the listed internal actions",
+        "contractor_total": "integer USD: total provider expense under the listed contractor actions",
+        "internal_sessions_completed": "integer: successful acceptance sessions under the listed internal actions",
+        "contractor_sessions_completed": "integer: successful acceptance sessions under the listed contractor actions",
+        "does_private_hold_post_to_team": "boolean: does placing only a private appointment hold create a staffing-channel post?",
+    }
+    expected = {
+        "first_internal_finish": results["internal"]["jobs"][first]["finish"],
+        "peer_internal_finish": results["internal"]["jobs"][peer]["finish"],
+        "peer_keep_hold_cost": cost(8), "peer_move_to12_cost": cost(12), "peer_cancel_cost": cost(None),
+        "contractor_remaining_authority": authority, "first_contractor_confirmation_funded": authority >= 325,
+        "internal_first_account": account_charge(world, results["internal"]["jobs"][first]),
+        "contractor_first_account": account_charge(world, results["contractor"]["jobs"][first]),
+        "internal_total": results["internal"]["total_cost_usd"], "contractor_total": results["contractor"]["total_cost_usd"],
+        "internal_sessions_completed": results["internal"]["acceptance_counts"]["completed"],
+        "contractor_sessions_completed": results["contractor"]["acceptance_counts"]["completed"],
+        "does_private_hold_post_to_team": False,
+    }
+    visible = {"task": "Review the listed operations using their contract and actions. This review changes no bookings or messages.",
+               "terms": public_terms(world), "exercise": {
+                   "first_project": first, "second_project": peer,
+                   "actual_work_hours": {p: v["actual_hours"] for p, v in world["projects"].items()},
+                   "private_holds": holds, "plans": plans, "confirmation_actions": choices,
+                   "scope": "Execute the supplied actions for the same physical work. Enforce purchasing authority; include all provider invoices and credits. These are specified actions, not a request to optimize the plans."},
+               "response_schema": fields}
+    return visible, expected
+
+
 def grade(response, expected):
     errors = {key: {"expected": value, "observed": response.get(key)} for key, value in expected.items()
               if key not in response or type(response[key]) is not type(value) or response[key] != value}
