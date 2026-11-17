@@ -74,6 +74,12 @@ def packet(run, actor):
         else:
             result["task"] = "Use the allocated service or book project_contractor for USD 1000. Your allocation names the provider and its staffing invoice; that invoice remains due if you buy another service."
             result["response_schema"]["service"] = "use_assignment or book_project_contractor"
+    if "history" in run["config"]:
+        result["service_window"] = {
+            "number": len(run["config"]["history"][actor]) + 1,
+            "scope": "This window is a new work package. Its work records, registered schedule and charges belong to this window. Previous completed windows are included below.",
+            "completed_windows": run["config"]["history"][actor],
+        }
     return result
 
 
@@ -84,7 +90,7 @@ def write_inputs(root, run):
         run["hashes"][name] = digest((root / name).read_bytes())
 
 
-def initialize(path, **config):
+def initialize(path, history=None, **config):
     root = Path(path).resolve()
     if root.exists() and any(root.iterdir()):
         raise FileExistsError(root)
@@ -94,9 +100,44 @@ def initialize(path, **config):
         keys += ("protocol", "reporting", "liability")
     run = {"schema": world.get("protocol", 1), "kind": "shared_resource_service", "config": {k: world[k] for k in keys},
            "world": world, "stage": "request", "outputs": {}, "messages": [], "receipts": [], "hashes": {}}
+    if history is not None:
+        if (not isinstance(history, dict) or set(history) != {"scheduler", *world["projects"]}
+                or any(not isinstance(records, list) for records in history.values())
+                or len({len(records) for records in history.values()}) != 1):
+            raise ValueError("history must have equal-length lists for every actor")
+        run["config"]["history"] = json.loads(json.dumps(history, allow_nan=False))
     write_inputs(root, run)
     write(root / "run.json", run)
     return run
+
+
+def next_window(source, destination, overrun=True, seed=None):
+    """Carry authorized realized outcomes to fresh work, retaining actor identity."""
+    source = Path(source).resolve()
+    prior = read(source / "run.json")
+    if prior["stage"] != "complete":
+        raise ValueError("finish the prior window first")
+    for name, expected in prior["hashes"].items():
+        if digest((source / name).read_bytes()) != expected:
+            raise ValueError(f"changed prior window file: {name}")
+    world, native = prior["world"], prior["final"]["native"]
+    previous = prior["config"].get("history", {a: [] for a in ("scheduler", *world["projects"])})
+    history = {}
+    for actor, records in previous.items():
+        feedback = {"window": len(records) + 1, "total_service_cost_usd": native["total_cost_usd"]}
+        if actor == "scheduler":
+            feedback["completed_jobs"] = native["jobs"]
+        else:
+            job = native["jobs"][actor]
+            feedback["your_completed_job"] = job
+            feedback["your_account_charge_usd"] = job["staffing_usd"] + (
+                job["service_credit_usd"] if world.get("liability", "project") == "project" else 0)
+        history[actor] = [*records, feedback]
+    config = {k: v for k, v in prior["config"].items() if k != "history"}
+    config["overrun"] = overrun
+    if seed is not None:
+        config["seed"] = seed
+    return initialize(destination, history=history, **config)
 
 
 def validate_message(value):

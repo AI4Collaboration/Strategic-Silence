@@ -3,7 +3,7 @@ import json
 import pytest
 
 from disclosure_causality.environment import make_world, public_terms, schedule, exposure, contractor_key, announced_assignment
-from disclosure_causality.runner import initialize, packet, actors, read, write, advance, fork, archive, replay
+from disclosure_causality.runner import initialize, packet, actors, read, write, advance, fork, archive, replay, next_window
 from disclosure_causality.validation import checkpoint, finish, reference_plan, reference_request, submit, blind_allocation_check
 
 
@@ -281,3 +281,62 @@ def test_comprehension_key_comes_from_execution_and_respects_expense_allocation(
     assert grade(expected, expected)["passed"]
     wrong = dict(expected, registered_records_vendor_project=expected["current_records_vendor_project"])
     assert not grade(wrong, expected)["passed"]
+
+
+@pytest.mark.parametrize("n", [4, 8, 16, 32])
+@pytest.mark.parametrize("objective", ["shared", "client"])
+def test_repeated_windows_have_real_feedback_private_boundaries_and_replay(tmp_path, n, objective):
+    paths = []
+    for index, overrun in enumerate((True, False, False, True)):
+        path = tmp_path / f"window{index + 1}"
+        run = (initialize(path, n=n, objective=objective, liability="office") if index == 0
+               else next_window(paths[-1], path, overrun=overrun))
+        if index:
+            assert packet(run, "scheduler")["service_window"]["number"] == index + 1
+            for actor in actors(run):
+                visible = packet(run, actor)
+                feedback = visible["service_window"]["completed_windows"][-1]
+                assert "completed_jobs" not in feedback
+                assert feedback["your_completed_job"] == previous["final"]["native"]["jobs"][actor]
+                assert feedback["your_account_charge_usd"] == feedback["your_completed_job"]["staffing_usd"]
+                for other, project in run["world"]["projects"].items():
+                    if other != actor:
+                        assert project["contact"] not in json.dumps(visible)
+                        assert project["label"] not in json.dumps(visible)
+        submit(path, "request", {a: reference_request(packet(run, a), "safe") for a in actors(run)})
+        previous = finish(path)
+        assert previous["final"]["native"]["total_cost_usd"] == (600 if overrun else 0)
+        assert previous["final"]["privacy"]["count"] == 0
+        paths.append(path)
+    archive(paths, tmp_path / "episodes.jsonl")
+    assert replay(tmp_path / "episodes.jsonl")["passed"]
+
+
+def test_past_outcomes_do_not_reveal_current_private_work_and_restoration_still_works(tmp_path):
+    checkpoint(tmp_path / "past", {"objective": "client", "liability": "office"})
+    finish(tmp_path / "past")
+    observations = []
+    for overrun in (False, True):
+        path = tmp_path / str(overrun)
+        run = next_window(tmp_path / "past", path, overrun=overrun)
+        run = submit(path, "request", {a: reference_request(packet(run, a), "silent") for a in actors(run)})
+        observations.append(packet(run, "scheduler"))
+    assert observations[0] == observations[1]
+    source = tmp_path / "True"
+    for condition in ("none", "required", "unrelated"):
+        path = tmp_path / condition
+        fork(source, path, condition, run["world"]["focal"])
+        result = finish(path)
+        assert result["final"]["native"]["total_cost_usd"] == (600 if condition == "required" else 1200)
+        assert result["final"]["privacy"]["count"] == 0
+
+
+def test_next_window_rejects_unfinished_or_changed_source(tmp_path):
+    source = tmp_path / "source"
+    checkpoint(source, {})
+    with pytest.raises(ValueError, match="finish"):
+        next_window(source, tmp_path / "next")
+    finish(source)
+    (source / "outputs/request/project-01.json").write_text("{}")
+    with pytest.raises(ValueError, match="changed prior"):
+        next_window(source, tmp_path / "next")

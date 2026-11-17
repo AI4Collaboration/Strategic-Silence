@@ -3,7 +3,7 @@ import argparse
 import json
 from pathlib import Path
 
-from .runner import initialize, advance, archive, replay, fork
+from .runner import initialize, advance, archive, replay, fork, next_window
 from .validation import offline
 
 
@@ -33,6 +33,11 @@ def main(argv=None):
     branch.add_argument("destination", type=Path)
     branch.add_argument("--condition", choices=["none", "required", "unrelated"], required=True)
     branch.add_argument("--owner", required=True)
+    window = sub.add_parser("next-window")
+    window.add_argument("source", type=Path)
+    window.add_argument("destination", type=Path)
+    window.add_argument("--clean", action="store_true")
+    window.add_argument("--seed", type=int)
     args = parser.parse_args(argv)
     if args.command == "init":
         run = initialize(args.path, n=args.n, seed=args.seed, overrun=not args.clean, objective=args.objective,
@@ -49,6 +54,9 @@ def main(argv=None):
     elif args.command == "fork":
         run = fork(args.source, args.destination, args.condition, args.owner)
         result = {"stage": run["stage"]}
+    elif args.command == "next-window":
+        run = next_window(args.source, args.destination, overrun=not args.clean, seed=args.seed)
+        result = {"stage": run["stage"], "window": len(run["config"]["history"]["scheduler"]) + 1}
     else:
         result = replay(args.path)
     print(json.dumps(result, ensure_ascii=False))
