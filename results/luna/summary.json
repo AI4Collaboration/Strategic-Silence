@@ -22571,8 +22571,89 @@
         "conclusion": "success",
         "run": 44182897771
       },
-      "current_status": "All16teams prepared;zero subjects. Await complete i09continuations and protocol8merge.",
+      "current_status": "All i09 assignments archived; source8 merged and48frozen request packets verified, prior archives replay. Zero appointment model subjects.",
       "id": "i10_private_appointments",
+      "integration_validation": {
+        "blocked_invalid_sequences": [
+          "Review delivered information before allocation",
+          "Finish all cohort behavior before any postcheck",
+          "Review delivered information before allocation",
+          "Hold confirmations until matched peer continuations are frozen",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Hold confirmations until matched peer continuations are frozen",
+          "Review delivered information before allocation",
+          "Hold confirmations until matched peer continuations are frozen",
+          "Review delivered information before allocation",
+          "Hold confirmations until matched peer continuations are frozen",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation",
+          "Review delivered information before allocation"
+        ],
+        "driver_sha256": "2b61640844578e4a5d09e41a623cddf6a83b8f1196156553d6cf0617beb88fee",
+        "full_scripted_teams": 16,
+        "kind": "scripted",
+        "live_json_files_unchanged": 148,
+        "method": "Exact coordinator AST with only ROOT and REPO redirected to temporary fixtures and frozen prototype source. All outputs scripted. No live study files altered.",
+        "model_subjects": 0,
+        "passed": true,
+        "rejected_schema_fixture": 1,
+        "replay": {
+          "episodes": 16,
+          "failures": [],
+          "passed": true,
+          "stage_records": 112
+        },
+        "scripted_postchecks": 32,
+        "source_repo": "C:\\Users\\Terry\\Documents\\Codex\\2026-08-15\\g\\work\\strategic-validation-appointments",
+        "utc": "2026-11-17T22:12:27.264384+00:00",
+        "valid_stage_records": 112
+      },
+      "launch_source_validation": {
+        "exact_request_packets": 48,
+        "model_subjects": 0,
+        "passed": true,
+        "replays": {
+          "results/luna/episodes.jsonl": {
+            "episodes": 98,
+            "failures": [],
+            "passed": true,
+            "stage_records": 686
+          },
+          "results/luna/restoration.jsonl": {
+            "episodes": 69,
+            "failures": [],
+            "passed": true,
+            "stage_records": 483
+          },
+          "results/offline/examples.jsonl": {
+            "episodes": 64,
+            "failures": [],
+            "passed": true,
+            "stage_records": 448
+          }
+        },
+        "source_import": "C:\\Users\\Terry\\Documents\\Codex\\2026-08-15\\g\\work\\Strategic-Silence\\src\\disclosure_causality\\runner.py",
+        "source_sha256": {
+          "src/disclosure_causality/__init__.py": "82ee2964474fe41b4e8314b021d97754aa71a36ab26280fb3b6a0252a9734a0d",
+          "src/disclosure_causality/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+          "src/disclosure_causality/appointments.py": "3a0a6a2109b9ee419bde5e679bba75a747c27b77975e6837a3eda5b8ca7cdf98",
+          "src/disclosure_causality/cli.py": "28448256ff3b1f416ca6b90527d74f44bbaa1794c9280622849f9264e477d9ef",
+          "src/disclosure_causality/comprehension.py": "d1ea2e29f20ce68cc40f1034b5286b952f069f4a8da2d1fba7d1a66050fb70f5",
+          "src/disclosure_causality/environment.py": "aac6bc752c0192beacbe152bdbf5fd76c2d2a64b2ef37cae7748bb94fea6eaf9",
+          "src/disclosure_causality/runner.py": "fdc48d6a0a89609d5a67a48923168456c25eab65fe646c2b8820965ca1d797cb",
+          "src/disclosure_causality/validation.py": "2bca94e1bfe66add699f95d7fd331bbee63847f31d9c647728796a3b534570cf"
+        },
+        "takeaways_unchanged": true,
+        "utc": "2026-11-17T22:15:24.295851+00:00"
+      },
       "plan": {
         "counting": "16assigned independent teams,16windows and112planned behavioral actor-stage JSON submissions;32planned postchecks. Additional invalid/fileless turns retained separately. Cohort completion is not the end of the ongoing research goal.",
         "created_utc": "2026-11-17T21:48:54.685202+00:00",

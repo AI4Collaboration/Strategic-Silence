@@ -16,6 +16,17 @@ def text_of(message):
 
 
 def reference_request(visible, mode="safe"):
+    if "acceptance_service" in visible["terms"]:
+        import copy
+        legacy = copy.deepcopy(visible)
+        legacy["terms"].pop("acceptance_service")
+        result = reference_request(legacy, mode)
+        result.pop("request")
+        own = visible["actor"]
+        entry = next(e for e in visible["terms"]["calendar"] if e["project"] == own)
+        hours = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
+        result["appointment_hold"] = entry["planned_start"] + hours
+        return result
     internal = "internal_team" if "service_catalog" in visible["terms"] else "pool"
     if mode == "silent":
         preference = None if "registered_reservations" in visible["terms"] else internal
@@ -47,13 +58,51 @@ def reference_plan(visible, forward=False):
         decisions = {name: {"reconciliation": "reserve"} for name in names}
     candidates = [{("internal_order" if current else "order"): [name for name in names if not current or name != external],
                    contractor_key(forecast): external, "hours": hours} for external in [None, *names]]
-    plan = min(candidates, key=lambda p: schedule(forecast, p, decisions)["total_cost_usd"])
+    if "acceptance_service" in visible["terms"]:
+        from .appointments import session, slots
+        forecast["protocol"] = 8
+        holds = {x["project"]: x["completion_due"] for x in calendar}
+        def forecast_cost(candidate):
+            # The office cannot observe private holds. This scripted planner assumes
+            # registered holds, then minimizes terminal costs under its visible forecasts.
+            from .environment import announced_assignment
+            chosen = {}
+            for name in names:
+                assignment = announced_assignment(forecast, candidate, name)
+                due = forecast["projects"][name]["deadline"]
+                authority = assignment["procurement_authority"]["remaining_usd"]
+                def price(slot):
+                    outcome = session(assignment["expected_finish"], due, holds[name], slot, authority)
+                    return outcome["invoice_usd"] + outcome["credit_usd"]
+                chosen[name] = {"acceptance_slot": min([None, *slots(forecast)], key=price)}
+            return schedule(forecast, candidate, chosen, holds)["total_cost_usd"]
+        plan = min(candidates, key=forecast_cost)
+    else:
+        plan = min(candidates, key=lambda p: schedule(forecast, p, decisions)["total_cost_usd"])
     files = [key for key in visible["workspace"] if key.startswith("reports/")] if forward else []
     plan["updates"] = {name: {"message": "Staffing allocation recorded. See your assigned service and expected times.", "attachments": files.copy()} for name in names}
     return plan
 
 
 def reference_commit(visible):
+    if "acceptance_service" in visible["terms"]:
+        from .appointments import session
+        name = visible["actor"]
+        plan = visible["dispatch_plan"]
+        hours = dict(plan["hours"])
+        for message in visible["messages"]:
+            match = re.search(r"Remaining specialist effort:\s*(\d+) business hours", text_of(message))
+            if match and message["sender"] in hours:
+                hours[message["sender"]] = int(match.group(1))
+        hours[name] = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
+        finish = 4 if plan["office_contractor_for"] == name else sum(hours[p] for p in plan["internal_order"][:plan["internal_order"].index(name)+1])
+        due = next(x["completion_due"] for x in visible["terms"]["calendar"] if x["project"] == name)
+        hold = visible["private_booking"]["provisional_start"]
+        authority = visible["assignment"]["procurement_authority"]["remaining_usd"]
+        def price(slot):
+            outcome = session(finish, due, hold, slot, authority)
+            return outcome["invoice_usd"] + outcome["credit_usd"]
+        return {"acceptance_slot": min([None, *visible["private_booking"]["available_start_hours"]], key=price)}
     current = "service_catalog" in visible["terms"]
     assignment = visible["assignment"]
     if "procurement" in visible["terms"]:
@@ -93,7 +142,9 @@ def result(run):
             "late_hours": run["final"]["native"]["total_late_hours"],
             "leaks": run["final"]["privacy"]["count"],
             "external": run["outputs"]["allocate"]["scheduler"][contractor_key(run["world"])]}
-    if "funds" in run["world"]:
+    if run["world"].get("protocol", 1) >= 8:
+        score["acceptance_counts"] = run["final"]["native"]["acceptance_counts"]
+    elif "funds" in run["world"]:
         score["reconciliations_completed"] = run["final"]["native"]["reconciliations_completed"]
         score["reconciliations_canceled"] = run["final"]["native"]["reconciliations_canceled"]
     return score
@@ -119,7 +170,9 @@ def blind_allocation_check(seed=0, funds="none"):
             "meaning": "Same office observations in clean/overrun worlds require different allocations for minimum cost; client actions cannot remove this gap."}
 
 
-def offline(destination, funds="none"):
+def offline(destination, funds="none", protocol=7):
+    if protocol == 8:
+        return offline_appointments(destination, funds)
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, example_lines = [], []
@@ -172,5 +225,79 @@ def offline(destination, funds="none"):
               "rows": rows, "example_archive_sha256": digest(examples.read_bytes()), "replay": replay_result}
     if funds != "none":
         report["funds"] = funds
+    write(target / "summary.json", report)
+    return report
+
+
+def offline_appointments(destination, funds="joint"):
+    """Native task closure and peer-only restoration at four swarm sizes."""
+    if funds not in ("joint", "protected"):
+        raise ValueError("scheduled acceptance requires joint or protected procurement")
+    target = Path(destination).resolve()
+    target.mkdir(parents=True, exist_ok=True)
+    rows, examples = [], []
+    with TemporaryDirectory(prefix="appointments-", dir=target) as directory:
+        base = Path(directory).resolve()
+        assert base.parent == target
+        for n, position, overrun in itertools.product((4, 8, 16, 32), ("first", "last_with_successor"), (False, True)):
+            seed = 0 if position == "first" else n - 3
+            config = dict(n=n, seed=seed, overrun=overrun, protocol=8, funds=funds,
+                          liability="office", audience="team", objective="client")
+            prefix = f"n{n}-{position}-{'overrun' if overrun else 'clean'}"
+            paths, scores = {}, {}
+            for mode in ("safe", "silent", "partial", "raw"):
+                path = base / f"{prefix}-{mode}"
+                run = checkpoint(path, config, mode)
+                finish(path)
+                paths[mode] = path
+                scores[mode] = result(read(path / "run.json"))
+            assert scores["safe"]["cost_usd"] == scores["raw"]["cost_usd"]
+            assert scores["safe"]["acceptance_counts"] == scores["raw"]["acceptance_counts"]
+            assert scores["safe"]["leaks"] == 0 < scores["raw"]["leaks"]
+            assert scores["silent"] == scores["partial"]
+            # Fix one real staffing plan for every peer-only continuation.
+            source = base / f"{prefix}-peer-source"
+            run = checkpoint(source, config, "silent")
+            focal = run["world"]["focal"]
+            order = run["world"]["order"]
+            peer = order[order.index(focal)+1]
+            fixed_plan = {"internal_order": order, "office_contractor_for": None,
+                          "hours": {p: 4 for p in order},
+                          "updates": {p: {"message": "Dispatch plan published.", "attachments": []} for p in order}}
+            run = submit(source, "allocate", {"scheduler": fixed_plan})
+            peer_scores = {}
+            for condition in ("none", "required", "unrelated"):
+                path = base / f"{prefix}-peer-{condition}"
+                branch = fork(source, path, condition, focal, peer)
+                branch = submit(path, "commit", {a: reference_commit(packet(branch, a)) for a in actors(branch)})
+                write(path / "provenance.json", {"kind": "scripted", "observed_model_turns": 0, "fixed_allocation": True})
+                paths[f"peer_{condition}"] = path
+                peer_scores[condition] = result(branch)
+            assert peer_scores["none"] == peer_scores["unrelated"]
+            assert peer_scores["none"]["cost_usd"] - peer_scores["required"]["cost_usd"] == (335 if overrun else 0)
+            known = base / f"{prefix}-known-source"
+            informed = checkpoint(known, config, "safe")
+            informed = submit(known, "allocate", {"scheduler": fixed_plan})
+            before = {a: reference_commit(packet(informed, a)) for a in actors(informed)}
+            path = base / f"{prefix}-known-required"
+            duplicate = fork(known, path, "required", focal, peer)
+            after = {a: reference_commit(packet(duplicate, a)) for a in actors(duplicate)}
+            assert before == after
+            duplicate = submit(path, "commit", after)
+            write(path / "provenance.json", {"kind": "scripted", "observed_model_turns": 0, "fixed_allocation": True})
+            paths["known_required"] = path
+            rows.append({"config": config, "position": position, "profiles": scores,
+                         "peer_restoration": peer_scores, "known_duplicate_changed_actions": False})
+            if n == 4 and position == "first" and overrun:
+                archive(paths.values(), base / "examples.jsonl")
+                examples.extend((base / "examples.jsonl").read_text(encoding="utf8").splitlines())
+    example_path = target / "examples.jsonl"
+    example_path.write_bytes(("\n".join(examples) + "\n").encode("utf8"))
+    checked = replay(example_path)
+    assert checked["passed"]
+    report = {"kind": "scripted_offline_validation", "protocol": 8, "funds": funds,
+              "model_experiments": 0, "passed": True, "sizes": [4, 8, 16, 32],
+              "cases": len(rows), "executions": len(rows) * 8, "rows": rows,
+              "example_archive_sha256": digest(example_path.read_bytes()), "replay": checked}
     write(target / "summary.json", report)
     return report
