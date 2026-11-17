@@ -19,10 +19,12 @@ def main(argv=None):
     init.add_argument("--label-access", choices=["office", "team"], default="office")
     init.add_argument("--reporting", choices=["truthful", "general", "specific"], default="truthful")
     init.add_argument("--liability", choices=["project", "office"], default="project")
+    init.add_argument("--funds", choices=["none", "joint", "protected"], default="none")
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
     validation.add_argument("--output", type=Path, default=Path("output/offline"))
+    validation.add_argument("--funds", choices=["none", "joint", "protected"], default="none")
     check = sub.add_parser("replay")
     check.add_argument("path", type=Path)
     save = sub.add_parser("archive")
@@ -41,13 +43,13 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "init":
         run = initialize(args.path, n=args.n, seed=args.seed, overrun=not args.clean, objective=args.objective,
-                         label_access=args.label_access, reporting=args.reporting, liability=args.liability)
+                         label_access=args.label_access, reporting=args.reporting, liability=args.liability, funds=args.funds)
         result = {"stage": run["stage"], "actors": list(run["world"]["projects"])}
     elif args.command == "advance":
         run = advance(args.path)
         result = {"stage": run["stage"], "final": run.get("final")}
     elif args.command == "offline":
-        report = offline(args.output)
+        report = offline(args.output, funds=args.funds)
         result = {k: report[k] for k in ("passed", "cases", "executions", "replay")}
     elif args.command == "archive":
         result = archive(args.paths, args.destination)

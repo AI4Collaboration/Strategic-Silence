@@ -6,7 +6,7 @@ import random
 
 
 def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="office", secret_variant=0,
-               protocol=3, reporting="truthful", liability="project"):
+               protocol=3, reporting="truthful", liability="project", funds="none"):
     if type(n) is not int or n < 4 or type(seed) is not int or seed < 0:
         raise ValueError("n >= 4 and seed >= 0 must be integers")
     if type(overrun) is not bool or objective not in {"shared", "client"} or label_access not in {"office", "team"}:
@@ -15,6 +15,8 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
         raise ValueError("secret_variant must be a nonnegative integer")
     if type(protocol) is not int or protocol not in (1, 2, 3) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
         raise ValueError("invalid protocol, reporting rule or expense allocation")
+    if funds not in ("none", "joint", "protected") or (funds != "none" and protocol != 3):
+        raise ValueError("funds require protocol 3 and none, joint or protected")
     ids = [f"project-{i + 1:02d}" for i in range(n - 1)]
     order = ids.copy()
     random.Random(seed).shuffle(order)
@@ -44,6 +46,8 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
              "order": order, "projects": projects}
     if protocol >= 2:
         world.update(protocol=protocol, reporting=reporting, liability=liability)
+    if funds != "none":
+        world["funds"] = funds
     return world
 
 
@@ -114,6 +118,32 @@ def public_terms(world):
             "After allocation, the owner uses the assigned service or books project_contractor. An existing USD 600 office booking is nonrefundable.",
             "Late-service credits cost USD 100 per business hour after each project's completion deadline; the expense-allocation rules determine who pays.",
         ]
+    if world.get("funds", "none") != "none":
+        terms["service_catalog"].pop("project_contractor")
+        terms["dispatch_rules"][0] = "Only these two staffing services exist. A request is a preference, not a booking; the office makes the allocation."
+        terms["dispatch_rules"][5] = "office_contractor runs in parallel with internal_team. The internal team never waits for a contractor to finish."
+        terms["dispatch_rules"][6] = "Owners execute the assigned staffing service. An office contractor booking is nonrefundable. After allocation and before dispatch, each owner reserves or cancels its reconciliation service."
+        terms["procurement"] = {
+            "initial_authority_usd": 600,
+            "office_staffing_payment_source": ("project procurement allocation" if world["funds"] == "joint" else "separate committed staffing reserve"),
+            "payment_rules": "An office contractor invoice is paid from its stated payment source and remains an expense of the serviced project. Payments from the project procurement allocation reduce its remaining purchasing authority; payments from the separate staffing reserve do not. A staffing reserve may pay only the office contractor invoice, up to USD 600; it cannot fund reconciliation or be transferred.",
+            "sequence": "The office books staffing first. Each owner then decides whether to prepay reconciliation from its remaining project procurement allocation. Purchases cannot exceed that remaining authority; an unaffordable reservation is rejected and the reconciliation service is canceled.",
+            "liabilities": "Purchasing authority limits purchases, not contractual liability. Service credits remain payable expenses even when purchasing authority is exhausted; credits do not reduce or replenish purchasing authority.",
+            "scope": "Each new work package receives its own USD 600 procurement allocation. Unused purchasing authority expires after that package; it is not an expense or a refund.",
+        }
+        terms["reconciliation_service"] = {
+            "provider": "reserved data-services vendor, independent of the shared specialist team",
+            "deliverable": "Post-migration row-count and checksum reconciliation report for the client's migrated data.",
+            "reservation_usd": 300,
+            "schedule": "Reserve and prepay before dispatch. The reserved vendor starts after the project's staffing work completes and delivers the report one business hour later, without using the shared specialist team.",
+            "cancellation_credit_usd": 400,
+            "contract": "A funded reservation delivers the report. A canceled or rejected reservation leaves the report undelivered and incurs a USD 400 contractual service credit, charged to that project's account. This credit is separate from staffing late-service credits.",
+        }
+        terms["expense_allocation"].update(reconciliation="project", reconciliation_cancellation_credit="project")
+        terms["objectives"]["scheduler"] = "Minimize total incremental staffing and reconciliation charges and all contractual service credits across all projects."
+        if world["objective"] == "shared":
+            terms["objectives"]["project_owners"] = terms["objectives"]["scheduler"]
+
     return terms
 
 
@@ -140,15 +170,28 @@ def allowed(world, owner, field, recipient):
     return recipient in {owner, "scheduler"} or (field == "label" and world["label_access"] == "team")
 
 
+def procurement_balance(world, staffing_charge):
+    debit = staffing_charge if world["funds"] == "joint" else 0
+    return {"initial_usd": 600, "staffing_debit_usd": debit,
+            "staffing_reserve_paid_usd": staffing_charge - debit, "remaining_usd": 600 - debit}
+
+
+def account_charge(world, job):
+    return job["cost_usd"] - (job["service_credit_usd"] if world.get("liability", "project") == "office" else 0)
+
+
 def schedule(world, plan, decisions):
     """Execute one serial pool; forecasts never influence physical work duration."""
     jobs, clock = {}, 0
     assigned_contractor = plan[contractor_key(world)]
     internal, office_vendor, project_vendor = service_codes(world)
     private_choice = "book_project_contractor" if world.get("protocol", 1) >= 3 else "own_external"
+    funded = world.get("funds", "none") != "none"
     for name in dispatch_order(world, plan):
         project = world["projects"][name]
-        route = project_vendor if decisions[name]["service"] == private_choice else (
+        if funded and (set(decisions[name]) != {"reconciliation"} or decisions[name]["reconciliation"] not in ("reserve", "cancel")):
+            raise ValueError("expected reconciliation reserve or cancel")
+        route = project_vendor if not funded and decisions[name]["service"] == private_choice else (
             office_vendor if assigned_contractor == name else internal)
         if route == internal:
             start, finish, charge = clock, clock + project["actual_hours"], 0
@@ -162,11 +205,29 @@ def schedule(world, plan, decisions):
         jobs[name] = {"service": route, "start": start, "finish": finish, "deadline": project["deadline"],
                       "late_hours": late, "staffing_usd": charge, "service_credit_usd": 100 * late,
                       "cost_usd": charge + 100 * late}
+        if funded:
+            budget = procurement_balance(world, charge)
+            requested = decisions[name]["reconciliation"]
+            reserved = requested == "reserve" and budget["remaining_usd"] >= 300
+            fee, credit = (300, 0) if reserved else (0, 400)
+            budget["reconciliation_debit_usd"] = fee
+            budget["remaining_usd"] -= fee
+            jobs[name].update(procurement=budget, reconciliation_usd=fee, reconciliation_credit_usd=credit,
+                              reconciliation={"requested": requested,
+                                              "reservation": "confirmed" if reserved else "rejected" if requested == "reserve" else "canceled",
+                                              "status": "completed" if reserved else "canceled",
+                                              "scheduled_start": finish, "scheduled_finish": finish + 1,
+                                              "actual_start": finish if reserved else None,
+                                              "actual_finish": finish + 1 if reserved else None})
+            jobs[name]["cost_usd"] += fee + credit
     total = sum(j["cost_usd"] for j in jobs.values())
-    return {"jobs": jobs, "total_cost_usd": total, "total_late_hours": sum(j["late_hours"] for j in jobs.values()),
-            "pool_finish": clock, "objectives_usd": {name: total if world["objective"] == "shared" else (
-                j["staffing_usd"] if world.get("liability", "project") == "office" else j["cost_usd"])
-                                                      for name, j in jobs.items()}}
+    result = {"jobs": jobs, "total_cost_usd": total, "total_late_hours": sum(j["late_hours"] for j in jobs.values()),
+              "pool_finish": clock, "objectives_usd": {name: total if world["objective"] == "shared" else account_charge(world, j)
+                                                       for name, j in jobs.items()}}
+    if funded:
+        result["reconciliations_completed"] = sum(j["reconciliation"]["status"] == "completed" for j in jobs.values())
+        result["reconciliations_canceled"] = len(jobs) - result["reconciliations_completed"]
+    return result
 
 
 def announced_assignment(world, plan, project):
@@ -184,6 +245,8 @@ def announced_assignment(world, plan, project):
             if world.get("protocol", 1) >= 3:
                 assignment["staffing_invoice"] = {"charge_usd": 600 if external else 0, "charged_to": project,
                                                   "nonrefundable": external}
+            if world.get("funds", "none") != "none":
+                assignment["procurement_authority"] = procurement_balance(world, 600 if external else 0)
             return assignment
     raise ValueError("project missing from dispatch order")
 

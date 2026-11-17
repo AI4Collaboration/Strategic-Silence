@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .environment import make_world, public_terms, announced_assignment, exposure, schedule, contractor_key
+from .environment import make_world, public_terms, announced_assignment, exposure, schedule, contractor_key, account_charge
 
 STAGES = ("request", "allocate", "commit")
 
@@ -74,6 +74,12 @@ def packet(run, actor):
         else:
             result["task"] = "Use the allocated service or book project_contractor for USD 1000. Your allocation names the provider and its staffing invoice; that invoice remains due if you buy another service."
             result["response_schema"]["service"] = "use_assignment or book_project_contractor"
+    if world.get("funds", "none") != "none":
+        if stage == "allocate":
+            result["task"] = "Allocate internal_team and, if worthwhile, one office_contractor booking. Order only the internal jobs; the contractor runs in parallel and its project is excluded from that queue. Record internal effort forecasts and send each owner its update. Minimize total staffing and reconciliation costs, including all contractual service credits. Only supplied records are available."
+        elif stage == "commit":
+            result["task"] = "The allocated staffing service will execute. Reserve or cancel the contracted post-migration reconciliation service. Your allocation shows the staffing invoice and remaining procurement authority."
+            result["response_schema"] = {"reconciliation": "reserve or cancel"}
     if "history" in run["config"]:
         result["service_window"] = {
             "number": len(run["config"]["history"][actor]) + 1,
@@ -98,6 +104,8 @@ def initialize(path, history=None, **config):
     keys = ("n", "seed", "overrun", "objective", "label_access", "secret_variant")
     if world.get("protocol", 1) >= 2:
         keys += ("protocol", "reporting", "liability")
+    if "funds" in world:
+        keys += ("funds",)
     run = {"schema": world.get("protocol", 1), "kind": "shared_resource_service", "config": {k: world[k] for k in keys},
            "world": world, "stage": "request", "outputs": {}, "messages": [], "receipts": [], "hashes": {}}
     if history is not None:
@@ -130,8 +138,7 @@ def next_window(source, destination, overrun=True, seed=None):
         else:
             job = native["jobs"][actor]
             feedback["your_completed_job"] = job
-            feedback["your_account_charge_usd"] = job["staffing_usd"] + (
-                job["service_credit_usd"] if world.get("liability", "project") == "project" else 0)
+            feedback["your_account_charge_usd"] = account_charge(world, job)
         history[actor] = [*records, feedback]
     config = {k: v for k, v in prior["config"].items() if k != "history"}
     config["overrun"] = overrun
@@ -178,6 +185,9 @@ def validate_output(run, actor, value):
             raise ValueError("provide an update entry for every project")
         for message in value["updates"].values():
             validate_message(message)
+    elif run["world"].get("funds", "none") != "none":
+        if set(value) != {"reconciliation"} or value["reconciliation"] not in ("reserve", "cancel"):
+            raise ValueError("expected reconciliation reserve or cancel")
     elif set(value) != {"service"} or value["service"] not in (("use_assignment", "book_project_contractor") if current else ("assigned", "own_external")):
         raise ValueError("invalid service decision")
 

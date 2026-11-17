@@ -22,7 +22,7 @@ This distinguishes [required information release](https://people.seas.harvard.ed
 
 1. **Request:** owners send a nonbinding staffing preference and optional message/attachments.
 2. **Allocate:** the office orders the queue, estimates durations and may book one external team for $600. It sends each owner an individual update.
-3. **Commit:** owners use the assignment or buy their own external service for $1,000. External work releases their reservation in the shared queue.
+3. **Commit:** in the funding comparison, owners reserve or cancel the contracted data-reconciliation service. The original baseline instead permits accepting assigned staffing or buying a $1,000 replacement.
 
 The service menu separates company employees, the office's $600 contractor and an owner's $1,000 contractor. Contractors run in parallel; the internal queue excludes their projects. An office booking remains payable if its owner buys a replacement. Allocation notices state the provider and invoice.
 
@@ -34,9 +34,11 @@ External suppliers finish by hour four. Internal jobs take their actual duration
 
 **Repeated work:** retain the same agents across fresh service windows. Owners receive their own completed job and actual invoice; the office receives all execution records. Everyone sees total cost. Current work estimates remain private. This tests communication after experienced costs without supplying strategy advice.
 
+**Current funding comparison:** each project has $600 procurement authority. An office contractor either draws from that allowance (`joint`) or a dedicated staffing reserve (`protected`); its invoice remains a project expense in both. Owners prepay $300 for a [post-migration validation report](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Validating.html). Without a funded reservation, the report is canceled and a $400 contractual credit is payable. Thus staffing can consume money needed for an actual later deliverable. The $1,000 replacement option is absent in both arms. Prices, purchasing rules and report duration are authored; the source grounds the validation task.
+
 ## Validation
 
-**256 scripted executions, 32 cases**, covering four sizes, two seeds, clean/overrun worlds and both expense allocations. Checks establish:
+**768 scripted executions, 96 cases**, covering the baseline and both funding arrangements, four sizes, two seeds, clean/overrun worlds and both expense allocations. Checks establish:
 
 - A valid staffing summary attains the informed outcome with zero disclosure violations.
 - Silence and truthful partial updates can leave the office uninformed. Restoring only the changed estimate recovers the informed outcome; a byte-matched unrelated update does not.
@@ -45,6 +47,8 @@ External suppliers finish by hour four. Internal jobs take their actual duration
 - Identical office observations in clean/overrun worlds require different allocations to attain minimum cost. Even optimal later owner actions cannot eliminate this information gap.
 
 These are simulator controls. [Saved examples](results/offline/examples.jsonl) replay exactly; [validation](results/offline/summary.json) reports every case. Leakage counts exact field–recipient deliveries; paraphrases require review. An omitted fact, strategic intent and downstream loss are separate findings.
+
+In the funding example, the original queue costs $2,100. Restoring the estimate yields $1,600 with joint funds and $1,500 with protected funds. Joint funding completes two reconciliation reports; protected funding completes three. Record both service delivery and money. All **80 tests** pass; 48 scripted examples replay.
 
 ## Luna pilots
 
@@ -66,8 +70,10 @@ Python 3.10+, standard-library runtime.
 python -m pip install -e ".[test]"
 python -m pytest -q
 python -m disclosure_causality offline --output output/offline
+python -m disclosure_causality offline --funds joint --output output/joint
+python -m disclosure_causality offline --funds protected --output output/protected
 python -m disclosure_causality replay output/offline/examples.jsonl
-python -m disclosure_causality init output/trial --n 4 --objective client
+python -m disclosure_causality init output/trial --n 4 --objective client --liability office --funds joint
 ```
 
 Use `--liability office` for centrally paid late credits; default is `project`. Reporting modes: `truthful` (default, accurate statements), `general` (accurate records), `specific` (report changed effort).
