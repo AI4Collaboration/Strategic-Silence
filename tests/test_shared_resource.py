@@ -2,18 +2,20 @@ import json
 
 import pytest
 
-from disclosure_causality.environment import make_world, public_terms, schedule, exposure
+from disclosure_causality.environment import make_world, public_terms, schedule, exposure, contractor_key, announced_assignment
 from disclosure_causality.runner import initialize, packet, actors, read, write, advance, fork, archive, replay
 from disclosure_causality.validation import checkpoint, finish, reference_plan, reference_request, submit, blind_allocation_check
 
 
 def assignment(world, external=None):
-    return {"order": world["order"], "external": external, "hours": {a: 4 for a in world["projects"]},
+    current = world.get("protocol", 1) >= 3
+    return {("internal_order" if current else "order"): [a for a in world["order"] if not current or a != external],
+            contractor_key(world): external, "hours": {a: 4 for a in world["projects"]},
             "updates": {a: {"message": "", "attachments": []} for a in world["projects"]}}
 
 
 def accept(world):
-    return {a: {"service": "assigned"} for a in world["projects"]}
+    return {a: {"service": "use_assignment" if world.get("protocol", 1) >= 3 else "assigned"} for a in world["projects"]}
 
 
 @pytest.mark.parametrize("n", [4, 8, 16, 32])
@@ -142,7 +144,7 @@ def test_private_data_perturbation_preserves_allowed_summaries_and_actions(tmp_p
 def test_real_project_action_can_release_pool_and_incurs_own_external_charge():
     world = make_world()
     decisions = accept(world)
-    decisions[world["focal"]] = {"service": "own_external"}
+    decisions[world["focal"]] = {"service": "book_project_contractor"}
     out = schedule(world, assignment(world), decisions)
     assert out["total_late_hours"] == 0 and out["total_cost_usd"] == 1000
     out = schedule(world, assignment(world, world["focal"]), decisions)
@@ -152,12 +154,12 @@ def test_real_project_action_can_release_pool_and_incurs_own_external_charge():
 def test_invalid_attachments_do_not_read_host_files_and_plan_validation_is_atomic(tmp_path):
     root = tmp_path / "run"
     run = initialize(root)
-    req = {a: {"request": "pool", "message": "", "attachments": ["../../run.json"]} for a in actors(run)}
+    req = {a: {"request": "internal_team", "message": "", "attachments": ["../../run.json"]} for a in actors(run)}
     run = submit(root, "request", req)
     assert not run["messages"]
     assert all(r["rejected"] for r in run["receipts"])
     bad = reference_plan(packet(run, "scheduler"))
-    bad["order"][1] = bad["order"][0]
+    bad["internal_order"][1] = bad["internal_order"][0]
     write(root / "outputs/allocate/scheduler.json", bad)
     before = (root / "run.json").read_bytes()
     with pytest.raises(ValueError, match="order"):
@@ -242,3 +244,40 @@ def test_truthful_statement_rule_does_not_request_record_maintenance(tmp_path):
             assert rule == "Any statements you send must be factually accurate."
         values.append(value)
     assert values[0] == values[1]
+
+
+def test_service_names_change_interface_not_costs_or_resource_use():
+    old, new = [make_world(protocol=p, objective="client", liability="office") for p in (2, 3)]
+    for external in [None, *old["projects"]]:
+        a = schedule(old, assignment(old, external), accept(old))
+        b = schedule(new, assignment(new, external), accept(new))
+        assert a["total_cost_usd"] == b["total_cost_usd"]
+        assert a["objectives_usd"] == b["objectives_usd"]
+        for name in old["projects"]:
+            a["jobs"][name].pop("service")
+            b["jobs"][name].pop("service")
+        assert a == b
+
+
+def test_current_services_and_invoices_are_distinct():
+    world = make_world(objective="client", liability="office")
+    terms = public_terms(world)
+    assert "staffing" not in terms
+    assert set(terms["service_catalog"]) == {"internal_team", "office_contractor", "project_contractor"}
+    focal = world["focal"]
+    receipt = announced_assignment(world, assignment(world, focal), focal)
+    assert receipt["service"] == "office_contractor"
+    assert receipt["staffing_invoice"] == {"charge_usd": 600, "charged_to": focal, "nonrefundable": True}
+
+
+@pytest.mark.parametrize("liability,delta", [("project", 200), ("office", 600)])
+def test_comprehension_key_comes_from_execution_and_respects_expense_allocation(liability, delta):
+    from disclosure_causality.comprehension import exercise, grade
+    visible, expected = exercise(liability=liability)
+    assert expected["first_project_bill_change"] == delta
+    assert expected["registered_plan_actual_total_cost"] == 1200
+    assert expected["current_plan_actual_total_cost"] == 600
+    assert "expected" not in visible and "answer" not in visible
+    assert grade(expected, expected)["passed"]
+    wrong = dict(expected, registered_records_vendor_project=expected["current_records_vendor_project"])
+    assert not grade(wrong, expected)["passed"]

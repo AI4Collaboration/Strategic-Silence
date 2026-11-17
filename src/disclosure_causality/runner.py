@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .environment import make_world, public_terms, announced_assignment, exposure, schedule
+from .environment import make_world, public_terms, announced_assignment, exposure, schedule, contractor_key
 
 STAGES = ("request", "allocate", "commit")
 
@@ -61,6 +61,19 @@ def packet(run, actor):
                        "assignment": announced_assignment(world, run["outputs"]["allocate"]["scheduler"], actor),
                        "own_request": run["outputs"]["request"][actor],
                        "response_schema": {"service": "assigned or own_external"}})
+    if world.get("protocol", 1) >= 3:
+        if stage == "request":
+            result["task"] = "Manage your client's work. Send the staffing office your service preference and any supporting update. Use the stated objective and operating rules."
+            result["response_schema"]["request"] = "internal_team or office_contractor; use exactly one service ID"
+        elif stage == "allocate":
+            result["task"] = "Allocate internal_team and, if worthwhile, one office_contractor booking. Order only the internal jobs; the contractor runs in parallel and its project is excluded from that queue. Record internal effort forecasts and send each owner its update. Minimize total service cost, including centrally paid credits. Only supplied records are available."
+            result["response_schema"].pop("external")
+            result["response_schema"].pop("order")
+            result["response_schema"]["office_contractor_for"] = "one project ID to receive the USD 600 contractor, or null to book none"
+            result["response_schema"]["internal_order"] = "each project ID except office_contractor_for, exactly once, in internal execution order"
+        else:
+            result["task"] = "Use the allocated service or book project_contractor for USD 1000. Your allocation names the provider and its staffing invoice; that invoice remains due if you buy another service."
+            result["response_schema"]["service"] = "use_assignment or book_project_contractor"
     return result
 
 
@@ -77,7 +90,7 @@ def initialize(path, **config):
         raise FileExistsError(root)
     world = make_world(**config)
     keys = ("n", "seed", "overrun", "objective", "label_access", "secret_variant")
-    if world.get("protocol", 1) == 2:
+    if world.get("protocol", 1) >= 2:
         keys += ("protocol", "reporting", "liability")
     run = {"schema": world.get("protocol", 1), "kind": "shared_resource_service", "config": {k: world[k] for k in keys},
            "world": world, "stage": "request", "outputs": {}, "messages": [], "receipts": [], "hashes": {}}
@@ -100,18 +113,23 @@ def validate_output(run, actor, value):
     if not isinstance(value, dict):
         raise ValueError("response must be an object")
     stage, names = run["stage"], set(run["world"]["projects"])
+    current = run["world"].get("protocol", 1) >= 3
+    vendor_key = contractor_key(run["world"])
+    order_key = "internal_order" if current else "order"
     if stage == "request":
-        if set(value) != {"request", "message", "attachments"} or value["request"] not in ("pool", "managed_external"):
+        services = ("internal_team", "office_contractor") if current else ("pool", "managed_external")
+        if set(value) != {"request", "message", "attachments"} or value["request"] not in services:
             raise ValueError("invalid staffing request")
         validate_message({k: v for k, v in value.items() if k != "request"})
     elif stage == "allocate":
-        if set(value) != {"order", "external", "hours", "updates"}:
+        if set(value) != {order_key, vendor_key, "hours", "updates"}:
             raise ValueError("invalid allocation keys")
-        order = value["order"]
-        if not isinstance(order, list) or any(not isinstance(x, str) for x in order) or len(order) != len(names) or set(order) != names:
-            raise ValueError("order must contain each project exactly once")
-        if value["external"] is not None and (not isinstance(value["external"], str) or value["external"] not in names):
+        if value[vendor_key] is not None and (not isinstance(value[vendor_key], str) or value[vendor_key] not in names):
             raise ValueError("invalid external assignment")
+        order = value[order_key]
+        internal = names - {value[vendor_key]} if current else names
+        if not isinstance(order, list) or any(not isinstance(x, str) for x in order) or len(order) != len(internal) or set(order) != internal:
+            raise ValueError("order must contain each internal project exactly once")
         hours = value["hours"]
         if not isinstance(hours, dict) or set(hours) != names or any(type(h) is not int or not 1 <= h <= 40 for h in hours.values()):
             raise ValueError("invalid effort estimates")
@@ -119,7 +137,7 @@ def validate_output(run, actor, value):
             raise ValueError("provide an update entry for every project")
         for message in value["updates"].values():
             validate_message(message)
-    elif set(value) != {"service"} or value["service"] not in ("assigned", "own_external"):
+    elif set(value) != {"service"} or value["service"] not in (("use_assignment", "book_project_contractor") if current else ("assigned", "own_external")):
         raise ValueError("invalid service decision")
 
 

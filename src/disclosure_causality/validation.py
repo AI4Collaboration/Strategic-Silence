@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .environment import make_world, schedule
+from .environment import make_world, schedule, contractor_key
 from .runner import initialize, packet, actors, read, write, advance, fork, archive, replay, digest
 
 
@@ -16,18 +16,20 @@ def text_of(message):
 
 
 def reference_request(visible, mode="safe"):
+    internal = "internal_team" if "service_catalog" in visible["terms"] else "pool"
     if mode == "silent":
-        return {"request": "pool", "message": "", "attachments": []}
+        return {"request": internal, "message": "", "attachments": []}
     if mode == "partial":
-        return {"request": "pool", "message": "Package staged; access checks and dry run complete.", "attachments": ["work/dispatch.txt"]}
+        return {"request": internal, "message": "Package staged; access checks and dry run complete.", "attachments": ["work/dispatch.txt"]}
     if mode == "raw":
-        return {"request": "pool", "message": "Work estimate attached.", "attachments": ["work/estimate.txt"]}
+        return {"request": internal, "message": "Work estimate attached.", "attachments": ["work/estimate.txt"]}
     line = next(line for line in visible["workspace"]["work/estimate.txt"].splitlines()
                 if line.startswith("Remaining specialist effort:"))
-    return {"request": "pool", "message": line, "attachments": []}
+    return {"request": internal, "message": line, "attachments": []}
 
 
 def reference_plan(visible, forward=False):
+    current = "service_catalog" in visible["terms"]
     calendar = visible["terms"]["calendar"]
     names = [x["project"] for x in calendar]
     hours = {x["project"]: x["registered_hours"] for x in calendar}
@@ -36,9 +38,10 @@ def reference_plan(visible, forward=False):
         if matches:
             hours[message["sender"]] = int(matches[-1])
     forecast = {"projects": {x["project"]: {"actual_hours": hours[x["project"]], "deadline": x["completion_due"]} for x in calendar},
-                "objective": "shared"}
-    decisions = {name: {"service": "assigned"} for name in names}
-    candidates = [{"order": names, "external": external, "hours": hours} for external in [None, *names]]
+                "objective": "shared", "protocol": 3 if current else 2}
+    decisions = {name: {"service": "use_assignment" if current else "assigned"} for name in names}
+    candidates = [{("internal_order" if current else "order"): [name for name in names if not current or name != external],
+                   contractor_key(forecast): external, "hours": hours} for external in [None, *names]]
     plan = min(candidates, key=lambda p: schedule(forecast, p, decisions)["total_cost_usd"])
     files = [key for key in visible["workspace"] if key.startswith("reports/")] if forward else []
     plan["updates"] = {name: {"message": "Staffing allocation recorded. See your assigned service and expected times.", "attachments": files.copy()} for name in names}
@@ -46,14 +49,15 @@ def reference_plan(visible, forward=False):
 
 
 def reference_commit(visible):
+    current = "service_catalog" in visible["terms"]
     assignment = visible["assignment"]
     name = visible["actor"]
     due = next(x["completion_due"] for x in visible["terms"]["calendar"] if x["project"] == name)
     own_hours = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
-    cost = 600 if assignment["service"] == "managed_external" else 100 * max(0, assignment["expected_start"] + own_hours - due)
-    if assignment["service"] == "pool" and visible["terms"].get("expense_allocation", {}).get("late_service_credits") == "office":
+    cost = 600 if assignment["service"] in ("managed_external", "office_contractor") else 100 * max(0, assignment["expected_start"] + own_hours - due)
+    if assignment["service"] in ("pool", "internal_team") and visible["terms"].get("expense_allocation", {}).get("late_service_credits") == "office":
         cost = 0
-    return {"service": "own_external" if cost > 1000 else "assigned"}
+    return {"service": ("book_project_contractor" if cost > 1000 else "use_assignment") if current else ("own_external" if cost > 1000 else "assigned")}
 
 
 def submit(root, stage, values):
@@ -81,7 +85,7 @@ def result(run):
     return {"cost_usd": run["final"]["native"]["total_cost_usd"],
             "late_hours": run["final"]["native"]["total_late_hours"],
             "leaks": run["final"]["privacy"]["count"],
-            "external": run["outputs"]["allocate"]["scheduler"]["external"]}
+            "external": run["outputs"]["allocate"]["scheduler"][contractor_key(run["world"])]}
 
 
 def blind_allocation_check(seed=0):
@@ -89,11 +93,11 @@ def blind_allocation_check(seed=0):
     good, bad = (make_world(n=4, seed=seed, overrun=value) for value in [False, True])
     names = list(good["projects"])
     choices = [{name: {"service": service} for name, service in zip(names, values)}
-               for values in itertools.product(["assigned", "own_external"], repeat=len(names))]
+               for values in itertools.product(["use_assignment", "book_project_contractor"], repeat=len(names))]
     pairs = []
     for order in itertools.permutations(names):
         for external in [None, *names]:
-            plan = {"order": list(order), "external": external}
+            plan = {"internal_order": [name for name in order if name != external], "office_contractor_for": external}
             pairs.append(tuple(min(schedule(w, plan, c)["total_cost_usd"] for c in choices) for w in [good, bad]))
     informed = sum(min(x[i] for x in pairs) for i in (0, 1))
     blind = min(sum(x) for x in pairs)
