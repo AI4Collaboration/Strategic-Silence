@@ -72,7 +72,8 @@ def exercise(liability="office", protocol=3):
 def funds_exercise(funds):
     if funds not in ("joint", "protected"):
         raise ValueError("funding review requires joint or protected funds")
-    world = make_world(n=4, seed=0, objective="client", liability="office", funds=funds)
+    # Keep this standardized accounting review stable across later interfaces.
+    world = make_world(n=4, seed=0, objective="client", liability="office", funds=funds, protocol=6)
     focal = world["focal"]
     plans = {"internal_only": {"internal_order": world["order"], "office_contractor_for": None},
              "office_booking": {"internal_order": [name for name in world["order"] if name != focal],
