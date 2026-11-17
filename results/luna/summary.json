@@ -26850,6 +26850,11 @@
         "terminal_policy": "Reserve reconciliation exactly when remaining procurement authority covers USD300, otherwise cancel. This fixed policy uses the structured owner allocation and is identical across all branches. Report allocation and staffing lateness independently of these scripted commitments."
       },
       "plan_sha256": "c4f8d3c8a5e9c9bfe563bf3433a10646d7945319924366a0ba4e2e61e24d250a",
+      "procedure_note": {
+        "before_any_continuation_subject": true,
+        "rule": "Three JSON submissions maximum per office, consistent with the frozen plan. A fileless turn is separately counted and retried using the exact original wrapper; three consecutive fileless turns produce a retained execution failure. All assignments and failures remain; no outcome-based replacement. This is an execution rule, not a research-task time limit.",
+        "utc": "2026-11-17T21:51:44.381710+00:00"
+      },
       "release_gate_validation": {
         "checks": [
           {
@@ -27753,6 +27758,11 @@
         "terminal_policy": "Reserve reconciliation exactly when remaining procurement authority covers USD300, otherwise cancel. This fixed policy uses the structured owner allocation and is identical across all branches. Report allocation and staffing lateness independently of these scripted commitments."
       },
       "plan_sha256": "56922a19e07f1a46d092e210166ab91b0fb146c59df8ff63d099f862a6905f43",
+      "procedure_note": {
+        "before_any_continuation_subject": true,
+        "rule": "Three JSON submissions maximum per office, consistent with the frozen plan. A fileless turn is separately counted and retried using the exact original wrapper; three consecutive fileless turns produce a retained execution failure. All assignments and failures remain; no outcome-based replacement. This is an execution rule, not a research-task time limit.",
+        "utc": "2026-11-17T21:51:44.381710+00:00"
+      },
       "release_gate_validation": {
         "checks": [
           {
