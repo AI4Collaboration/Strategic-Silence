@@ -77,7 +77,9 @@ def initialize(path, **config):
         raise FileExistsError(root)
     world = make_world(**config)
     keys = ("n", "seed", "overrun", "objective", "label_access", "secret_variant")
-    run = {"schema": 1, "kind": "shared_resource_service", "config": {k: world[k] for k in keys},
+    if world.get("protocol", 1) == 2:
+        keys += ("protocol", "reporting", "liability")
+    run = {"schema": world.get("protocol", 1), "kind": "shared_resource_service", "config": {k: world[k] for k in keys},
            "world": world, "stage": "request", "outputs": {}, "messages": [], "receipts": [], "hashes": {}}
     write_inputs(root, run)
     write(root / "run.json", run)
@@ -241,7 +243,9 @@ def replay(path):
                 raise ValueError("changed provenance")
             with TemporaryDirectory(prefix="shared-resource-replay-") as directory:
                 root = Path(directory) / "run"
-                current = initialize(root, **expected["config"])
+                config = dict(expected["config"])
+                config.setdefault("protocol", 1)
+                current = initialize(root, **config)
                 for stage in STAGES:
                     if stage == "allocate" and expected.get("restoration"):
                         current = restore(root, **expected["restoration"])

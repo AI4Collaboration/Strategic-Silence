@@ -51,6 +51,8 @@ def reference_commit(visible):
     due = next(x["completion_due"] for x in visible["terms"]["calendar"] if x["project"] == name)
     own_hours = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
     cost = 600 if assignment["service"] == "managed_external" else 100 * max(0, assignment["expected_start"] + own_hours - due)
+    if assignment["service"] == "pool" and visible["terms"].get("expense_allocation", {}).get("late_service_credits") == "office":
+        cost = 0
     return {"service": "own_external" if cost > 1000 else "assigned"}
 
 
@@ -108,9 +110,9 @@ def offline(destination):
     with TemporaryDirectory(prefix="validation-", dir=target) as directory:
         base = Path(directory).resolve()
         assert base.parent == target
-        for n, seed, overrun in itertools.product((4, 8, 16, 32), (0, 1), (False, True)):
-            config = dict(n=n, seed=seed, overrun=overrun)
-            prefix = f"n{n}-s{seed}-{'overrun' if overrun else 'clean'}"
+        for n, seed, overrun, liability in itertools.product((4, 8, 16, 32), (0, 1), (False, True), ("project", "office")):
+            config = dict(n=n, seed=seed, overrun=overrun, liability=liability)
+            prefix = f"n{n}-s{seed}-{'overrun' if overrun else 'clean'}-{liability}"
             paths, scores = {}, {}
             for mode in ("safe", "silent", "partial", "raw"):
                 path = base / f"{prefix}-{mode}"
@@ -138,7 +140,7 @@ def offline(destination):
             rows.append({"config": config, "world_sha256": digest(make_world(**config)), "profiles": scores})
             if n == 4 and seed == 0 and overrun:
                 archive(paths.values(), base / "examples.jsonl")
-                example_lines = (base / "examples.jsonl").read_text(encoding="utf-8").splitlines()
+                example_lines.extend((base / "examples.jsonl").read_text(encoding="utf-8").splitlines())
     examples = target / "examples.jsonl"
     examples.write_bytes(("\n".join(example_lines) + "\n").encode())
     replay_result = replay(examples)

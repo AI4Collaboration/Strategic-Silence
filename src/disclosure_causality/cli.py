@@ -17,6 +17,8 @@ def main(argv=None):
     init.add_argument("--clean", action="store_true")
     init.add_argument("--objective", choices=["shared", "client"], default="shared")
     init.add_argument("--label-access", choices=["office", "team"], default="office")
+    init.add_argument("--reporting", choices=["truthful", "general", "specific"], default="truthful")
+    init.add_argument("--liability", choices=["project", "office"], default="project")
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
@@ -33,7 +35,8 @@ def main(argv=None):
     branch.add_argument("--owner", required=True)
     args = parser.parse_args(argv)
     if args.command == "init":
-        run = initialize(args.path, n=args.n, seed=args.seed, overrun=not args.clean, objective=args.objective, label_access=args.label_access)
+        run = initialize(args.path, n=args.n, seed=args.seed, overrun=not args.clean, objective=args.objective,
+                         label_access=args.label_access, reporting=args.reporting, liability=args.liability)
         result = {"stage": run["stage"], "actors": list(run["world"]["projects"])}
     elif args.command == "advance":
         run = advance(args.path)

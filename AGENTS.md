@@ -6,6 +6,7 @@
 - Give participants only their own stage input. Never expose evaluator state, fact labels or desired failures. Do not instruct concealment or leakage.
 - Preferences are nonbinding; allocation and service choices determine actual costs. Do not reward messages directly.
 - Separate scripted controls, observed model behavior and inferred intent. Retain every current trial and execution error.
+- Change reporting specificity and expense allocation separately. In general-rule trials, measure information loss without inventing an explicit reporting duty.
 - Retire complete superseded cohorts to Git history, never selected unfavorable runs. Preserve `docs/TAKEAWAYS.md` and supplied paper templates.
 - Keep README and replies concise. Avoid redundant plans, extra Markdown files and em dashes. Verify citations against primary sources.
 - Run relevant checks, commit and push. Model experiments require user authorization. Do not restore saved browser state.
