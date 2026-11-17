@@ -36,24 +36,24 @@
   "matrix_run_revision": "39336543fd72113aa9a932c13af847f144c22801",
   "normalization": "UTF-8 text with universal newlines (LF)",
   "normalized_source_sha256": {
-    "pyproject.toml": "450d93ca2c806ed34d582de74add2b191919aad8b39c71771c2d87ac41bdde7e",
+    "pyproject.toml": "ed4c9e3705daddf06e700c2de262d1ba1af98b55d8c953033d1bb505bfec2fb1",
     "src/disclosure_causality/__init__.py": "18b528a4c69f99fdd3425d06075af60d4caa341bcc7dac0c059ff4fbe52ffd20",
     "src/disclosure_causality/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
     "src/disclosure_causality/cases.py": "c28dd5a35a20fa6d25fb91d52cc8e8cbb1f273ab1f185b3b78faf2d12222a30d",
     "src/disclosure_causality/cli.py": "862e008a0b69ffa623bd23554493420a789453167b759982ac0efdd590fb2a7c",
     "src/disclosure_causality/engine.py": "3df50bfd77529b64c4c99c9228ece190a2725f09b96b60ad2e4726b52c3d3ad9",
     "src/disclosure_causality/environments.py": "89296b1ecfcaa5393e5dc0d9774d692565166ed617ed1fbc99f5fee4d2a02af7",
-    "src/disclosure_causality/pilot.py": "b34e1cd224582f4dac1ed1540ffec9f4e0f6ec1424c97cfc2db15166077353ca",
+    "src/disclosure_causality/pilot.py": "f3cd6fe013ff8d1898b6024572620d81bf09a31117c36494ce94d2468a181368",
     "src/disclosure_causality/protocol.py": "ca631b9ad1dd876888edd37335ceed15ac003db63e96807298a9d115b5a3fff4",
     "src/disclosure_causality/runner.py": "b1b19c2f11c865c98aca4f2488433f03d382a8f0b605ba8c00a51f7ec6de3be3",
     "src/disclosure_causality/software.py": "aa23a29380d86fa7e9226c721d2bc41829d4a0bec6c6bb4c17ce021121518e74",
     "tests/conftest.py": "a9fcb37b0451ed100a261cb9e9be7626c39697f190d23ffe2474e8eb657bb1ae",
-    "tests/test_pilot.py": "f065e349c3116b56731c75d1d60baa431f7b082f13be7e9d376e0e86b84a9d73",
+    "tests/test_pilot.py": "c5263855b2b485d38587511d090daadfc0e3df0d6853606e3eca17595262f9a2",
     "tests/test_protocol.py": "f602e8512619e5cad0d98b11cc19136d4b927791bf89b00623d8cea9185ae85e",
     "tests/test_software.py": "eaae14ef105648a7446f1beb9cfe7e1d548a1c80f5842351eeb70e86644c1682",
     "tests/test_workflows.py": "fc7806d9ce3db3a9c92012fad75c2f05148006bdb5e6901046b2091c81e78068"
   },
-  "replay_validation_revision": "c943d22c8f749bdfb7608c86ff3bbe40310f5cbd",
+  "replay_validation_revision": "5d0d24b119abeb35fe121ab2354e434ea233d35d",
   "schema_version": 2,
   "scope": "Scripted offline validation of authored workflow simulators; not model results",
   "sizes": [
@@ -64,7 +64,7 @@
   ],
   "tests": {
     "command": "python -m pytest -q -p no:cacheprovider",
-    "passed": 123
+    "passed": 121
   },
   "total_episodes": 714
 }
