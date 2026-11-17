@@ -37,15 +37,16 @@ def test_ledger_does_not_change_actions_costs_or_service_outcomes(n, funds, liab
     assert 'reconciliation' not in json.dumps(new_terms).lower()
 
 
-def test_office_finance_records_do_not_reveal_unreported_work_or_private_holds(tmp_path):
+@pytest.mark.parametrize('n',[4,32])
+def test_office_finance_records_do_not_reveal_unreported_work_or_private_holds(tmp_path,n):
     offices=[]
     for overrun in (False,True):
         path=tmp_path/str(overrun)
-        run=initialize(path,protocol=9,funds='joint',liability='office',audience='team',overrun=overrun)
+        run=initialize(path,n=n,protocol=9,funds='joint',liability='office',audience='team',overrun=overrun)
         requests={a:reference_request(packet(run,a),'silent') for a in run['world']['projects']}
         run=submit(path,'request',requests)
         visible=packet(run,'scheduler');offices.append(visible)
-        assert len([p for p in visible['workspace'] if p.startswith('finance/')])==3
+        assert len([p for p in visible['workspace'] if p.startswith('finance/')])==1
         assert not any(p.startswith('reports/') for p in visible['workspace'])
     assert offices[0]==offices[1]
 
@@ -56,7 +57,7 @@ def test_postcheck_adds_records_without_changing_questions_or_expected_values(fu
     after,observed=appointment_exercise(funds,9)
     assert expected==observed and before['exercise']==after['exercise']
     assert before['response_schema']==after['response_schema']
-    assert len(after['workspace'])==3
+    assert len(after['workspace'])==1
     assert 'workspace' not in before
 
 

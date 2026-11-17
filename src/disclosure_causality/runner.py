@@ -37,8 +37,8 @@ def workspace(run, actor):
     files = {f"clients/{name}/contract.txt": p["files"]["client/brief.txt"]
              for name, p in run["world"]["projects"].items()}
     if run["world"].get("protocol", 1) >= 9:
-        files.update({f"finance/{name}.txt": p["files"]["finance/cost-center.txt"]
-                      for name, p in run["world"]["projects"].items()})
+        from .appointments import expense_record
+        files["finance/cost-allocation.txt"] = expense_record(run["world"], "serviced project's cost center")
     for m in run["messages"]:
         if m["recipient"] == "scheduler":
             for path, content in m["attachments"].items():
