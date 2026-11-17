@@ -44,7 +44,7 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Offline:** 256 current scripted executions across 32 cases; all four sizes, both funding rules, safe summaries, privacy and restoration. All 64 saved examples replay, including earlier versions. [Validation records](results/offline/summary.json).
 
-**Earlier model pilots:** 92 teams / 98 windows, 695 behavioral JSON submissions (686 accepted, nine rejected), and 69 completed office continuations plus one retained failure. Latest omissions: 2/8 adverse cases. Required-fact restoration cost nearly matched unrelated restoration, so recipient errors remain material. [All team records](results/luna/episodes.jsonl), [recipient continuations](results/luna/restoration.jsonl), and [cohort audits](results/luna/summary.json) preserve every completed pilot, rejection and negative result. These pilots used earlier task versions. The appointment version has not yet run with model subjects.
+**Earlier model pilots:** 92 teams / 98 windows, 695 behavioral JSON submissions (686 accepted, nine rejected), and 69 completed office continuations plus one retained failure. Latest omissions: 2/8 adverse cases. Required-fact restoration cost nearly matched unrelated restoration, so recipient errors remain material. [All team records](results/luna/episodes.jsonl), [recipient continuations](results/luna/restoration.jsonl), and [cohort audits](results/luna/summary.json) preserve every completed pilot, rejection and negative result. These pilots used earlier task versions. A fixed sixteen-team appointment pilot is now running; its results will be reported separately.
 
 ## Run
 
