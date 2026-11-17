@@ -124,7 +124,7 @@ def test_funding_information_gap_survives_optimal_owner_actions(tmp_path, funds,
     assert proof["one_fixed_allocation_minimum_combined_cost_usd"] > proof["informed_minimum_combined_cost_usd"]
 
 
-@pytest.mark.parametrize("protocol", [3, 4])
+@pytest.mark.parametrize("protocol", [3, 4, 5])
 def test_arms_have_identical_visible_inputs_except_stated_funding_explanations(tmp_path, protocol):
     initial, office, worlds = [], [], []
     for funds in ("joint", "protected"):
@@ -222,16 +222,16 @@ def test_repeated_funding_windows_reset_procurement_retain_real_costs_and_replay
 
 
 def test_none_preserves_legacy_worlds_and_cli_defaults(tmp_path, capsys):
-    for protocol in (1, 2, 3, 4):
+    for protocol in (1, 2, 3, 4, 5):
         assert make_world(protocol=protocol) == make_world(protocol=protocol, funds="none")
-    assert make_world()["protocol"] == 4
+    assert make_world()["protocol"] == 5
     assert main(["init", str(tmp_path / "default")]) == 0
     assert "funds" not in read(tmp_path / "default/run.json")["config"]
-    assert read(tmp_path / "default/run.json")["config"]["protocol"] == 4
+    assert read(tmp_path / "default/run.json")["config"]["protocol"] == 5
     for funds in ("joint", "protected"):
         assert main(["init", str(tmp_path / funds), "--funds", funds]) == 0
         assert read(tmp_path / funds / "run.json")["config"]["funds"] == funds
-        assert read(tmp_path / funds / "run.json")["config"]["protocol"] == 4
+        assert read(tmp_path / funds / "run.json")["config"]["protocol"] == 5
     with pytest.raises(ValueError, match="funds"):
         make_world(funds="joint", protocol=2)
     with pytest.raises(ValueError, match="funds"):
@@ -244,7 +244,7 @@ def test_none_preserves_legacy_worlds_and_cli_defaults(tmp_path, capsys):
 def test_funding_accounting_review_is_separate_and_schedule_derived(funds, total, own, remaining, reports, delta):
     from disclosure_causality.comprehension import funds_exercise, grade
     visible, expected = funds_exercise(funds)
-    assert visible["terms"] == public_terms(make_world(funds=funds, objective="client", liability="office", protocol=4))
+    assert visible["terms"] == public_terms(make_world(funds=funds, objective="client", liability="office", protocol=5))
     assert len(expected) == len(visible["response_schema"]) == 14
     assert expected["office_vendor_project_charge"] == 600
     assert expected["procurement_remaining_after_office_booking"] == remaining
@@ -315,3 +315,29 @@ def test_active_funding_rules_exclude_unavailable_reserve_and_cost_unused_reserv
     assert unbooked["total_cost_usd"] == 900
     assert booked["total_cost_usd"] == 1500
     assert booked["objectives_usd"][world["focal"]] - unbooked["objectives_usd"][world["focal"]] == 600
+
+
+@pytest.mark.parametrize("funds", ["none", "joint", "protected"])
+@pytest.mark.parametrize("objective", ["client", "shared"])
+@pytest.mark.parametrize("overrun", [False, True])
+def test_protocol_five_changes_only_request_task_bytes_and_preserves_execution(tmp_path, funds, objective, overrun):
+    runs = {p: initialize(tmp_path / str(p), protocol=p, funds=funds, objective=objective, overrun=overrun, liability="office") for p in (4, 5)}
+    removed = b" and any supporting update"
+    for stage in ("request", "allocate", "commit"):
+        for actor in actors(runs[4]):
+            before, after = [(tmp_path / str(p) / f"inputs/{stage}/{actor}.json").read_bytes() for p in (4, 5)]
+            if stage == "request":
+                assert before.count(removed) == 1
+                assert after == before.replace(removed, b"", 1)
+            else:
+                assert after == before
+        for protocol, run in runs.items():
+            if stage == "request":
+                outputs = {a: reference_request(packet(run, a)) for a in actors(run)}
+            elif stage == "allocate":
+                outputs = {"scheduler": reference_plan(packet(run, "scheduler"))}
+            else:
+                outputs = {a: reference_commit(packet(run, a)) for a in actors(run)}
+            runs[protocol] = submit(tmp_path / str(protocol), stage, outputs)
+    assert runs[4]["outputs"] == runs[5]["outputs"]
+    assert runs[4]["final"] == runs[5]["final"]

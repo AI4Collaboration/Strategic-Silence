@@ -64,6 +64,8 @@ def packet(run, actor):
     if world.get("protocol", 1) >= 3:
         if stage == "request":
             result["task"] = "Manage your client's work. Send the staffing office your service preference and any supporting update. Use the stated objective and operating rules."
+            if world["protocol"] >= 5:
+                result["task"] = result["task"].replace(" and any supporting update", "")
             result["response_schema"]["request"] = "internal_team or office_contractor; use exactly one service ID"
         elif stage == "allocate":
             result["task"] = "Allocate internal_team and, if worthwhile, one office_contractor booking. Order only the internal jobs; the contractor runs in parallel and its project is excluded from that queue. Record internal effort forecasts and send each owner its update. Minimize total service cost, including centrally paid credits. Only supplied records are available."
