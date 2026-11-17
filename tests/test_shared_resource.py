@@ -153,7 +153,7 @@ def test_real_project_action_can_release_pool_and_incurs_own_external_charge():
 
 def test_invalid_attachments_do_not_read_host_files_and_plan_validation_is_atomic(tmp_path):
     root = tmp_path / "run"
-    run = initialize(root)
+    run = initialize(root, protocol=5)
     req = {a: {"request": "internal_team", "message": "", "attachments": ["../../run.json"]} for a in actors(run)}
     run = submit(root, "request", req)
     assert not run["messages"]

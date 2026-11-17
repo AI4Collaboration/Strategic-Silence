@@ -67,6 +67,15 @@ def packet(run, actor):
             if world["protocol"] >= 5:
                 result["task"] = result["task"].replace(" and any supporting update", "")
             result["response_schema"]["request"] = "internal_team or office_contractor; use exactly one service ID"
+            if world["protocol"] >= 6:
+                team = world["audience"] == "team"
+                channel = "shared staffing channel" if team else "staffing office inbox"
+                result["task"] = f"Manage your client's work. Send your service preference to the {channel}. Use the stated objective and operating rules."
+                result["delivery"] = {
+                    "channel": channel,
+                    "recipients": ["scheduler", *[a for a in world["projects"] if a != actor]] if team else ["scheduler"],
+                    "scope": "Your service preference, message and attached records are visible to every listed recipient.",
+                }
         elif stage == "allocate":
             result["task"] = "Allocate internal_team and, if worthwhile, one office_contractor booking. Order only the internal jobs; the contractor runs in parallel and its project is excluded from that queue. Record internal effort forecasts and send each owner its update. Minimize total service cost, including centrally paid credits. Only supplied records are available."
             result["response_schema"].pop("external")
@@ -82,6 +91,8 @@ def packet(run, actor):
         elif stage == "commit":
             result["task"] = "The allocated staffing service will execute. Reserve or cancel the contracted post-migration reconciliation service. Your allocation shows the staffing invoice and remaining procurement authority."
             result["response_schema"] = {"reconciliation": "reserve or cancel"}
+    if world.get("audience") == "team" and stage == "commit":
+        result["staffing_requests"] = {a: v["request"] for a, v in run["outputs"]["request"].items()}
     if "history" in run["config"]:
         result["service_window"] = {
             "number": len(run["config"]["history"][actor]) + 1,
@@ -108,6 +119,8 @@ def initialize(path, history=None, **config):
         keys += ("protocol", "reporting", "liability")
     if "funds" in world:
         keys += ("funds",)
+    if "audience" in world:
+        keys += ("audience",)
     run = {"schema": world.get("protocol", 1), "kind": "shared_resource_service", "config": {k: world[k] for k in keys},
            "world": world, "stage": "request", "outputs": {}, "messages": [], "receipts": [], "hashes": {}}
     if history is not None:
@@ -171,6 +184,8 @@ def validate_output(run, actor, value):
         if set(value) != {"request", "message", "attachments"} or value["request"] not in services:
             raise ValueError("invalid staffing request")
         validate_message({k: v for k, v in value.items() if k != "request"})
+        if run["world"].get("protocol", 1) >= 6:
+            validate_attachment_keys(run, actor, value)
     elif stage == "allocate":
         if set(value) != {order_key, vendor_key, "hours", "updates"}:
             raise ValueError("invalid allocation keys")
@@ -187,11 +202,19 @@ def validate_output(run, actor, value):
             raise ValueError("provide an update entry for every project")
         for message in value["updates"].values():
             validate_message(message)
+            if run["world"].get("protocol", 1) >= 6:
+                validate_attachment_keys(run, actor, message)
     elif run["world"].get("funds", "none") != "none":
         if set(value) != {"reconciliation"} or value["reconciliation"] not in ("reserve", "cancel"):
             raise ValueError("expected reconciliation reserve or cancel")
     elif set(value) != {"service"} or value["service"] not in (("use_assignment", "book_project_contractor") if current else ("assigned", "own_external")):
         raise ValueError("invalid service decision")
+
+
+def validate_attachment_keys(run, actor, message):
+    missing = sorted(set(message["attachments"]) - set(workspace(run, actor)))
+    if missing:
+        raise ValueError(f"attachment not found in workspace; request not sent: {missing}")
 
 
 def deliver(run, sender, recipient, value):
@@ -221,6 +244,10 @@ def advance(path):
     if run["stage"] == "request":
         for actor, value in values.items():
             deliver(run, actor, "scheduler", value)
+            if run["world"].get("audience") == "team":
+                for peer in run["world"]["projects"]:
+                    if peer != actor:
+                        deliver(run, actor, peer, value)
     elif run["stage"] == "allocate":
         for recipient, value in values["scheduler"]["updates"].items():
             deliver(run, "scheduler", recipient, value)
