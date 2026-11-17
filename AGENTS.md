@@ -1,7 +1,7 @@
 # Working rules
 
 - README is the current design: nine value-chain scenarios in one framework.
-- T1 is the executable IT integration pilot; M1–M3 and L1–L3 are six scripted reference simulators. Distinguish implemented workflows from the nine-scenario plan.
+- The current Luna pilot is IT migration delivery (flow). T1 and M1–M3/L1–L3 remain seven scripted reference workflows. Distinguish these from the nine-scenario plan.
 - Keep business functions, flow/sharing/fit dependencies and candidate industries separate.
 - Every task tests required disclosure and protected information together.
 - Keep replies and README concise. Do not restore superseded setups or plans.
