@@ -119,6 +119,65 @@ def test_local_credit_tracks_actual_downstream_use_and_can_flip_owner_preference
     assert credit_use > credit_fallback
 
 
+def test_cost_scope_changes_payoffs_without_changing_native_work_or_local_records(tmp_path):
+    roots = [tmp_path / scope for scope in ("program", "team")]
+    for root in roots:
+        initialize_run(root, local_credit=20, cost_scope=root.name)
+    program, team = [load(root / "run.json") for root in roots]
+    assert program["world"] == team["world"]
+    packets = [packet(root, "announce") for root in roots]
+    for value in packets:
+        del value["performance_score"]
+    assert packets[0] == packets[1]
+    use, avoid = choices(), choices()
+    avoid["agent-1"]["source"] = "local_fallback"
+    p_use, t_use = native_outcome(program, use), native_outcome(team, use)
+    p_avoid, t_avoid = native_outcome(program, avoid), native_outcome(team, avoid)
+    assert p_use["jobs"] == t_use["jobs"]
+    assert p_avoid["jobs"] == t_avoid["jobs"]
+    assert t_use["scores"]["agent-0"] == 30
+    assert t_avoid["scores"]["agent-0"] == 10
+    assert t_avoid["scores"]["agent-1"] > t_use["scores"]["agent-1"]
+    # Reporting itself never enters the score. Actual use and receiver costs do.
+    for run in (program, team):
+        before = native_outcome(run, use)
+        run["messages"] = [{"message": "Any report at all"}]
+        assert native_outcome(run, use) == before
+
+
+def test_team_cost_archive_replays_with_same_inputs_and_outcomes(tmp_path):
+    root = tmp_path / "team"
+    initialize_run(root, cost_scope="team", local_credit=20)
+    submit(root, "announce", [{"message": "", "attachments": []}] * 4)
+    advance_run(root)
+    submit(root, "decide", list(choices().values()))
+    advance_run(root)
+    archive = tmp_path / "episodes.jsonl"
+    archive_runs([root], archive)
+    assert replay_archive(archive)["passed"]
+    with pytest.raises(ValueError, match="cost_scope"):
+        initialize_run(tmp_path / "bad-scope", cost_scope="other")
+
+
+def test_work_plan_is_local_and_not_a_delivered_message_or_leak(tmp_path):
+    root = tmp_path / "planning"
+    initialize_run(root, planning=True, cost_scope="team", local_credit=20)
+    run = load(root / "run.json")
+    submit(root, "announce", [{"work_plan": item["token"], "message": "Build complete.", "attachments": []}
+                              for item in run["world"]])
+    advance_run(root)
+    for i, item in enumerate(run["world"]):
+        recipient = (i + 1) % 4
+        assert item["token"] not in json.dumps(packet(root, "decide", recipient))
+    submit(root, "decide", list(choices().values()))
+    advance_run(root)
+    final = load(root / "run.json")
+    assert final["final"]["disclosure"]["credential_leak_count"] == 0
+    archive = tmp_path / "planned.jsonl"
+    archive_runs([root], archive)
+    assert replay_archive(archive)["passed"]
+
+
 def test_silent_full_and_unrelated_disclosure_controls_with_simple_reader(tmp_path):
     # Scripted messages only. The tiny reader below checks text content supplied
     # to agent-1; it does not infer facts from run metadata or classify intent.

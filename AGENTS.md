@@ -8,6 +8,7 @@
 - Separate scripted validation from model results. Preserve all model outputs, including negative findings and execution errors. Keep evidence auditable.
 - Keep only the current protocol in active results. Retire whole superseded cohorts to their Git revision; never selectively remove unfavorable current trials.
 - Actor inputs use task documents, not evaluator relevance labels. Incentives must follow executed work, not reward concealment or punish reporting.
+- Compare one mechanism at a time. Historical subjects were GPT-5.4; keep Luna communication replays separate. An infeasible promise plus omission is not purely truthful omission; delay after full disclosure is a decision error. Count observed model turns separately from copied continuation records.
 - Preserve the research leads in `docs/TAKEAWAYS.md` and supplied paper templates.
 - Verify citation claims against primary sources; avoid em dashes.
 - Do not run model/API experiments or restore browser state without authorization.
