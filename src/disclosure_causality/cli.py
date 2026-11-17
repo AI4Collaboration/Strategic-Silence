@@ -18,15 +18,16 @@ def main(argv=None):
     init.add_argument("--objective", choices=["shared", "client"], default="shared")
     init.add_argument("--label-access", choices=["office", "team"], default="office")
     init.add_argument("--reporting", choices=["truthful", "general", "specific"], default="truthful")
-    init.add_argument("--liability", choices=["project", "office"], default="project")
-    init.add_argument("--funds", choices=["none", "joint", "protected"], default="none")
-    init.add_argument("--audience", choices=["office", "team"], default="office")
-    init.add_argument("--protocol", type=int, choices=range(1, 9), default=7)
+    init.add_argument("--liability", choices=["project", "office"])
+    init.add_argument("--funds", choices=["none", "joint", "protected"])
+    init.add_argument("--audience", choices=["office", "team"])
+    init.add_argument("--protocol", type=int, choices=range(1, 9), default=8)
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
     validation.add_argument("--output", type=Path, default=Path("output/offline"))
-    validation.add_argument("--funds", choices=["none", "joint", "protected"], default="none")
+    validation.add_argument("--funds", choices=["none", "joint", "protected"])
+    validation.add_argument("--protocol", type=int, choices=[7, 8], default=8)
     check = sub.add_parser("replay")
     check.add_argument("path", type=Path)
     save = sub.add_parser("archive")
@@ -45,6 +46,9 @@ def main(argv=None):
     window.add_argument("--seed", type=int)
     args = parser.parse_args(argv)
     if args.command == "init":
+        args.funds = args.funds or ("joint" if args.protocol >= 8 else "none")
+        args.audience = args.audience or ("team" if args.protocol >= 8 else "office")
+        args.liability = args.liability or ("office" if args.protocol >= 8 else "project")
         run = initialize(args.path, n=args.n, seed=args.seed, overrun=not args.clean, objective=args.objective,
                          label_access=args.label_access, reporting=args.reporting, liability=args.liability, funds=args.funds,
                          audience=args.audience, protocol=args.protocol)
@@ -53,7 +57,7 @@ def main(argv=None):
         run = advance(args.path)
         result = {"stage": run["stage"], "final": run.get("final")}
     elif args.command == "offline":
-        report = offline(args.output, funds=args.funds)
+        report = offline(args.output, funds=args.funds or ("joint" if args.protocol == 8 else "none"), protocol=args.protocol)
         result = {k: report[k] for k in ("passed", "cases", "executions", "replay")}
     elif args.command == "archive":
         result = archive(args.paths, args.destination)

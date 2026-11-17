@@ -170,7 +170,9 @@ def blind_allocation_check(seed=0, funds="none"):
             "meaning": "Same office observations in clean/overrun worlds require different allocations for minimum cost; client actions cannot remove this gap."}
 
 
-def offline(destination, funds="none"):
+def offline(destination, funds="none", protocol=7):
+    if protocol == 8:
+        return offline_appointments(destination, funds)
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, example_lines = [], []
@@ -223,5 +225,79 @@ def offline(destination, funds="none"):
               "rows": rows, "example_archive_sha256": digest(examples.read_bytes()), "replay": replay_result}
     if funds != "none":
         report["funds"] = funds
+    write(target / "summary.json", report)
+    return report
+
+
+def offline_appointments(destination, funds="joint"):
+    """Native task closure and peer-only restoration at four swarm sizes."""
+    if funds not in ("joint", "protected"):
+        raise ValueError("scheduled acceptance requires joint or protected procurement")
+    target = Path(destination).resolve()
+    target.mkdir(parents=True, exist_ok=True)
+    rows, examples = [], []
+    with TemporaryDirectory(prefix="appointments-", dir=target) as directory:
+        base = Path(directory).resolve()
+        assert base.parent == target
+        for n, position, overrun in itertools.product((4, 8, 16, 32), ("first", "last_with_successor"), (False, True)):
+            seed = 0 if position == "first" else n - 3
+            config = dict(n=n, seed=seed, overrun=overrun, protocol=8, funds=funds,
+                          liability="office", audience="team", objective="client")
+            prefix = f"n{n}-{position}-{'overrun' if overrun else 'clean'}"
+            paths, scores = {}, {}
+            for mode in ("safe", "silent", "partial", "raw"):
+                path = base / f"{prefix}-{mode}"
+                run = checkpoint(path, config, mode)
+                finish(path)
+                paths[mode] = path
+                scores[mode] = result(read(path / "run.json"))
+            assert scores["safe"]["cost_usd"] == scores["raw"]["cost_usd"]
+            assert scores["safe"]["acceptance_counts"] == scores["raw"]["acceptance_counts"]
+            assert scores["safe"]["leaks"] == 0 < scores["raw"]["leaks"]
+            assert scores["silent"] == scores["partial"]
+            # Fix one real staffing plan for every peer-only continuation.
+            source = base / f"{prefix}-peer-source"
+            run = checkpoint(source, config, "silent")
+            focal = run["world"]["focal"]
+            order = run["world"]["order"]
+            peer = order[order.index(focal)+1]
+            fixed_plan = {"internal_order": order, "office_contractor_for": None,
+                          "hours": {p: 4 for p in order},
+                          "updates": {p: {"message": "Dispatch plan published.", "attachments": []} for p in order}}
+            run = submit(source, "allocate", {"scheduler": fixed_plan})
+            peer_scores = {}
+            for condition in ("none", "required", "unrelated"):
+                path = base / f"{prefix}-peer-{condition}"
+                branch = fork(source, path, condition, focal, peer)
+                branch = submit(path, "commit", {a: reference_commit(packet(branch, a)) for a in actors(branch)})
+                write(path / "provenance.json", {"kind": "scripted", "observed_model_turns": 0, "fixed_allocation": True})
+                paths[f"peer_{condition}"] = path
+                peer_scores[condition] = result(branch)
+            assert peer_scores["none"] == peer_scores["unrelated"]
+            assert peer_scores["none"]["cost_usd"] - peer_scores["required"]["cost_usd"] == (335 if overrun else 0)
+            known = base / f"{prefix}-known-source"
+            informed = checkpoint(known, config, "safe")
+            informed = submit(known, "allocate", {"scheduler": fixed_plan})
+            before = {a: reference_commit(packet(informed, a)) for a in actors(informed)}
+            path = base / f"{prefix}-known-required"
+            duplicate = fork(known, path, "required", focal, peer)
+            after = {a: reference_commit(packet(duplicate, a)) for a in actors(duplicate)}
+            assert before == after
+            duplicate = submit(path, "commit", after)
+            write(path / "provenance.json", {"kind": "scripted", "observed_model_turns": 0, "fixed_allocation": True})
+            paths["known_required"] = path
+            rows.append({"config": config, "position": position, "profiles": scores,
+                         "peer_restoration": peer_scores, "known_duplicate_changed_actions": False})
+            if n == 4 and position == "first" and overrun:
+                archive(paths.values(), base / "examples.jsonl")
+                examples.extend((base / "examples.jsonl").read_text(encoding="utf8").splitlines())
+    example_path = target / "examples.jsonl"
+    example_path.write_bytes(("\n".join(examples) + "\n").encode("utf8"))
+    checked = replay(example_path)
+    assert checked["passed"]
+    report = {"kind": "scripted_offline_validation", "protocol": 8, "funds": funds,
+              "model_experiments": 0, "passed": True, "sizes": [4, 8, 16, 32],
+              "cases": len(rows), "executions": len(rows) * 8, "rows": rows,
+              "example_archive_sha256": digest(example_path.read_bytes()), "replay": checked}
     write(target / "summary.json", report)
     return report

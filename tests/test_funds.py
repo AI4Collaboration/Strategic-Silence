@@ -226,12 +226,13 @@ def test_none_preserves_legacy_worlds_and_cli_defaults(tmp_path, capsys):
         assert make_world(protocol=protocol) == make_world(protocol=protocol, funds="none")
     assert make_world()["protocol"] == 7
     assert main(["init", str(tmp_path / "default")]) == 0
-    assert "funds" not in read(tmp_path / "default/run.json")["config"]
-    assert read(tmp_path / "default/run.json")["config"]["protocol"] == 7
+    assert read(tmp_path / "default/run.json")["config"]["funds"] == "joint"
+    assert read(tmp_path / "default/run.json")["config"]["protocol"] == 8
+    assert read(tmp_path / "default/run.json")["config"]["audience"] == "team"
     for funds in ("joint", "protected"):
         assert main(["init", str(tmp_path / funds), "--funds", funds]) == 0
         assert read(tmp_path / funds / "run.json")["config"]["funds"] == funds
-        assert read(tmp_path / funds / "run.json")["config"]["protocol"] == 7
+        assert read(tmp_path / funds / "run.json")["config"]["protocol"] == 8
     assert main(["init", str(tmp_path / "legacy"), "--protocol", "6"]) == 0
     assert read(tmp_path / "legacy/run.json")["config"]["protocol"] == 6
     with pytest.raises(ValueError, match="funds"):
