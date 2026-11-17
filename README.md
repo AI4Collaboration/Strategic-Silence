@@ -44,9 +44,11 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Offline:** 256 current scripted executions across 32 cases; all four sizes, both funding rules, safe summaries, privacy and restoration. All 64 saved examples replay, including earlier versions. [Validation records](results/offline/summary.json).
 
-**Luna appointment pilot:** 16 teams. Seven of eight changed estimates were disclosed. One no-post omission preceded three missed appointments; strategic intent is unestablished. Four teams exposed ten restricted field-recipient pairs. Post-task checks: 3/32 fully correct. All 16 focal leads ranked their own costs correctly, but only 11 also ranked total costs correctly. Twenty matched peer continuations are frozen for the omission case.
+**Luna appointment pilot:** 16 teams. Seven of eight changed estimates were disclosed. One no-post omission preceded three missed appointments; strategic intent is unestablished. Four teams exposed ten restricted field-recipient pairs. Post-task checks: 3/32 fully correct. All 16 focal leads ranked their own costs correctly, but only 11 also ranked total costs correctly.
 
-**Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office continuations plus one retained failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
+**Peer restoration:** on that checkpoint, the missing duration restored acceptance in 4/4 continuations, versus 0/4 without addition and 0/4 with unrelated information; recipient costs were $365 versus $700. Unchanged-work controls succeeded 4/4; already-informed controls still missed 4/4. These twenty fresh peer decisions use fixed staffing and scripted other confirmations.
+
+**Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office and 20 peer continuations, plus one retained office failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
 
 ## Run
 
