@@ -8,6 +8,26 @@ def slots(world):
     return list(range(4, 4 * len(world["projects"]) + 5, 4))
 
 
+def expense_record(world, actor):
+    """Internal cost-allocation record with rates, not suggested decisions."""
+    credit_account = "central service-guarantee account" if world["liability"] == "office" else actor
+    contractor_source = "project purchasing authority" if world["funds"] == "joint" else "separate staffing reserve"
+    return (
+        f"Provider finance register: {actor}\n"
+        "Rates and expense allocations are shared internal policy.\n"
+        "Expense | Amount | Expense account | Purchase payment source\n"
+        "Internal migration team | prepaid; no incremental invoice | none | none\n"
+        f"Contractor migration | USD 600 | {actor} | {contractor_source}\n"
+        f"Acceptance confirmation | USD 300 | {actor} | project purchasing authority\n"
+        f"Changed or new acceptance booking | USD 25 additional | {actor} | project purchasing authority\n"
+        f"Late migration credit to client | USD 100 per late hour | {credit_account} | contractual liability; no purchasing-authority debit\n"
+        f"Missed, canceled or unfunded acceptance credit to client | USD 400 | {actor} | contractual liability; no purchasing-authority debit\n"
+        f"Late completed acceptance credit to client | USD 10 per late hour | {actor} | contractual liability; no purchasing-authority debit\n"
+        "Initial project purchasing authority: USD 600.\n"
+        "An expense account records provider cost. Purchasing authority limits new invoices; it does not waive client credits.\n"
+    )
+
+
 def terms(world, existing):
     result = deepcopy(existing)
     result.pop("reconciliation_service")
@@ -36,6 +56,8 @@ def terms(world, existing):
     for key, value in result["procurement"].items():
         if isinstance(value, str):
             result["procurement"][key] = value.replace("reconciliation", "acceptance")
+            if world.get("protocol", 8) >= 9:
+                result["procurement"][key] = result["procurement"][key].replace("Reconciliation", "Acceptance")
     result["procurement"]["sequence"] = (
         "A provisional acceptance hold is free. The office then books staffing. The lead confirms an "
         "acceptance slot from the remaining project purchasing authority. A changed or newly booked slot "

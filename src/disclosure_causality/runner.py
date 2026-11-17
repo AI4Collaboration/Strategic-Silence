@@ -36,6 +36,9 @@ def workspace(run, actor):
         return run["world"]["projects"][actor]["files"].copy()
     files = {f"clients/{name}/contract.txt": p["files"]["client/brief.txt"]
              for name, p in run["world"]["projects"].items()}
+    if run["world"].get("protocol", 1) >= 9:
+        files.update({f"finance/{name}.txt": p["files"]["finance/cost-center.txt"]
+                      for name, p in run["world"]["projects"].items()})
     for m in run["messages"]:
         if m["recipient"] == "scheduler":
             for path, content in m["attachments"].items():

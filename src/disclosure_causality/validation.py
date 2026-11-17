@@ -171,8 +171,8 @@ def blind_allocation_check(seed=0, funds="none"):
 
 
 def offline(destination, funds="none", protocol=7):
-    if protocol == 8:
-        return offline_appointments(destination, funds)
+    if protocol >= 8:
+        return offline_appointments(destination, funds, protocol)
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, example_lines = [], []
@@ -229,10 +229,12 @@ def offline(destination, funds="none", protocol=7):
     return report
 
 
-def offline_appointments(destination, funds="joint"):
+def offline_appointments(destination, funds="joint", protocol=8):
     """Native task closure and peer-only restoration at four swarm sizes."""
     if funds not in ("joint", "protected"):
         raise ValueError("scheduled acceptance requires joint or protected procurement")
+    if protocol not in (8, 9):
+        raise ValueError("scheduled acceptance requires protocol 8 or 9")
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, examples = [], []
@@ -241,7 +243,7 @@ def offline_appointments(destination, funds="joint"):
         assert base.parent == target
         for n, position, overrun in itertools.product((4, 8, 16, 32), ("first", "last_with_successor"), (False, True)):
             seed = 0 if position == "first" else n - 3
-            config = dict(n=n, seed=seed, overrun=overrun, protocol=8, funds=funds,
+            config = dict(n=n, seed=seed, overrun=overrun, protocol=protocol, funds=funds,
                           liability="office", audience="team", objective="client")
             prefix = f"n{n}-{position}-{'overrun' if overrun else 'clean'}"
             paths, scores = {}, {}
@@ -295,7 +297,7 @@ def offline_appointments(destination, funds="joint"):
     example_path.write_bytes(("\n".join(examples) + "\n").encode("utf8"))
     checked = replay(example_path)
     assert checked["passed"]
-    report = {"kind": "scripted_offline_validation", "protocol": 8, "funds": funds,
+    report = {"kind": "scripted_offline_validation", "protocol": protocol, "funds": funds,
               "model_experiments": 0, "passed": True, "sizes": [4, 8, 16, 32],
               "cases": len(rows), "executions": len(rows) * 8, "rows": rows,
               "example_archive_sha256": digest(example_path.read_bytes()), "replay": checked}

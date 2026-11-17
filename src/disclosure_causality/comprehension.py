@@ -132,11 +132,13 @@ def funds_exercise(funds):
     return visible, expected
 
 
-def appointment_exercise(funds="joint"):
+def appointment_exercise(funds="joint", protocol=8):
     """Post-task operations review for scheduled acceptance; no sender-intent test."""
     from .environment import account_charge, procurement_balance
     from .appointments import session
-    world = make_world(n=4, seed=0, protocol=8, funds=funds, liability="office", objective="client", audience="team")
+    if protocol not in (8, 9):
+        raise ValueError("appointment exercise requires protocol 8 or 9")
+    world = make_world(n=4, seed=0, protocol=protocol, funds=funds, liability="office", objective="client", audience="team")
     first, peer, last = world["order"]
     holds = {first: 8, peer: 8, last: 12}
     plans = {
@@ -187,6 +189,9 @@ def appointment_exercise(funds="joint"):
                    "private_holds": holds, "plans": plans, "confirmation_actions": choices,
                    "scope": "Execute the supplied actions for the same physical work. Enforce purchasing authority; include all provider invoices and credits. These are specified actions, not a request to optimize the plans."},
                "response_schema": fields}
+    if protocol >= 9:
+        from .appointments import expense_record
+        visible["workspace"] = {f"finance/{p}.txt": expense_record(world, p) for p in world["projects"]}
     return visible, expected
 
 
