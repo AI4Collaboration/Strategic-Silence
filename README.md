@@ -54,7 +54,7 @@ The earlier 16-team wording comparison delivered 7/8 adverse estimates. Its sole
 
 [Diagnostics](results/luna/comprehension.jsonl): 14 independent checks, 96 planned post-task checks and two separately labeled post-hoc permission checks. Earlier reviews: 60/64 fully correct on 14 accounting items. Audience pilot and replication: 12/16 and 9/16 fully correct on 20 items. All four leaking senders later answered their permission items correctly; two were selected for post-hoc checks. Later answers do not establish prior intent. Model: unpinned `gpt-6-luna`; file isolation is instructed on a shared host. Leakage counts exact field–recipient pairs; semantic paraphrases require review.
 
-**Next:** sixteen teams vary whether a private procurement forecast precedes or follows the submitted request, keeping prices fixed. This tests deliberation timing, including added attention to personal expenses. The complete plan and two unconditional blocks are saved before launch. A separately tested optional-request prototype will follow the frozen study; current trials still require a service preference, so empty prose is not literal silence.
+**Next:** sixteen teams vary private procurement-forecast timing, keeping prices fixed. This tests deliberation timing, including attention to personal expenses. A subsequent sixteen-team comparison tests mandatory preferences versus optional requests, crossed with objective and workload. Both complete plans contain two unconditional blocks. The optional-request prototype passed 154 tests and legacy replay; main remains on the frozen current interface. Current trials require a preference, so empty prose is not literal silence.
 
 ## Run
 
