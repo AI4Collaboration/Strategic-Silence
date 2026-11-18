@@ -36,14 +36,7 @@ def description():
     }
 
 
-def quote(packet, query):
-    if packet.get('tools', {}).get('plan_quote') != description():
-        raise ValueError('Plan calculator is not enabled for this input')
-    if not isinstance(query, dict) or set(query) != {'scenarios'}:
-        raise ValueError('Expected scenarios')
-    scenarios = query['scenarios']
-    if not isinstance(scenarios, list) or not 1 <= len(scenarios) <= 16:
-        raise ValueError('Provide 1 to 16 scenarios')
+def contract_world(packet):
     terms = packet['terms']
     calendar = terms['calendar']
     names = {p['project'] for p in calendar}
@@ -75,6 +68,19 @@ def quote(packet, query):
         'liability': terms['expense_allocation']['late_service_credits'],
         'projects': {p['project']: {'deadline': p['completion_due']} for p in calendar},
     }
+    return public_world, slots
+
+
+def quote(packet, query):
+    if packet.get('tools', {}).get('plan_quote') != description():
+        raise ValueError('Plan calculator is not enabled for this input')
+    if not isinstance(query, dict) or set(query) != {'scenarios'}:
+        raise ValueError('Expected scenarios')
+    scenarios = query['scenarios']
+    if not isinstance(scenarios, list) or not 1 <= len(scenarios) <= 16:
+        raise ValueError('Provide 1 to 16 scenarios')
+    public_world, slots = contract_world(packet)
+    names = set(public_world['projects'])
     results = []
     for item in scenarios:
         required = {'name', 'internal_order', 'office_contractor_for', 'hours', 'holds', 'confirmations'}
@@ -158,7 +164,12 @@ def main():
         try:
             if log.exists() and len(log.read_text(encoding='utf8').splitlines()) >= 6:
                 raise ValueError('Six calculator calls already recorded for this input')
-            result = quote(json.loads(raw), json.loads(query_raw))
+            packet = json.loads(raw)
+            if 'booking_quote' in packet.get('tools', {}):
+                from disclosure_causality.booking_quote import quote_booking
+                result = quote_booking(packet, json.loads(query_raw))
+            else:
+                result = quote(packet, json.loads(query_raw))
             valid = True
         except (ValueError, KeyError, TypeError) as error:
             valid, result = False, {'error': str(error)}

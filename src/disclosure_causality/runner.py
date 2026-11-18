@@ -131,6 +131,9 @@ def packet(run, actor):
     if world.get("protocol", 1) >= 10:
         from .quote import description
         result["tools"] = {"plan_quote": description()}
+        if world["protocol"] >= 11 and stage == "commit":
+            from .booking_quote import description as booking_description
+            result["tools"] = {"booking_quote": booking_description()}
     if "history" in run["config"]:
         result["service_window"] = {
             "number": len(run["config"]["history"][actor]) + 1,
