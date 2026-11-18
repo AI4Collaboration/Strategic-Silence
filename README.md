@@ -42,19 +42,17 @@ Measure no-post silence, favorable updates that omit needed information, safe di
 
 For causality, freeze the office allocation and private bookings, then restore only the missing duration to a downstream lead. Compare no addition, an unrelated addition, unchanged work, and already-informed controls. Office-level restoration is a separate test.
 
-**Offline:** 256 current scripted executions across 32 cases; all four sizes, both funding rules, safe summaries, privacy and restoration. All 64 saved examples replay, including earlier versions. [Validation records](results/offline/summary.json).
+**Offline:** 256 current scripted executions across 32 cases; all four sizes, both funding rules, safe summaries, privacy and restoration. All 80 saved examples replay, including earlier versions. [Validation records](results/offline/summary.json).
 
-**Luna appointment pilot:** 16 teams. Seven of eight changed estimates were disclosed. One no-post omission preceded three missed appointments; strategic intent is unestablished. Four teams exposed ten restricted field-recipient pairs. Post-task checks: 3/32 fully correct. All 16 focal leads ranked their own costs correctly, but only 11 also ranked total costs correctly.
+**Earlier appointment pilot:** 16 teams; seven of eight changed estimates disclosed. One no-post omission preceded three missed appointments, including the sender's; intent remains unestablished. Four teams exposed ten restricted field-recipient pairs.
 
-**Peer restoration:** on that checkpoint, the missing duration restored acceptance in 4/4 continuations, versus 0/4 without addition and 0/4 with unrelated information; recipient costs were $365 versus $700. Unchanged-work controls succeeded 4/4; already-informed controls still missed 4/4. These twenty fresh peer decisions use fixed staffing and scripted other confirmations.
+**Peer restoration:** at that omission checkpoint, the missing duration restored acceptance in 4/4 continuations, versus 0/4 without addition and 0/4 with unrelated information; recipient costs were $365 versus $700. Unchanged-work controls succeeded 4/4; already-informed controls still missed 4/4. These twenty peer decisions fix staffing and other confirmations.
 
-**Operations checks:** 32 fresh individuals tested accounting guidance, an optional calculator and record layout. All ranked their own staffing costs correctly; 24/32 also ranked total costs correctly. Only 4/32 answered every item correctly. Query logs show repeated confusion between original bookings and final confirmations. These diagnostic pilots remain separate from team behavior; the calculator is experimental.
+**Latest pilot:** eight teams with optional cost quotes. All four changed estimates were disclosed; six teams exposed 24 restricted field-recipient pairs. Of 24 confirmations, 22 minimized cost; two paid $5 more to complete acceptance instead of canceling. One office selected a costly plan despite receiving the correct duration. Three request wrappers had recorded path-quotation deviations; all outcomes, four query errors and one fileless retry are retained.
 
-Ten further single-actor checks tested actual confirmations. With quotes bound to existing bookings, all four clear cases chose the lowest-cost slot, versus two without quotes. Both actors given conflicting work records missed acceptance. Each case fixes six other actions by script.
+**Archive:** 116 teams / 122 windows, 869 behavioral JSON submissions (854 accepted, 15 rejected). Separately: 69 completed office and 20 peer continuations, plus one retained office failure. Diagnostic quizzes and single-actor checks remain separate. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json).
 
-Next: eight full teams with optional quotes, crossing own versus shared costs and ordinary versus extended work. Conditions and restoration rules are fixed before model calls.
-
-**Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office and 20 peer continuations, plus one retained office failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
+Next: compare joint and protected staffing funds. Both charge the project for the contractor; protected funds leave its acceptance purchasing authority available.
 
 ## Run
 
@@ -68,7 +66,7 @@ python -m disclosure_causality init output/trial --n 4 --objective client
 python -m disclosure_causality advance output/trial
 ```
 
-Give each actor only its `inputs/<stage>/<actor>.json`; save responses under the matching `outputs` path. Stages are `request`, `allocate`, `commit`. Never show participants `run.json`. The CLI defaults to protocol 8, joint funding and a shared channel. Earlier protocols remain for replay.
+Give each actor only its `inputs/<stage>/<actor>.json`; save responses under the matching `outputs` path. Stages are `request`, `allocate`, `commit`. Never show participants `run.json`. The CLI defaults to protocol 11, joint funding and a shared channel. Optional quotes use only supplied assumptions; booking quotes bind the existing hold and spending authority. Earlier protocols remain for replay.
 
 Before peer confirmation:
 

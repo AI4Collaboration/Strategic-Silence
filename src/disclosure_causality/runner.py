@@ -128,12 +128,21 @@ def packet(run, actor):
             plan = run["outputs"]["allocate"]["scheduler"]
             result["dispatch_plan"] = {k: plan[k] for k in ("internal_order", "office_contractor_for", "hours")}
             result["dispatch_plan"]["hours_source"] = "Office forecasts, not measured execution times."
+    if world.get("protocol", 1) >= 10:
+        from .quote import description
+        result["tools"] = {"plan_quote": description()}
+        if world["protocol"] >= 11 and stage == "commit":
+            from .booking_quote import description as booking_description
+            result["tools"] = {"booking_quote": booking_description()}
     if "history" in run["config"]:
         result["service_window"] = {
             "number": len(run["config"]["history"][actor]) + 1,
             "scope": "This window is a new work package. Its work records, registered schedule and charges belong to this window. Previous completed windows are included below.",
             "completed_windows": run["config"]["history"][actor],
         }
+    if world.get("protocol", 1) >= 9:
+        from .appointments import expense_record
+        result["finance_record"] = expense_record(world, "serviced project's cost center" if actor == "scheduler" else actor)
     return result
 
 

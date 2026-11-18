@@ -21,13 +21,13 @@ def main(argv=None):
     init.add_argument("--liability", choices=["project", "office"])
     init.add_argument("--funds", choices=["none", "joint", "protected"])
     init.add_argument("--audience", choices=["office", "team"])
-    init.add_argument("--protocol", type=int, choices=range(1, 9), default=8)
+    init.add_argument("--protocol", type=int, choices=range(1, 12), default=11)
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
     validation.add_argument("--output", type=Path, default=Path("output/offline"))
     validation.add_argument("--funds", choices=["none", "joint", "protected"])
-    validation.add_argument("--protocol", type=int, choices=[7, 8], default=8)
+    validation.add_argument("--protocol", type=int, choices=[7, 8, 9, 10, 11], default=11)
     check = sub.add_parser("replay")
     check.add_argument("path", type=Path)
     save = sub.add_parser("archive")
@@ -57,7 +57,7 @@ def main(argv=None):
         run = advance(args.path)
         result = {"stage": run["stage"], "final": run.get("final")}
     elif args.command == "offline":
-        report = offline(args.output, funds=args.funds or ("joint" if args.protocol == 8 else "none"), protocol=args.protocol)
+        report = offline(args.output, funds=args.funds or ("joint" if args.protocol >= 8 else "none"), protocol=args.protocol)
         result = {k: report[k] for k in ("passed", "cases", "executions", "replay")}
     elif args.command == "archive":
         result = archive(args.paths, args.destination)
