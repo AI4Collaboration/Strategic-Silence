@@ -5,16 +5,12 @@ import json
 import os
 from pathlib import Path
 
-from luna import MODEL, call, save
+from luna import MODEL, call, read, recorded, save
 from disclosure_causality import recipient_handoff as handoff
 from disclosure_causality import workdesk as desk
 
 VERSION = "staged"
 ARMS = ("none", "unrelated", "mailbox")
-
-
-def read(path):
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def calibration_design(blocks):
@@ -205,16 +201,7 @@ def mailbox_control(design, interact):
 def audit_run(root):
     design = read(root / "design.json")
     def replay(stage, packet):
-        if read(root / stage / "input.json") != packet:
-            raise ValueError(f"packet mismatch at {stage}")
-        action = read(root / stage / "decision.json")
-        events = [json.loads(s) for s in (root / stage / "events.jsonl").read_text(encoding="utf-8").splitlines()]
-        items = [e["item"] for e in events if e["type"] == "item.completed"]
-        if (not any(e["type"] == "turn.completed" for e in events)
-                or any(x["type"] not in ("agent_message", "reasoning") for x in items)
-                or action != json.loads(next(x["text"] for x in reversed(items) if x["type"] == "agent_message"))):
-            raise ValueError(f"decision mismatch at {stage}")
-        return action
+        return recorded(root, stage, packet)
     if design["kind"] == "reciprocal mailbox replay":
         if design != mailbox_design(root.parent / design["source"], design["blocks"], root.parent):
             raise ValueError("mailbox replay differs from parent")

@@ -37,3 +37,20 @@ def call(root, name, packet):
     answer = json.loads(next(i["text"] for i in reversed(items) if i["type"] == "agent_message"))
     save(dest / "decision.json", answer)
     return answer
+
+
+def read(path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def recorded(root, stage, packet):
+    if read(root / stage / "input.json") != packet:
+        raise ValueError(f"packet mismatch at {stage}")
+    action = read(root / stage / "decision.json")
+    events = [json.loads(s) for s in (root / stage / "events.jsonl").read_text(encoding="utf-8").splitlines()]
+    items = [e["item"] for e in events if e["type"] == "item.completed"]
+    if (not any(e["type"] == "turn.completed" for e in events)
+            or any(x["type"] not in ("agent_message", "reasoning") for x in items)
+            or action != json.loads(next(x["text"] for x in reversed(items) if x["type"] == "agent_message"))):
+        raise ValueError(f"decision mismatch at {stage}")
+    return action
