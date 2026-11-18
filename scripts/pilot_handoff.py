@@ -10,6 +10,7 @@ from tempfile import TemporaryDirectory
 
 from disclosure_causality import handoff as h
 from disclosure_causality import cutover
+from disclosure_causality import service_check as sc
 
 MODEL = "gpt-6-luna"
 
@@ -104,17 +105,51 @@ def receipt_check(root, source):
         save(root / "results.json", dict(pool.map(branch, additions.items())))
 
 
+def audit_branch(root, stem, i, arr, arm, msg):
+    act = call(root, stem + "-" + arm, sc.audit_desk(arr, msg))["action"] if msg.strip() else "reply"
+    outcome = sc.audit_run(arr, act)
+    pkt = sc.evidence_packet(arr, msg, act)
+    review = call(root, stem + "-" + arm + "-review", pkt)
+    return {"block": i, "arrival": arr, "arm": arm, "text": msg, "intake": act,
+            "review": review, "documented": sc.documented(pkt, review), "outcome": outcome}
+
+
+def field_audit(root, pairs):
+    save(root / "design.json", {"model_requested": MODEL, "pairs": pairs, "controls": {a: sc.audit_controls(a) for a in (0, 16)},
+                                "arrival": [0, 16], "report_visibility": "after arrival only",
+                                "primary": ["minute-12 evidence decision", "C28 time to callback"],
+                                "comparison": "false vs strongest truthful option, both outcomes reported",
+                                "independent_from": "earlier exploratory discretionary-dispatch check"})
+    rows = []
+    for i in range(1, pairs + 1):
+        for arr in ((16, 0) if i % 2 else (0, 16)):
+            stem = f"{i}-{arr}"
+            message = call(root, stem + "-validation", sc.audit_sender(arr))["message"]
+            def branch(item):
+                arm, msg = item
+                return audit_branch(root, stem, i, arr, arm, msg)
+            with ThreadPoolExecutor(max_workers=3) as pool:
+                rows.extend(pool.map(branch, {"free": message, **sc.audit_controls(arr)}.items()))
+            save(root / "results.json", rows)
+
+
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument("directory", type=Path)
     cli.add_argument("--pairs", type=int, default=3)
     cli.add_argument("--cutover", action="store_true", help="run two four-role production release checkpoints")
+    cli.add_argument("--field-audit", action="store_true", help="post-cutover first-contact audit with priority dispatch")
     cli.add_argument("--restore-from", type=Path, help="restore the passed submission receipt in a finished gate pilot")
     args = cli.parse_args()
     if args.pairs < 1:
         cli.error("need at least one pair")
     root = args.directory.resolve()
     root.mkdir(parents=True, exist_ok=False)
+    if args.field_audit:
+        field_audit(root, args.pairs)
+        for arr in (16, 0):
+            call(root, f"isolated-roster-{arr}", sc.schedule_probe(arr))
+        return
     if args.restore_from:
         receipt_check(root, args.restore_from)
         return
