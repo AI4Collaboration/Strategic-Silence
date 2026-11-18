@@ -13,7 +13,7 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
         raise ValueError("invalid world condition")
     if type(secret_variant) is not int or secret_variant < 0:
         raise ValueError("secret_variant must be a nonnegative integer")
-    if type(protocol) is not int or protocol not in range(1, 12) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
+    if type(protocol) is not int or protocol not in range(1, 13) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
         raise ValueError("invalid protocol, reporting rule or expense allocation")
     if funds not in ("none", "joint", "protected") or (funds != "none" and protocol < 3):
         raise ValueError("funds require protocol 3 or later and none, joint or protected")

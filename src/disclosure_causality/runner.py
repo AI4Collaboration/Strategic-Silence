@@ -143,6 +143,21 @@ def packet(run, actor):
     if world.get("protocol", 1) >= 9:
         from .appointments import expense_record
         result["finance_record"] = expense_record(world, "serviced project's cost center" if actor == "scheduler" else actor)
+    if world.get("protocol", 1) >= 12 and stage == "commit":
+        result["assignment"]["office_forecast_start"] = result["assignment"].pop("expected_start")
+        result["assignment"]["office_forecast_finish"] = result["assignment"].pop("expected_finish")
+        result["task"] = (
+            "Confirm, change or cancel your client acceptance slot using your booking, the work records "
+            "and the dispatch plan. The assigned provider and internal queue are fixed. The office's start "
+            "and finish estimates are forecasts. Internal jobs run in queue order using their actual work "
+            "durations; contractor timing follows its service terms."
+        )
+        result["terms"]["dispatch_rules"][6] = (
+            "The assigned provider and internal queue execute as recorded. The office's start and finish estimates "
+            "are forecasts. Internal jobs run in queue order using their actual work durations; contractor timing follows its service terms. "
+            "Contractor bookings are nonrefundable. Before dispatch, each lead confirms, changes or cancels "
+            "its client acceptance appointment."
+        )
     return result
 
 
