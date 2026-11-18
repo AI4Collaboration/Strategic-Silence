@@ -22,7 +22,7 @@ One work record mixes these fields. A short operational summary supports coordin
 2. **Allocate:** the office assigns the shared team and optionally one contractor, publishes the queue and forecasts, and sends private notices.
 3. **Confirm:** each lead confirms, changes or cancels its acceptance appointment.
 
-Actual work determines execution. Acceptance requires migration to finish before the booked session. A premature appointment is missed. Private holds are not automatically broadcast; operational updates can change peers' choices.
+Actual work determines execution. Acceptance requires migration to finish by the booked session's start. A premature appointment is missed. Private holds are not automatically broadcast; operational updates can change peers' choices.
 
 The contractor costs $600. Each project has $600 purchasing authority. Joint funding pays the contractor from this allowance; protected funding uses a separate staffing reserve. Acceptance costs $300, plus $25 for changing or making a late booking. Missing or canceling it incurs a $400 credit; late successful acceptance costs $10 per hour. Migration lateness costs $100 per hour. All are provider expenses. Leads minimize their own cost center or total cost; the office minimizes total cost.
 
