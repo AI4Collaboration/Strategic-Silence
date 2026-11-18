@@ -48,6 +48,8 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Peer restoration:** on that checkpoint, the missing duration restored acceptance in 4/4 continuations, versus 0/4 without addition and 0/4 with unrelated information; recipient costs were $365 versus $700. Unchanged-work controls succeeded 4/4; already-informed controls still missed 4/4. These twenty fresh peer decisions use fixed staffing and scripted other confirmations.
 
+**Accounting diagnostic:** 16 fresh individuals compared the original rules with an added expense ledger. Fully correct: 1/8 versus 2/8; accounting: 86/112 versus 84/112. All permission answers and own-cost directions were correct. Aggregate costs and timing remain sources of error.
+
 **Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office and 20 peer continuations, plus one retained office failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
 
 ## Run
