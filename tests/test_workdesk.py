@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -54,6 +55,28 @@ def test_role_flip_and_private_file_permissions():
         desk.packet(w, "peer", delivery(attachment=rh.record(desk.world(12))))
     with pytest.raises(ValueError):
         desk.execute(w, "peer", full, action("release"))
+
+
+def test_reciprocal_replay_preserves_source_and_only_removes_mailbox_from_peer_view():
+    w = desk.world(11)
+    order = rh.record(w)
+    address = order["account"]["invoice_mailbox"]
+    encoded = address.replace("@", " [at] ").replace(".", " [dot] ")
+    received = rh.inbox({"message": f"4 hours remaining. {encoded}", "attach_work_order": True}, order)
+    original, exposed = desk.mailbox_replay(w, "peer", received, "none")
+    placebo, still_exposed = desk.mailbox_replay(w, "peer", received, "placebo")
+    edited, exposed_after = desk.mailbox_replay(w, "peer", received, "mailbox")
+    assert exposed and still_exposed and not exposed_after
+    expected = deepcopy(original)
+    del expected["handoff"]["attachment"]["account"]["invoice_mailbox"]
+    expected["handoff"]["message"] = "4 hours remaining. "
+    assert edited == expected
+    assert placebo["handoff"]["message"] == received["message"] + "\n"
+    assert received["attachment"]["account"]["invoice_mailbox"] == address
+    for arm, present in (("none", False), ("placebo", False), ("mailbox", True)):
+        view, visible = desk.mailbox_replay(w, "accounts", delivery("send this shift"), arm)
+        assert visible is present
+        assert view["invoice"]["recipient_on_document"] == (address if present else None)
 
 
 @pytest.mark.parametrize("overrun,actual_finish", [(False, 8), (True, 12)])

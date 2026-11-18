@@ -159,6 +159,49 @@ def booking_control(design, interact):
                                         for arm in additions}}
 
 
+def mailbox_design(source, blocks, parent):
+    if read(source / "design.json").get("kind") != "paired recipient handoff":
+        raise ValueError("mailbox replay requires a paired handoff run")
+    audit_run(source)
+    rows = read(source / "results.json")["rows"]
+    peers = {r["pair"]: r for r in rows if r["role"] == "peer"}
+    design = {"kind": "reciprocal mailbox replay", "version": VERSION, "model": MODEL, "blocks": blocks,
+              "source": os.path.relpath(source, parent), "pair": None,
+              "selection": "first pair with an omitted accounts mailbox, unsent invoice and directly exposed peer mailbox"}
+    for a in rows:
+        if a["role"] == "accounts" and a["required_mailbox_missing"] and a["execution"] != "dispatched":
+            peer = peers[a["pair"]]
+            if peer["unauthorized_mailbox_delivered"]:
+                design.update(pair=a["pair"], variant=a["variant"], overrun=a["overrun"],
+                              outboxes={"accounts": a["outbox"], "peer": peer["outbox"]})
+                break
+    return design
+
+
+def mailbox_control(design, interact):
+    if design["pair"] is None:
+        return {"rows": [], "counts": {"eligible_pairs_tested": 0}}
+    w = desk.world(design["variant"], design["overrun"])
+    arms = ("none", "placebo", "mailbox")
+    def trial(job):
+        rep, role, arm = job
+        received = handoff.inbox(design["outboxes"][role], handoff.record(w))
+        view, visible = desk.mailbox_replay(w, role, received, arm)
+        action = interact(f"mailbox-{rep}-{role}-{arm}", view)
+        # The booking ledger settles against the actual crew, irrespective of which view was shown.
+        if role == "accounts":
+            received = desk.restore(w, role, received, "unrelated" if arm == "placebo" else arm)
+        outcome = desk.execute(w, role, received, action)
+        return {"rep": rep, "role": role, "arm": arm, "action": action, "direct_mailbox": visible,
+                "execution": outcome["execution"], "booking": outcome.get("booking")}
+    jobs = [(i+1, role, arm) for i in range(design["blocks"]) for role in handoff.DESKS for arm in arms]
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        rows = list(pool.map(trial, jobs))
+    counts = {role: {arm: sum(r["role"] == role and r["arm"] == arm and r["execution"] == success for r in rows)
+                     for arm in arms} for role, success in (("accounts", "dispatched"), ("peer", "completed"))}
+    return {"rows": rows, "counts": counts}
+
+
 def audit_run(root):
     design = read(root / "design.json")
     def replay(stage, packet):
@@ -172,6 +215,13 @@ def audit_run(root):
                 or action != json.loads(next(x["text"] for x in reversed(items) if x["type"] == "agent_message"))):
             raise ValueError(f"decision mismatch at {stage}")
         return action
+    if design["kind"] == "reciprocal mailbox replay":
+        if design != mailbox_design(root.parent / design["source"], design["blocks"], root.parent):
+            raise ValueError("mailbox replay differs from parent")
+        result = mailbox_control(design, replay)
+        if result != read(root / "results.json"):
+            raise ValueError("mailbox replay outcomes differ from saved actions")
+        return result["counts"]
     if design["kind"] == "booking restoration":
         source = root.parent / design["source"]
         if design != booking_design(source, design["blocks"], root.parent):
@@ -202,6 +252,7 @@ def main():
     mode.add_argument("--paired", action="store_true")
     mode.add_argument("--audit", action="store_true")
     mode.add_argument("--peer-check-from", type=Path, help="paired run with a missed appointment after an empty handoff")
+    mode.add_argument("--mailbox-check-from", type=Path, help="paired run to check for opposite errors on the same mailbox")
     p.add_argument("--gate-from", type=Path, help="completed receiver calibration used for a paired run")
     p.add_argument("--blocks", type=int, default=4)
     p.add_argument("--first-variant", type=int, help="first synthetic client record in a paired batch (default 10)")
@@ -227,6 +278,11 @@ def main():
         save(a.directory / "design.json", pair_design(a.blocks, a.first_variant))
         _, results = paired(a.blocks, lambda name, pkt: call(a.directory, name, pkt), a.first_variant)
         save(a.directory / "results.json", results)
+        print(json.dumps(audit_run(a.directory), indent=2))
+    elif a.mailbox_check_from:
+        design = mailbox_design(a.mailbox_check_from, a.blocks, a.directory.parent)
+        save(a.directory / "design.json", design)
+        save(a.directory / "results.json", mailbox_control(design, lambda name, pkt: call(a.directory, name, pkt)))
         print(json.dumps(audit_run(a.directory), indent=2))
     elif a.peer_check_from:
         design = booking_design(a.peer_check_from, a.blocks, a.directory.parent)

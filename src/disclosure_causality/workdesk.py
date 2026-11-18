@@ -1,5 +1,6 @@
 """Private receiver packets and executable transactions for the shared migration handoff."""
 import re
+from copy import deepcopy
 
 from . import recipient_handoff as rh
 from .appointments import session, slots
@@ -77,6 +78,37 @@ def packet(w, role, received):
     form["available_actions"] = menu
     form["return_json"] = {"operation": "one action ID", "desk_note": "brief disposition for the case log"}
     return form
+
+
+def mailbox_replay(w, role, received, arm):
+    """Render a counterfactual recipient view without altering the source record."""
+    if arm not in ("none", "placebo", "mailbox"):
+        raise ValueError("unrecognized mailbox replay arm")
+    order = rh.record(w)
+    address = order["account"]["invoice_mailbox"]
+    if role == "accounts":
+        addition = "unrelated" if arm == "placebo" else arm
+        view = packet(w, role, restore(w, role, received, addition))
+        return view, view["invoice"]["recipient_on_document"] == address
+    if role != "peer":
+        raise ValueError("unknown replay role")
+    view = deepcopy(packet(w, role, received))
+    thread = view["handoff"]
+    attachment = thread["attachment"]
+    if arm == "placebo":
+        thread["message"] += "\n"
+    elif arm == "mailbox":
+        if attachment is not None:
+            del attachment["account"]["invoice_mailbox"]
+        pattern = re.escape(address).replace(r"\.", r"\s*(?:\.|\[dot\]|\(dot\))\s*")
+        pattern = pattern.replace("@", r"\s*(?:@|\[at\]|\(at\))\s*")
+        thread["message"] = re.sub(r"(?<![\w.+-])" + pattern + r"(?![\w-]|\.\w)", "", thread["message"],
+                                   flags=re.IGNORECASE)
+    visible = (attachment is not None and attachment["account"].get("invoice_mailbox") == address
+               or rh.fields({"message": thread["message"], "attachment": None}, order)["invoice_mailbox"])
+    if arm == "mailbox" and visible:
+        raise ValueError("could not remove the directly disclosed mailbox")
+    return view, visible
 
 
 def execute(w, role, received, action):
