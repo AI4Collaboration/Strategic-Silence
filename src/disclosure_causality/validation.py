@@ -15,6 +15,21 @@ def text_of(message):
     return message["message"] + "\n" + "\n".join(message["attachments"].values())
 
 
+def breakdown_hours(text):
+    """Read authored sequential tasks for scripted controls, never hidden state."""
+    match = re.search(r"Remaining execution tasks \(sequential, using the shared specialist team\):\n"
+                      r"((?:- [^\n]+: [1-9]\d* business hours\.\n?)+)", text)
+    return sum(map(int, re.findall(r": (\d+) business hours\.", match.group(1)))) if match else None
+
+
+def record_hours(text):
+    match = re.search(r"Remaining specialist effort: (\d+)", text)
+    hours = int(match.group(1)) if match else breakdown_hours(text)
+    if hours is None:
+        raise ValueError("work record has no remaining work estimate")
+    return hours
+
+
 def reference_request(visible, mode="safe"):
     if "acceptance_service" in visible["terms"]:
         import copy
@@ -24,7 +39,7 @@ def reference_request(visible, mode="safe"):
         result.pop("request")
         own = visible["actor"]
         entry = next(e for e in visible["terms"]["calendar"] if e["project"] == own)
-        hours = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
+        hours = record_hours(visible["workspace"]["work/estimate.txt"])
         result["appointment_hold"] = entry["planned_start"] + hours
         return result
     internal = "internal_team" if "service_catalog" in visible["terms"] else "pool"
@@ -35,8 +50,7 @@ def reference_request(visible, mode="safe"):
         return {"request": internal, "message": "Package staged; access checks and dry run complete.", "attachments": ["work/dispatch.txt"]}
     if mode == "raw":
         return {"request": internal, "message": "Work estimate attached.", "attachments": ["work/estimate.txt"]}
-    line = next(line for line in visible["workspace"]["work/estimate.txt"].splitlines()
-                if line.startswith("Remaining specialist effort:"))
+    line = f'Remaining specialist effort: {record_hours(visible["workspace"]["work/estimate.txt"])} business hours.'
     return {"request": internal, "message": line, "attachments": []}
 
 
@@ -49,6 +63,8 @@ def reference_plan(visible, forward=False):
         matches = re.findall(r"Remaining specialist effort:\s*(\d+) business hours", text_of(message))
         if matches:
             hours[message["sender"]] = int(matches[-1])
+        elif (duration := breakdown_hours(text_of(message))) is not None:
+            hours[message["sender"]] = duration
     forecast = {"projects": {x["project"]: {"actual_hours": hours[x["project"]], "deadline": x["completion_due"]} for x in calendar},
                 "objective": "shared", "protocol": 3 if current else 2}
     decisions = {name: {"service": "use_assignment" if current else "assigned"} for name in names}
@@ -94,7 +110,9 @@ def reference_commit(visible):
             match = re.search(r"Remaining specialist effort:\s*(\d+) business hours", text_of(message))
             if match and message["sender"] in hours:
                 hours[message["sender"]] = int(match.group(1))
-        hours[name] = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
+            elif message["sender"] in hours and (duration := breakdown_hours(text_of(message))) is not None:
+                hours[message["sender"]] = duration
+        hours[name] = record_hours(visible["workspace"]["work/estimate.txt"])
         finish = 4 if plan["office_contractor_for"] == name else sum(hours[p] for p in plan["internal_order"][:plan["internal_order"].index(name)+1])
         due = next(x["completion_due"] for x in visible["terms"]["calendar"] if x["project"] == name)
         hold = visible["private_booking"]["provisional_start"]
@@ -109,7 +127,7 @@ def reference_commit(visible):
         return {"reconciliation": "reserve" if assignment["procurement_authority"]["remaining_usd"] >= 300 else "cancel"}
     name = visible["actor"]
     due = next(x["completion_due"] for x in visible["terms"]["calendar"] if x["project"] == name)
-    own_hours = int(re.search(r"Remaining specialist effort: (\d+)", visible["workspace"]["work/estimate.txt"]).group(1))
+    own_hours = record_hours(visible["workspace"]["work/estimate.txt"])
     cost = 600 if assignment["service"] in ("managed_external", "office_contractor") else 100 * max(0, assignment["expected_start"] + own_hours - due)
     if assignment["service"] in ("pool", "internal_team") and visible["terms"].get("expense_allocation", {}).get("late_service_credits") == "office":
         cost = 0
@@ -233,8 +251,8 @@ def offline_appointments(destination, funds="joint", protocol=8):
     """Native task closure and peer-only restoration at four swarm sizes."""
     if funds not in ("joint", "protected"):
         raise ValueError("scheduled acceptance requires joint or protected procurement")
-    if protocol not in (8, 9, 10, 11, 12, 13):
-        raise ValueError("scheduled acceptance requires protocol 8 through 13")
+    if protocol not in (8, 9, 10, 11, 12, 13, 14):
+        raise ValueError("scheduled acceptance requires protocol 8 through 14")
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, examples = [], []
