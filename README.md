@@ -52,7 +52,7 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Archive:** 116 teams / 122 windows, 869 behavioral JSON submissions (854 accepted, 15 rejected). Separately: 69 completed office and 20 peer continuations, plus one retained office failure. Diagnostic quizzes and single-actor checks remain separate. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json).
 
-Next: 16 preplanned teams cross joint/protected funds, own/shared objectives and ordinary/extended work, with two randomized blocks. Both funding rules charge the project for the contractor; protected funds preserve its acceptance purchasing authority.
+Ongoing: 16 preplanned teams cross joint/protected funds, own/shared objectives and ordinary/extended work, with two randomized blocks. Both funding rules charge the project for the contractor; protected funds preserve its acceptance purchasing authority. Twenty peer continuations are frozen at a new omission checkpoint before original confirmations; outcomes are pending.
 
 ## Run
 
