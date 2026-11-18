@@ -50,7 +50,7 @@ Offline checks cover all four sizes, both funding rules, safe summaries, privacy
 - Disclosure and information use are separate. Another office ignored a delivered update. Cost quotes still depend on the agent's finish-time assumption.
 - Sharing a full work record can expose client details. A short operational summary can support the same decision safely.
 - Silence is harmless when the registered information remains correct. Selective comparison is not necessarily harmful either: an office independently found the cheaper alternative omitted from a recommendation.
-- Restoration effects varied between checkpoints. Attribute loss through matched controls and actual recipient actions, not information availability alone.
+- At one checkpoint with clarified forecast wording, restoring the missing duration yielded 3/4 successful acceptances; no addition and an unrelated addition each yielded 0/4. Restoration under the original wording remained 0/4. These were recipient continuations with other actions fixed.
 
 Raw pilot records, including negative results and errors, stay local. This repository keeps the current framework and takeaways.
 
