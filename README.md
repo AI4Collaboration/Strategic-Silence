@@ -50,6 +50,8 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Operations checks:** 32 fresh individuals tested accounting guidance, an optional calculator and record layout. All ranked their own staffing costs correctly; 24/32 also ranked total costs correctly. Only 4/32 answered every item correctly. Query logs show repeated confusion between original bookings and final confirmations. These diagnostic pilots remain separate from team behavior; the calculator is experimental.
 
+Ten further single-actor checks tested actual confirmations. With quotes bound to existing bookings, all four clear cases chose the lowest-cost slot, versus two without quotes. Both actors given conflicting work records missed acceptance. Each case fixes six other actions by script.
+
 **Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office and 20 peer continuations, plus one retained office failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
 
 ## Run
