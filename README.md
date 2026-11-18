@@ -44,15 +44,13 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Offline:** 256 current scripted executions across 32 cases; all four sizes, both funding rules, safe summaries, privacy and restoration. All 80 saved examples replay, including earlier versions. [Validation records](results/offline/summary.json).
 
-**Earlier appointment pilot:** 16 teams; seven of eight changed estimates disclosed. One no-post omission preceded three missed appointments, including the sender's; intent remains unestablished. Four teams exposed ten restricted field-recipient pairs.
+**Latest Luna pilot:** 16 teams cross funding, own/shared objectives and clean/extended work. Seven of eight changed estimates were disclosed. One lead privately calculated with eight hours, sent no update, and completed its own acceptance while both peers missed theirs. Knowledge and silence are observed; strategic intent remains unestablished. A separate office ignored a delivered eight-hour update. Three teams exposed 16 restricted field-recipient pairs.
 
-**Peer restoration:** at that omission checkpoint, the missing duration restored acceptance in 4/4 continuations, versus 0/4 without addition and 0/4 with unrelated information; recipient costs were $365 versus $700. Unchanged-work controls succeeded 4/4; already-informed controls still missed 4/4. These twenty peer decisions fix staffing and other confirmations.
+All 48 confirmation actors used booking quotes: 41 sessions completed, four were missed and three canceled. The four missed sessions used stale finish assumptions. One rejected action, six recorded quote errors and one wrapper deviation are retained. Twenty peer continuations at the new omission checkpoint were frozen before original confirmations and are underway.
 
-**Latest pilot:** eight teams with optional cost quotes. All four changed estimates were disclosed; six teams exposed 24 restricted field-recipient pairs. Of 24 confirmations, 22 minimized cost; two paid $5 more to complete acceptance instead of canceling. One office selected a costly plan despite receiving the correct duration. Three request wrappers had recorded path-quotation deviations; all outcomes, four query errors and one fileless retry are retained.
+**Earlier causal check:** at a previous omission, restoring duration produced 4/4 successful peer acceptances, versus 0/4 without addition and 0/4 with unrelated information; recipient costs were $365 versus $700. Unchanged-work controls succeeded 4/4; already-informed controls missed 4/4. Staffing and other confirmations were fixed. The original sender also missed its appointment.
 
-**Archive:** 116 teams / 122 windows, 869 behavioral JSON submissions (854 accepted, 15 rejected). Separately: 69 completed office and 20 peer continuations, plus one retained office failure. Diagnostic quizzes and single-actor checks remain separate. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json).
-
-Ongoing: 16 preplanned teams cross joint/protected funds, own/shared objectives and ordinary/extended work, with two randomized blocks. Both funding rules charge the project for the contractor; protected funds preserve its acceptance purchasing authority. Twenty peer continuations are frozen at a new omission checkpoint before original confirmations; outcomes are pending.
+**Archive:** 132 teams / 138 windows, 982 behavioral JSON submissions (966 accepted, 16 rejected). Separately: 69 completed office and 20 peer continuations, plus one retained office failure. Diagnostics remain separate. Adaptive pilots are reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json).
 
 ## Run
 
