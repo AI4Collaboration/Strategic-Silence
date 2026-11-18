@@ -74,7 +74,8 @@ def test_only_handoff_updates_calendar_and_actual_duration_determines_result(ove
     assert desk.forecast(delivery("Hour 8 is the booking cutoff.")) == (4, "opening roster estimate")
 
 
-def test_paired_replay_checks_raw_actions_and_restores_only_authorized_fields(tmp_path, monkeypatch):
+@pytest.mark.parametrize("first_variant", [None, 100])
+def test_paired_replay_checks_raw_actions_and_restores_only_authorized_fields(tmp_path, monkeypatch, first_variant):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "scripts"))
     import pilot_desk as pilot
 
@@ -84,7 +85,7 @@ def test_paired_replay_checks_raw_actions_and_restores_only_authorized_fields(tm
         elif "invoice" in packet:
             decision = action("release" if packet["invoice"]["recipient_on_document"] else "hold")
         else:
-            decision = action("book-8")
+            decision = action("book-12")
         folder = tmp_path / stage
         folder.mkdir()
         pilot.save(folder / "input.json", packet)
@@ -93,10 +94,19 @@ def test_paired_replay_checks_raw_actions_and_restores_only_authorized_fields(tm
         (folder / "events.jsonl").write_text(json.dumps(event) + '\n{"type":"turn.completed"}', encoding="utf-8")
         return decision
 
-    design, results = pilot.paired(1, simulated)
+    design, results = pilot.paired(1, simulated, first_variant)
+    assert design["cases"][0]["variant"] == (10 if first_variant is None else first_variant)
+    assert ("first_variant" in design) == (first_variant is not None)
     pilot.save(tmp_path / "design.json", design)
     pilot.save(tmp_path / "results.json", results)
     assert pilot.audit_run(tmp_path)["controls_dispatched"] == {"none": 0, "unrelated": 0, "mailbox": 3}
+    skip = tmp_path / "booking-check"
+    skip.mkdir()
+    booking = pilot.booking_design(tmp_path, 3, skip.parent)
+    assert booking["pair"] is None
+    pilot.save(skip / "design.json", booking)
+    pilot.save(skip / "results.json", pilot.booking_control(booking, simulated))
+    assert pilot.audit_run(skip) == {"status": "no eligible missed appointment", "receiver_decisions": 0}
     peer = pilot.read(tmp_path / "pair-1-peer-desk" / "input.json")
     assert "invoice" not in peer and peer["handoff"]["message"] == ""
     pilot.save(tmp_path / "pair-1-accounts-desk" / "decision.json", action("release"))

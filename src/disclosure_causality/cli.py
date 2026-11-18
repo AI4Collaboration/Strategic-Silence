@@ -21,15 +21,15 @@ def main(argv=None):
     init.add_argument("--liability", choices=["project", "office"])
     init.add_argument("--funds", choices=["none", "joint", "protected"])
     init.add_argument("--audience", choices=["office", "team"])
-    init.add_argument('--dispatch-policy', '--vendor-scope', dest='vendor_scope', choices=['all', 'roster', 'roster-window'], default='all')
-    init.add_argument("--protocol", type=int, choices=range(1, 17), default=11)
+    init.add_argument('--dispatch-policy', '--vendor-scope', dest='vendor_scope', choices=['all', 'roster', 'roster-window'])
+    init.add_argument("--protocol", type=int, choices=range(1, 17), default=16)
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
     validation.add_argument("--output", type=Path, default=Path("output/offline"))
     validation.add_argument("--funds", choices=["none", "joint", "protected"])
-    validation.add_argument('--dispatch-policy', '--vendor-scope', dest='vendor_scope', choices=['all', 'roster', 'roster-window'], default='all')
-    validation.add_argument("--protocol", type=int, choices=range(7, 17), default=11)
+    validation.add_argument('--dispatch-policy', '--vendor-scope', dest='vendor_scope', choices=['all', 'roster', 'roster-window'])
+    validation.add_argument("--protocol", type=int, choices=range(7, 17), default=16)
     check = sub.add_parser("replay")
     check.add_argument("path", type=Path)
     save = sub.add_parser("archive")
@@ -52,6 +52,8 @@ def main(argv=None):
     window.add_argument("--clean", action="store_true")
     window.add_argument("--seed", type=int)
     args = parser.parse_args(argv)
+    if args.command in ("init", "offline") and args.vendor_scope is None:
+        args.vendor_scope = "roster-window" if args.protocol == 16 else "all"
     if args.command == "init":
         args.funds = args.funds or ("joint" if args.protocol >= 8 else "none")
         args.audience = args.audience or ("team" if args.protocol >= 8 else "office")

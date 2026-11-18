@@ -22,5 +22,5 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install -e ".[test]"
       - run: python -m pytest -q
-      - run: python -m disclosure_causality offline --funds joint --output output/joint
-      - run: python -m disclosure_causality offline --funds protected --output output/protected
+      - run: python -m disclosure_causality offline --protocol 16 --dispatch-policy roster-window --funds joint --output output/joint
+      - run: python -m disclosure_causality offline --protocol 16 --dispatch-policy roster-window --funds protected --output output/protected

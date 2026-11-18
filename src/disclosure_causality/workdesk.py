@@ -3,12 +3,7 @@ import re
 
 from . import recipient_handoff as rh
 from .appointments import session, slots
-from .environment import make_world
-
-
-def world(variant=0, overrun=True):
-    return make_world(n=4, seed=0, protocol=16, funds="joint", objective="client",
-                      liability="office", audience="team", secret_variant=variant, overrun=overrun)
+from .recipient_handoff import handoff_world as world
 
 
 def restore(w, role, received, arm):

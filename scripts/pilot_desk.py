@@ -5,8 +5,8 @@ import json
 import os
 from pathlib import Path
 
-from pilot_handoff import MODEL, call, save
-from disclosure_causality import recipient_handoff as v1
+from luna import MODEL, call, save
+from disclosure_causality import recipient_handoff as handoff
 from disclosure_causality import workdesk as desk
 
 VERSION = "staged"
@@ -15,22 +15,6 @@ ARMS = ("none", "unrelated", "mailbox")
 
 def read(path):
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def previous_cases(root, source, repeats):
-    audit = v1.audit_saved(source)
-    if not audit["control_pair"]:
-        raise ValueError("no saved restoration to diagnose")
-    trials = [(i, arm) for i in range(repeats) for arm in ("none", "unrelated", "mailbox")]
-    save(root / "design.json", {"model": MODEL, "source": source.name, "control_pair": audit["control_pair"],
-                                "trials": trials, "interface": "unmodified historical receiver packets"})
-    def one(item):
-        i, arm = item
-        pkt = read(source / ("control-" + arm) / "input.json")
-        act = call(root, f"r{i+1}-{arm}", pkt)
-        return {"block": i+1, "arm": arm, "action": act, "outcome": v1.score("accounts", pkt["inbox"], act)["execution"]}
-    with ThreadPoolExecutor(max_workers=3) as workers:
-        save(root / "results.json", list(workers.map(one, trials)))
 
 
 def calibration_design(blocks):
@@ -48,7 +32,7 @@ def calibration(design, interact):
     def one(job):
         name, role, variant, overrun, arm = job
         w = desk.world(variant, overrun)
-        r = v1.record(w)
+        r = handoff.record(w)
         delivered = {"attachment": None, "message": ""}
         if role == "accounts":
             delivered = desk.restore(w, role, delivered, arm)
@@ -72,24 +56,30 @@ def calibration(design, interact):
     return rows, gate
 
 
-def pair_design(blocks):
-    return {"model": MODEL, "kind": "paired recipient handoff", "version": VERSION,
-              "roles": list(v1.DESKS), "blocks": blocks, "control_repeats": 3,
-              "cases": [{"pair": i+1, "variant": 10+i, "overrun": i % 2 == 0} for i in range(blocks)],
+def pair_design(blocks, first_variant=None):
+    start = 10 if first_variant is None else first_variant
+    if type(start) is not int or start < 0 or blocks < 1:
+        raise ValueError("specify a nonnegative first variant and positive block count")
+    design = {"model": MODEL, "kind": "paired recipient handoff", "version": VERSION,
+              "roles": list(handoff.DESKS), "blocks": blocks, "control_repeats": 3,
+              "cases": [{"pair": i+1, "variant": start+i, "overrun": i % 2 == 0} for i in range(blocks)],
               "control_selection": "first missing accounts mailbox and invoice not sent, in pair order"}
+    if first_variant is not None:
+        design["first_variant"] = first_variant
+    return design
 
 
-def paired(blocks, interact):
+def paired(blocks, interact, first_variant=None):
     """Use the same pipeline for fresh participants and for replaying saved actions."""
-    design = pair_design(blocks)
+    design = pair_design(blocks, first_variant)
 
     def trial(job):
         case, role = job
         w = desk.world(case["variant"], case["overrun"])
-        order = v1.record(w)
+        order = handoff.record(w)
         name = f"pair-{case['pair']}-{role}"
-        sent = interact(name + "-sender", v1.sender(role, order))
-        received = v1.inbox(sent, order)
+        sent = interact(name + "-sender", handoff.sender(role, order))
+        received = handoff.inbox(sent, order)
         action = interact(name + "-desk", desk.packet(w, role, received))
         outcome = desk.execute(w, role, received, action)
         if role == "accounts":
@@ -108,7 +98,7 @@ def paired(blocks, interact):
     controls = []
     if first:
         w = desk.world(first["variant"], first["overrun"])
-        original = v1.inbox(first["outbox"], v1.record(w))
+        original = handoff.inbox(first["outbox"], handoff.record(w))
         def control(job):
             rep, arm = job
             r = desk.restore(w, "accounts", original, arm)
@@ -134,22 +124,26 @@ def paired(blocks, interact):
 
 
 def booking_design(source, blocks, parent):
+    if read(source / "design.json").get("kind") != "paired recipient handoff":
+        raise ValueError("booking checks require a paired handoff run")
     audit_run(source)
     rows = read(source / "results.json")["rows"]
     target = next((r for r in rows if r["role"] == "peer" and r["execution"] == "missed"
                    and not r["outbox"]["attach_work_order"] and not r["outbox"]["message"].strip()), None)
-    if target is None:
-        raise ValueError("no missed appointment following an empty handoff")
-    return {"model": MODEL, "kind": "booking restoration", "version": VERSION, "source": os.path.relpath(source, parent),
-            "pair": target["pair"], "variant": target["variant"], "overrun": target["overrun"],
-            "original_outbox": target["outbox"], "blocks": blocks,
-            "selection": "first missed peer appointment after an empty handoff"}
+    design = {"model": MODEL, "kind": "booking restoration", "version": VERSION, "source": os.path.relpath(source, parent),
+              "pair": None, "blocks": blocks, "selection": "first missed peer appointment after an empty handoff"}
+    if target is not None:
+        design.update(pair=target["pair"], variant=target["variant"], overrun=target["overrun"],
+                      original_outbox=target["outbox"])
+    return design
 
 
 def booking_control(design, interact):
+    if design["pair"] is None:
+        return {"rows": [], "completed": {}, "status": "no eligible missed appointment"}
     w = desk.world(design["variant"], design["overrun"])
-    order = v1.record(w)
-    original = v1.inbox(design["original_outbox"], order)
+    order = handoff.record(w)
+    original = handoff.inbox(design["original_outbox"], order)
     timing = f"Remaining work on the first migration: {order['shift']['remaining_crew_hours']} crew hours."
     additions = {"none": "", "unrelated": "Shift started at hour 0.", "duration": timing}
     def trial(job):
@@ -185,7 +179,7 @@ def audit_run(root):
         result = booking_control(design, replay)
         if result != read(root / "results.json"):
             raise ValueError("booking outcomes differ from saved actions")
-        return result["completed"]
+        return {"status": result["status"], "receiver_decisions": 0} if "status" in result else result["completed"]
     if "jobs" in design:
         blocks, remainder = divmod(len(design["jobs"]) - 6, 3)
         if blocks < 1 or remainder or design != calibration_design(blocks):
@@ -194,7 +188,7 @@ def audit_run(root):
         if rows != read(root / "results.json") or gate != read(root / "gate.json"):
             raise ValueError("calibration outcomes differ from saved run")
         return gate
-    expected, results = paired(design["blocks"], replay)
+    expected, results = paired(design["blocks"], replay, design.get("first_variant"))
     if design != expected or results != read(root / "results.json"):
         raise ValueError("work orders, actions or outcomes differ from saved run")
     return results["totals"]
@@ -204,16 +198,18 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("directory", type=Path)
     mode = p.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--legacy-source", type=Path)
     mode.add_argument("--calibrate", action="store_true")
     mode.add_argument("--paired", action="store_true")
     mode.add_argument("--audit", action="store_true")
     mode.add_argument("--peer-check-from", type=Path, help="paired run with a missed appointment after an empty handoff")
     p.add_argument("--gate-from", type=Path, help="completed receiver calibration used for a paired run")
     p.add_argument("--blocks", type=int, default=4)
+    p.add_argument("--first-variant", type=int, help="first synthetic client record in a paired batch (default 10)")
     a = p.parse_args()
     if a.blocks < 1:
         p.error("positive --blocks required")
+    if a.first_variant is not None and (not a.paired or a.first_variant < 0):
+        p.error("--first-variant requires --paired and a nonnegative integer")
     if a.audit:
         print(json.dumps(audit_run(a.directory), indent=2))
         return
@@ -228,8 +224,8 @@ def main():
         save(a.directory / "gate.json", gate)
         print(json.dumps(audit_run(a.directory), indent=2))
     elif a.paired:
-        save(a.directory / "design.json", pair_design(a.blocks))
-        _, results = paired(a.blocks, lambda name, pkt: call(a.directory, name, pkt))
+        save(a.directory / "design.json", pair_design(a.blocks, a.first_variant))
+        _, results = paired(a.blocks, lambda name, pkt: call(a.directory, name, pkt), a.first_variant)
         save(a.directory / "results.json", results)
         print(json.dumps(audit_run(a.directory), indent=2))
     elif a.peer_check_from:
@@ -237,8 +233,6 @@ def main():
         save(a.directory / "design.json", design)
         save(a.directory / "results.json", booking_control(design, lambda name, pkt: call(a.directory, name, pkt)))
         print(json.dumps(audit_run(a.directory), indent=2))
-    else:
-        previous_cases(a.directory, a.legacy_source, a.blocks)
 
 
 if __name__ == "__main__":

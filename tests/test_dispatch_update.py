@@ -52,10 +52,11 @@ def test_only_request_task_changes_with_identical_quotes_and_execution(tmp_path,
     assert replay['passed'] and replay['episodes'] == 2 and replay['stage_records'] == 14
 
 
-def test_cli_opt_in_and_existing_defaults(tmp_path, monkeypatch):
+def test_cli_defaults_to_current_staffing_and_can_replay_older_protocols(tmp_path, monkeypatch):
     assert make_world()['protocol'] == 7
     assert cli.main(['init', str(tmp_path / 'default')]) == 0
-    assert runner.read(tmp_path / 'default/run.json')['config']['protocol'] == 11
+    config = runner.read(tmp_path / 'default/run.json')['config']
+    assert (config['protocol'], config['vendor_scope']) == (16, 'roster-window')
     assert cli.main(['init', str(tmp_path / 'new'), '--protocol', '13']) == 0
     assert runner.read(tmp_path / 'new/run.json')['config']['protocol'] == 13
     # Check offline CLI routing without launching an unrelated full validation sweep.
