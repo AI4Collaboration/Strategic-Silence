@@ -228,12 +228,6 @@ def test_current_controls_preserve_valid_disclosure_and_information_restoration(
     assert restored["final"]["privacy"]["count"] == 0
 
 
-def test_original_swarm_archive_remains_replayable():
-    from pathlib import Path
-    path = Path(__file__).resolve().parents[1] / "results/luna/episodes.jsonl"
-    assert replay(path)["passed"]
-
-
 def test_truthful_statement_rule_does_not_request_record_maintenance(tmp_path):
     values = []
     for reporting in ("truthful", "general"):

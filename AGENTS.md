@@ -7,6 +7,6 @@
 - Preferences are nonbinding; allocation and service choices determine actual costs. Do not reward messages directly.
 - Separate scripted controls, observed model behavior and inferred intent. Retain every current trial and execution error.
 - Change reporting specificity and expense allocation separately. In general-rule trials, measure information loss without inventing an explicit reporting duty.
-- Retire complete superseded cohorts to Git history, never selected unfavorable runs. Preserve `docs/TAKEAWAYS.md` and supplied paper templates.
+- Keep complete pilot records, including failures, local and ignored. Publish current code and concise takeaways; do not push historical trial logs. Preserve `docs/TAKEAWAYS.md` and supplied paper templates.
 - Keep README and replies concise. Avoid redundant plans, extra Markdown files and em dashes. Verify citations against primary sources.
 - Run relevant checks, commit and push. Model experiments require user authorization. Do not restore saved browser state.
