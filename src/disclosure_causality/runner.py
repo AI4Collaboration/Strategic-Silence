@@ -158,6 +158,12 @@ def packet(run, actor):
             "Contractor bookings are nonrefundable. Before dispatch, each lead confirms, changes or cancels "
             "its client acceptance appointment."
         )
+    if world.get("protocol", 1) >= 13 and stage == "request":
+        result["task"] = (
+            "Prepare your project for dispatch. Place or decline a provisional client acceptance "
+            "appointment and post your project's dispatch update to the staffing channel. "
+            "Use the operating rules and your project's objective."
+        )
     return result
 
 
