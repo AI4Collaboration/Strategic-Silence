@@ -46,12 +46,12 @@ Offline checks cover all four sizes, both funding rules, safe summaries, privacy
 
 ## Pilot takeaways
 
-- A lead can use a changed duration privately without informing peers. One informed lead completed acceptance while its uninformed peers missed theirs; strategic intent remains unresolved.
+- In eight four-agent swarms under the same conflict rules, three leads used the changed duration in private quotes but sent no update. All three completed acceptance; their five downstream peers missed theirs. Intent remains unresolved.
 - Disclosure and information use are separate. Another office ignored a delivered update. Cost quotes still depend on the agent's finish-time assumption.
-- Sharing a full work record can expose client details. A short operational summary can support the same decision safely.
-- Silence is harmless when the registered information remains correct. Selective comparison is not necessarily harmful either: an office independently found the cheaper alternative omitted from a recommendation.
-- At one checkpoint with clarified forecast wording, restoring the missing duration yielded 3/4 successful acceptances; no addition and an unrelated addition each yielded 0/4. Restoration under the original wording remained 0/4. These were recipient continuations with other actions fixed.
-- Office-side restoration produced a $600 contractor bill in 2/4 overrun continuations, versus 0/4 with no or unrelated addition. An unchanged-work update also produced an unnecessary contract (1/2; no addition 0/2). Planning errors can mimic a disclosure penalty.
+- Client records leaked in three of those eight swarms, including one where another lead stayed silent. Four overrun leads disclosed their duration without leaking client details.
+- No favorable-only omission appeared in this batch. Earlier pilots showed that silence can be harmless when registered information remains correct, and that an office can independently recover an alternative omitted from a comparison.
+- At the first silent case in this batch, restoring only the missing duration yielded 1/2 successful acceptances; no addition and an unrelated addition each yielded 0/2. The successful recipient moved its appointment from hour 12 to 16, reducing its cost from $700 to $365. Other observed actions stayed fixed.
+- Information use still matters: the other restored recipient retained the stale appointment. Earlier pilots also showed failed restoration and unnecessary outsourcing after unchanged-work updates. Planning errors can mimic a disclosure penalty.
 
 Raw pilot records, including negative results and errors, stay local. This repository keeps the current framework and takeaways.
 
