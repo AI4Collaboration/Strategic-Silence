@@ -128,6 +128,9 @@ def packet(run, actor):
             plan = run["outputs"]["allocate"]["scheduler"]
             result["dispatch_plan"] = {k: plan[k] for k in ("internal_order", "office_contractor_for", "hours")}
             result["dispatch_plan"]["hours_source"] = "Office forecasts, not measured execution times."
+    if world.get("protocol", 1) >= 10:
+        from .quote import description
+        result["tools"] = {"plan_quote": description()}
     if "history" in run["config"]:
         result["service_window"] = {
             "number": len(run["config"]["history"][actor]) + 1,

@@ -233,8 +233,8 @@ def offline_appointments(destination, funds="joint", protocol=8):
     """Native task closure and peer-only restoration at four swarm sizes."""
     if funds not in ("joint", "protected"):
         raise ValueError("scheduled acceptance requires joint or protected procurement")
-    if protocol not in (8, 9):
-        raise ValueError("scheduled acceptance requires protocol 8 or 9")
+    if protocol not in (8, 9, 10):
+        raise ValueError("scheduled acceptance requires protocol 8, 9 or 10")
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, examples = [], []

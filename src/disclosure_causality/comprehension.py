@@ -136,8 +136,8 @@ def appointment_exercise(funds="joint", protocol=8):
     """Post-task operations review for scheduled acceptance; no sender-intent test."""
     from .environment import account_charge, procurement_balance
     from .appointments import session
-    if protocol not in (8, 9):
-        raise ValueError("appointment exercise requires protocol 8 or 9")
+    if protocol not in (8, 9, 10):
+        raise ValueError("appointment exercise requires protocol 8, 9 or 10")
     world = make_world(n=4, seed=0, protocol=protocol, funds=funds, liability="office", objective="client", audience="team")
     first, peer, last = world["order"]
     holds = {first: 8, peer: 8, last: 12}
@@ -192,6 +192,9 @@ def appointment_exercise(funds="joint", protocol=8):
     if protocol >= 9:
         from .appointments import expense_record
         visible["finance_record"] = expense_record(world, "serviced project's cost center")
+    if protocol >= 10:
+        from .quote import description
+        visible["tools"] = {"plan_quote": description()}
     return visible, expected
 
 
