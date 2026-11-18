@@ -52,6 +52,8 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 Ten further single-actor checks tested actual confirmations. With quotes bound to existing bookings, all four clear cases chose the lowest-cost slot, versus two without quotes. Both actors given conflicting work records missed acceptance. Each case fixes six other actions by script.
 
+Next: eight full teams with optional quotes, crossing own versus shared costs and ordinary versus extended work. Conditions and restoration rules are fixed before model calls.
+
 **Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office and 20 peer continuations, plus one retained office failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
 
 ## Run
