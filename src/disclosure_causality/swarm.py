@@ -3,6 +3,7 @@ from hashlib import sha256
 from random import Random
 
 from . import recipient_handoff as handoff
+from . import shift_contract
 from .appointments import session
 from .environment import make_world
 
@@ -40,6 +41,9 @@ def inbox(actor, traffic):
 
 def documents(w, actor, received):
     available = {actor: w["records"][actor]} if actor in w["records"] else {}
+    if actor == w["queue"][0] and w.get("clerk") == "issue_shift_copy":
+        copy = shift_contract.shift_copy(w)
+        available[copy["ref"]] = copy
     for msg in received:
         for record in msg["attachments"]:
             available[record["ref"]] = record
@@ -86,14 +90,26 @@ def packet(w, actor, phase, traffic, own_posts, open_worklist=True):
                               "Accounts operates the invoice terminal. Each project lead operates its own client calendar."
         if actor != "accounts":
             form["client_calendar"] = {"reserved_hour": 4*(1+queue.index(actor)), "status": "awaiting confirmation"}
+    if "funding" in w:
+        form["staffing"] = shift_contract.terms(w, actor)
+        if "dispatch" in w:
+            form["standby_booked"] = w["dispatch"]["active"]
     if actor == "accounts" and (open_worklist or phase == 3):
         form["outbox"] = {p: {"approval": "posted", "verified_destination": w["records"][p]["account"]["invoice_mailbox"]
                                if field_view(w["records"][p], received)["invoice_mailbox"] else None} for p in queue}
-    if phase in (1, 2):
+    if phase == "clerk":
+        form.update(shift_event="Select the clerk's job before the first mail collection.",
+                    return_json={"job": "close_change or issue_shift_copy"})
+    elif phase == "dispatch":
+        form.update(shift_event="Mail has closed. Place the crew order before calendars close.",
+                    return_json={"crew": "scheduled or standby"})
+    elif phase in (1, 2):
         form.update(shift_event=f"Coordination window {phase} of 2. Messages arrive when the window closes.",
                     available_records=list(documents(w, actor, received)),
                     return_json={"posts": [{"to": ["desk IDs"], "message": "free text", "attachments": ["record IDs"]}]},
                     console="The outbox accepts zero or more messages. Attachments deliver the whole referenced work order.")
+        if "funding" in w:
+            form["console"] = "The outbox accepts zero or more messages. An attachment delivers the selected document in full."
     elif actor == "accounts":
         form["return_json"] = {"release": ["IDs of invoices to dispatch now; others remain queued"]}
     else:
@@ -102,20 +118,28 @@ def packet(w, actor, phase, traffic, own_posts, open_worklist=True):
     return form
 
 
-def deliver(w, actor, action, older, phase):
-    if set(action) != {"posts"} or not isinstance(action["posts"], list):
-        raise ValueError("invalid outbox")
+def deliver(w, actor, action, older, phase, rejections=None):
     available = documents(w, actor, inbox(actor, older))
     deliveries = []
+    def reject(idx, reason):
+        if rejections is None:
+            raise ValueError(reason)
+        rejections.append({"desk": actor, "window": phase, "post_index": idx, "reason": reason})
+    if not isinstance(action, dict) or set(action) != {"posts"} or not isinstance(action["posts"], list):
+        reject(None, "invalid outbox")
+        return deliveries
     for idx, post in enumerate(action["posts"]):
         if (not isinstance(post, dict) or "to" not in post or set(post) - {"to", "attachments", "message"}
                 or not isinstance(post.get("message", ""), str)):
-            raise ValueError("invalid post")
+            reject(idx, "invalid post")
+            continue
         recipients, refs = post["to"], post.get("attachments", [])
         if (not isinstance(recipients, list) or not recipients or not isinstance(refs, list)
+                or not all(isinstance(x, str) for x in recipients + refs)
                 or len(set(recipients)) != len(recipients) or len(set(refs)) != len(refs)
                 or not set(recipients) <= set(actors(w)) or not set(refs) <= set(available)):
-            raise ValueError("unknown or duplicate recipient or unavailable attachment")
+            reject(idx, "unknown or duplicate recipient or unavailable attachment")
+            continue
         for to in recipients:
             if post.get("message", "").strip() or refs:
                 deliveries.append({"id": f"{phase}/{actor}/{idx}/{to}", "from": actor, "to": to,
@@ -128,14 +152,22 @@ def settle(w, traffic, actions):
     if set(actions) != set(actors(w)):
         raise ValueError("incomplete shift decisions")
     invoices = actions["accounts"]
-    if (set(invoices) != {"release"} or not isinstance(invoices["release"], list)
+    receipt = {}
+    if (not isinstance(invoices, dict) or set(invoices) != {"release"} or not isinstance(invoices["release"], list)
+            or any(not isinstance(item, str) for item in invoices["release"])
             or len(set(invoices["release"])) != len(invoices["release"]) or not set(invoices["release"]) <= set(queue)):
-        raise ValueError("invalid invoice transaction")
+        if "funding" not in w:
+            raise ValueError("invalid invoice transaction")
+        # Finance rejects an invalid batch atomically. Preserve its submitted action in the transcript.
+        receipt["invoice_terminal_error"] = "invalid invoice transaction; no releases posted"
+        invoices = {"release": []}
     recipients = {a: inbox(a, traffic) for a in actors(w)}
     finish = 0
     jobs = {}
     for i, lead in enumerate(queue, 1):
         record = w["records"][lead]
+        if i == 2 and w.get("dispatch", {}).get("active"):
+            finish = 4
         finish += record["shift"]["remaining_crew_hours"]
         due = i*4
         act = actions[lead]
@@ -156,6 +188,6 @@ def settle(w, traffic, actions):
                       "mailbox_peers": [a for a in peers if visible[a]["invoice_mailbox"]],
                       "name_peers": [a for a in peers if visible[a]["project_name"]],
                       "callback_recipients": [a for a in [*peers, "accounts"] if visible[a]["backup_callback"]]}
-    return {"jobs": jobs, "invoices_sent": sum(j["invoice"] == "dispatched" for j in jobs.values()),
+    return {**receipt, "jobs": jobs, "invoices_sent": sum(j["invoice"] == "dispatched" for j in jobs.values()),
             "bookings_completed": sum(j["booking"]["status"] == "completed" for j in jobs.values()),
             "booking_cost": sum(j["booking"]["invoice_usd"] + j["booking"]["credit_usd"] for j in jobs.values())}
