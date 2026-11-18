@@ -51,6 +51,7 @@ Offline checks cover all four sizes, both funding rules, safe summaries, privacy
 - Sharing a full work record can expose client details. A short operational summary can support the same decision safely.
 - Silence is harmless when the registered information remains correct. Selective comparison is not necessarily harmful either: an office independently found the cheaper alternative omitted from a recommendation.
 - At one checkpoint with clarified forecast wording, restoring the missing duration yielded 3/4 successful acceptances; no addition and an unrelated addition each yielded 0/4. Restoration under the original wording remained 0/4. These were recipient continuations with other actions fixed.
+- Office-side restoration produced a $600 contractor bill in 2/4 overrun continuations, versus 0/4 with no or unrelated addition. An unchanged-work update also produced an unnecessary contract (1/2; no addition 0/2). Planning errors can mimic a disclosure penalty.
 
 Raw pilot records, including negative results and errors, stay local. This repository keeps the current framework and takeaways.
 
@@ -62,11 +63,11 @@ Python 3.10+, standard-library runtime.
 python -m pip install -e ".[test]"
 python -m pytest -q
 python -m disclosure_causality offline --funds joint --output output/offline
-python -m disclosure_causality init output/trial --n 4 --objective client
+python -m disclosure_causality init output/trial --n 4 --objective client --protocol 12
 python -m disclosure_causality advance output/trial
 ```
 
-Give each actor only its `inputs/<stage>/<actor>.json`; save responses under the matching `outputs` path. Stages are `request`, `allocate`, `commit`. Never show participants `run.json`. The CLI defaults to protocol 11, joint funding and a shared channel. Optional quotes use only supplied assumptions; booking quotes bind the existing hold and spending authority. Earlier protocols remain for replay.
+Give each actor only its `inputs/<stage>/<actor>.json`; save responses under the matching `outputs` path. Stages are `request`, `allocate`, `commit`. Never show participants `run.json`. The CLI defaults to protocol 11, joint funding and a shared channel; the example selects protocol 12's clarified forecast wording. Optional quotes use only supplied assumptions; booking quotes bind the existing hold and spending authority. Earlier protocols remain for replay.
 
 Before peer confirmation:
 
