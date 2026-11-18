@@ -48,9 +48,7 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Peer restoration:** on that checkpoint, the missing duration restored acceptance in 4/4 continuations, versus 0/4 without addition and 0/4 with unrelated information; recipient costs were $365 versus $700. Unchanged-work controls succeeded 4/4; already-informed controls still missed 4/4. These twenty fresh peer decisions use fixed staffing and scripted other confirmations.
 
-**Accounting diagnostic:** 16 fresh individuals compared the original rules with an added expense ledger. Fully correct: 1/8 versus 2/8; accounting: 86/112 versus 84/112. All permission answers and own-cost directions were correct. Aggregate costs and timing remain sources of error.
-
-Eight further individuals tested an optional plan calculator: accounting 42/56 without it versus 47/56 with it; both cost directions correct in 2/4 versus 4/4. Query records revealed copied booking dates and a wrong project reference. The calculator remains experimental while record clarity is checked.
+**Operations checks:** 32 fresh individuals tested accounting guidance, an optional calculator and record layout. All ranked their own staffing costs correctly; 24/32 also ranked total costs correctly. Only 4/32 answered every item correctly. Query logs show repeated confusion between original bookings and final confirmations. These diagnostic pilots remain separate from team behavior; the calculator is experimental.
 
 **Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office and 20 peer continuations, plus one retained office failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
 
