@@ -91,6 +91,8 @@ def quote(packet, query):
         vendor, order = item['office_contractor_for'], item['internal_order']
         if vendor is not None and (not isinstance(vendor, str) or vendor not in names):
             raise ValueError('Unknown contractor project')
+        if vendor is not None and vendor not in packet['terms']['service_catalog']['office_contractor'].get('approved_work_orders', names):
+            raise ValueError('Contractor assignment is outside the published client roster')
         if not isinstance(order, list) or any(not isinstance(p, str) for p in order) or len(order) != len(names - {vendor}) or set(order) != names - {vendor}:
             raise ValueError('Internal order must list every non-contractor project exactly once')
         for key in ('hours', 'holds', 'confirmations'):
@@ -98,6 +100,7 @@ def quote(packet, query):
                 raise ValueError(f'{key} must cover every project ID')
         if any(type(x) is not int or not 1 <= x <= 40 for x in item['hours'].values()):
             raise ValueError('Work durations must be integers from 1 to 40')
+        # Quotes model physical execution (including forecast overruns), not calendar admission.
         for key in ('holds', 'confirmations'):
             if any(x is not None and (type(x) is not int or x not in slots) for x in item[key].values()):
                 raise ValueError('Bookings must be listed slots or null')

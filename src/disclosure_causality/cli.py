@@ -3,7 +3,7 @@ import argparse
 import json
 from pathlib import Path
 
-from .runner import initialize, advance, archive, replay, fork, next_window
+from .runner import initialize, advance, archive, replay, fork, next_window, mask_span
 from .validation import offline
 
 
@@ -21,13 +21,15 @@ def main(argv=None):
     init.add_argument("--liability", choices=["project", "office"])
     init.add_argument("--funds", choices=["none", "joint", "protected"])
     init.add_argument("--audience", choices=["office", "team"])
-    init.add_argument("--protocol", type=int, choices=range(1, 15), default=11)
+    init.add_argument('--dispatch-policy', '--vendor-scope', dest='vendor_scope', choices=['all', 'roster', 'roster-window'], default='all')
+    init.add_argument("--protocol", type=int, choices=range(1, 17), default=11)
     step = sub.add_parser("advance")
     step.add_argument("path", type=Path)
     validation = sub.add_parser("offline")
     validation.add_argument("--output", type=Path, default=Path("output/offline"))
     validation.add_argument("--funds", choices=["none", "joint", "protected"])
-    validation.add_argument("--protocol", type=int, choices=[7, 8, 9, 10, 11, 12, 13, 14], default=11)
+    validation.add_argument('--dispatch-policy', '--vendor-scope', dest='vendor_scope', choices=['all', 'roster', 'roster-window'], default='all')
+    validation.add_argument("--protocol", type=int, choices=range(7, 17), default=11)
     check = sub.add_parser("replay")
     check.add_argument("path", type=Path)
     save = sub.add_parser("archive")
@@ -39,6 +41,11 @@ def main(argv=None):
     branch.add_argument("--condition", choices=["none", "required", "unrelated"], required=True)
     branch.add_argument("--owner", required=True)
     branch.add_argument("--recipient", help="restore to this peer after allocation, before acceptance confirmation")
+    masked = sub.add_parser('mask-span', help='evaluator control: remove one exact span before allocation')
+    masked.add_argument('source', type=Path)
+    masked.add_argument('destination', type=Path)
+    masked.add_argument('--owner', required=True)
+    masked.add_argument('--span', required=True)
     window = sub.add_parser("next-window")
     window.add_argument("source", type=Path)
     window.add_argument("destination", type=Path)
@@ -51,19 +58,23 @@ def main(argv=None):
         args.liability = args.liability or ("office" if args.protocol >= 8 else "project")
         run = initialize(args.path, n=args.n, seed=args.seed, overrun=not args.clean, objective=args.objective,
                          label_access=args.label_access, reporting=args.reporting, liability=args.liability, funds=args.funds,
-                         audience=args.audience, protocol=args.protocol)
+                         audience=args.audience, protocol=args.protocol, vendor_scope=args.vendor_scope)
         result = {"stage": run["stage"], "actors": list(run["world"]["projects"])}
     elif args.command == "advance":
         run = advance(args.path)
         result = {"stage": run["stage"], "final": run.get("final")}
     elif args.command == "offline":
-        report = offline(args.output, funds=args.funds or ("joint" if args.protocol >= 8 else "none"), protocol=args.protocol)
+        report = offline(args.output, funds=args.funds or ("joint" if args.protocol >= 8 else "none"), protocol=args.protocol,
+                         **({'vendor_scope': args.vendor_scope} if args.vendor_scope != 'all' else {}))
         result = {k: report[k] for k in ("passed", "cases", "executions", "replay")}
     elif args.command == "archive":
         result = archive(args.paths, args.destination)
     elif args.command == "fork":
         run = fork(args.source, args.destination, args.condition, args.owner, args.recipient)
         result = {"stage": run["stage"]}
+    elif args.command == 'mask-span':
+        run = mask_span(args.source, args.destination, args.owner, args.span)
+        result = {'stage': run['stage'], 'spontaneous_omission': False}
     elif args.command == "next-window":
         run = next_window(args.source, args.destination, overrun=not args.clean, seed=args.seed)
         result = {"stage": run["stage"], "window": len(run["config"]["history"]["scheduler"]) + 1}

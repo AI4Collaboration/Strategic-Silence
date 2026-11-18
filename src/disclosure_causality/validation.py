@@ -41,6 +41,14 @@ def reference_request(visible, mode="safe"):
         entry = next(e for e in visible["terms"]["calendar"] if e["project"] == own)
         hours = record_hours(visible["workspace"]["work/estimate.txt"])
         result["appointment_hold"] = entry["planned_start"] + hours
+        if 'file_start_release' in visible['response_schema']:
+            result['file_start_release'] = visible['opening_register'][own] != 'filed'
+            if mode == 'partial':
+                result.update(message='Staging and dry run complete. Signed customer start release in hand.', attachments=[])
+        elif "opening_register" in visible and mode != "silent" and visible["opening_register"][own] != "filed":
+            result["attachments"].append("work/start-release.txt")
+            if mode == "partial":
+                result.update(message="Signed start release attached.", attachments=["work/start-release.txt"])
         return result
     internal = "internal_team" if "service_catalog" in visible["terms"] else "pool"
     if mode == "silent":
@@ -74,6 +82,21 @@ def reference_plan(visible, forward=False):
         decisions = {name: {"reconciliation": "reserve"} for name in names}
     candidates = [{("internal_order" if current else "order"): [name for name in names if not current or name != external],
                    contractor_key(forecast): external, "hours": hours} for external in [None, *names]]
+    if "opening_register" in visible:
+        register = visible["opening_register"]
+        roster = visible['terms']['service_catalog']['office_contractor'].get('approved_work_orders', names)
+        candidates = [p for p in candidates if not p["office_contractor_for"] or
+                      (p["office_contractor_for"] in roster and register[p["office_contractor_for"]] == "filed")]
+        for candidate in candidates:
+            queue = candidate["internal_order"]
+            first = next((p for p in queue if register[p] == "filed" and
+                          ('opening_window' not in visible['terms'] or hours[p] <= visible['terms']['opening_window']['internal_hours'])), None)
+            if first is None:
+                continue
+            queue.insert(0, queue.pop(queue.index(first)))
+        if 'opening_window' in visible['terms']:
+            candidates = [p for p in candidates if register[p['internal_order'][0]] == 'filed' and
+                          hours[p['internal_order'][0]] <= visible['terms']['opening_window']['internal_hours']]
     if "acceptance_service" in visible["terms"]:
         from .appointments import session, slots
         forecast["protocol"] = 8
@@ -188,9 +211,11 @@ def blind_allocation_check(seed=0, funds="none"):
             "meaning": "Same office observations in clean/overrun worlds require different allocations for minimum cost; client actions cannot remove this gap."}
 
 
-def offline(destination, funds="none", protocol=7):
+def offline(destination, funds="none", protocol=7, vendor_scope='all'):
+    if vendor_scope != 'all' and protocol < 15:
+        raise ValueError('client contractor roster requires a release register')
     if protocol >= 8:
-        return offline_appointments(destination, funds, protocol)
+        return offline_appointments(destination, funds, protocol, vendor_scope)
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, example_lines = [], []
@@ -247,12 +272,12 @@ def offline(destination, funds="none", protocol=7):
     return report
 
 
-def offline_appointments(destination, funds="joint", protocol=8):
+def offline_appointments(destination, funds="joint", protocol=8, vendor_scope='all'):
     """Native task closure and peer-only restoration at four swarm sizes."""
     if funds not in ("joint", "protected"):
         raise ValueError("scheduled acceptance requires joint or protected procurement")
-    if protocol not in (8, 9, 10, 11, 12, 13, 14):
-        raise ValueError("scheduled acceptance requires protocol 8 through 14")
+    if protocol not in range(8, 17):
+        raise ValueError("scheduled acceptance requires protocol 8 through 16")
     target = Path(destination).resolve()
     target.mkdir(parents=True, exist_ok=True)
     rows, examples = [], []
@@ -263,6 +288,8 @@ def offline_appointments(destination, funds="joint", protocol=8):
             seed = 0 if position == "first" else n - 3
             config = dict(n=n, seed=seed, overrun=overrun, protocol=protocol, funds=funds,
                           liability="office", audience="team", objective="client")
+            if vendor_scope != 'all':
+                config['vendor_scope'] = vendor_scope
             prefix = f"n{n}-{position}-{'overrun' if overrun else 'clean'}"
             paths, scores = {}, {}
             for mode in ("safe", "silent", "partial", "raw"):
@@ -274,10 +301,11 @@ def offline_appointments(destination, funds="joint", protocol=8):
             assert scores["safe"]["cost_usd"] == scores["raw"]["cost_usd"]
             assert scores["safe"]["acceptance_counts"] == scores["raw"]["acceptance_counts"]
             assert scores["safe"]["leaks"] == 0 < scores["raw"]["leaks"]
-            assert scores["silent"] == scores["partial"]
+            if protocol != 15:
+                assert scores["silent"] == scores["partial"]
             # Fix one real staffing plan for every peer-only continuation.
             source = base / f"{prefix}-peer-source"
-            run = checkpoint(source, config, "silent")
+            run = checkpoint(source, config, "partial" if protocol >= 15 else "silent")
             focal = run["world"]["focal"]
             order = run["world"]["order"]
             peer = order[order.index(focal)+1]

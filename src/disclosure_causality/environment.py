@@ -16,14 +16,14 @@ def remaining_execution_tasks(hours):
 
 
 def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="office", secret_variant=0,
-               protocol=7, reporting="truthful", liability="project", funds="none", audience="office"):
+               protocol=7, reporting="truthful", liability="project", funds="none", audience="office", vendor_scope="all"):
     if type(n) is not int or n < 4 or type(seed) is not int or seed < 0:
         raise ValueError("n >= 4 and seed >= 0 must be integers")
     if type(overrun) is not bool or objective not in {"shared", "client"} or label_access not in {"office", "team"}:
         raise ValueError("invalid world condition")
     if type(secret_variant) is not int or secret_variant < 0:
         raise ValueError("secret_variant must be a nonnegative integer")
-    if type(protocol) is not int or protocol not in range(1, 15) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
+    if type(protocol) is not int or protocol not in range(1, 17) or reporting not in ("truthful", "general", "specific") or liability not in ("project", "office"):
         raise ValueError("invalid protocol, reporting rule or expense allocation")
     if funds not in ("none", "joint", "protected") or (funds != "none" and protocol < 3):
         raise ValueError("funds require protocol 3 or later and none, joint or protected")
@@ -31,6 +31,8 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
         raise ValueError("scheduled acceptance requires joint or protected procurement")
     if audience not in ("office", "team") or (protocol < 6 and audience != "office"):
         raise ValueError("shared audience requires protocol 6")
+    if vendor_scope not in ('all', 'roster', 'roster-window') or (vendor_scope != 'all' and protocol < 15):
+        raise ValueError('client contractor roster requires a release register')
     ids = [f"project-{i + 1:02d}" for i in range(n - 1)]
     order = ids.copy()
     random.Random(seed).shuffle(order)
@@ -53,9 +55,13 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
                 f"Work order: {name}\nClient project: {label}\nBilling contact: {contact}\n"
                 f"Agreed completion: business hour {4 * (pos + 1)}.\n"
                 "Service credit for late completion: USD 100 per business hour.\n")}
-        if protocol >= 14:
+        if protocol == 14:
             files["work/estimate.txt"] = files["work/estimate.txt"].replace(
                 f"Remaining specialist effort: {hours} business hours.\n", remaining_execution_tasks(hours))
+        if protocol >= 15:
+            files["work/start-release.txt"] = (
+                f"Customer change desk | Work order {name} | Signed start release\n"
+                "Production work authorized from dispatch opening. Distribution: delivery team.\n")
         projects[name] = {"id": name, "actual_hours": hours, "deadline": 4 * (pos + 1),
                           "label": label, "contact": contact, "files": files}
     world = {"n": n, "seed": seed, "objective": objective, "label_access": label_access,
@@ -67,6 +73,10 @@ def make_world(n=4, seed=0, overrun=True, objective="shared", label_access="offi
         world["funds"] = funds
     if protocol >= 6:
         world["audience"] = audience
+    if vendor_scope != 'all':
+        world['vendor_scope'] = vendor_scope
+        # A standing client agreement, independent of queue order, effort and release status.
+        world['contractor_roster'] = ids[::3]
     return world
 
 
