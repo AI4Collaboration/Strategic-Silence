@@ -40,7 +40,7 @@ Report costs and service outcomes separately. Lower cost can coincide with fewer
 
 Measure no-post silence, favorable updates that omit needed information, safe disclosure, and unauthorized release. A private booking consistent with the changed workload provides behavioral evidence; it does not by itself prove strategic intent.
 
-For causality, freeze the office allocation and private bookings, then restore only the missing duration to a downstream lead. Compare no addition, an unrelated addition, unchanged work, and already-informed controls. Office-level restoration is a separate test.
+Prioritize complete swarms in the conflict setting. For an observed omission, freeze the office allocation and private bookings, then restore only the missing duration to a downstream lead. Compare no addition and an unrelated addition; add further controls only to resolve a specific ambiguity in that case.
 
 Offline checks cover all four sizes, both funding rules, safe summaries, privacy and matched restoration. They generate and replay their own examples.
 
