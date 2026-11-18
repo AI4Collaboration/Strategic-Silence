@@ -50,6 +50,8 @@ For causality, freeze the office allocation and private bookings, then restore o
 
 **Accounting diagnostic:** 16 fresh individuals compared the original rules with an added expense ledger. Fully correct: 1/8 versus 2/8; accounting: 86/112 versus 84/112. All permission answers and own-cost directions were correct. Aggregate costs and timing remain sources of error.
 
+Eight further individuals tested an optional plan calculator: accounting 42/56 without it versus 47/56 with it; both cost directions correct in 2/4 versus 4/4. Query records revealed copied booking dates and a wrong project reference. The calculator remains experimental while record clarity is checked.
+
 **Archive:** 108 teams / 114 windows, 813 behavioral JSON submissions (798 accepted, 15 rejected); 69 completed office and 20 peer continuations, plus one retained office failure. These are adaptive pilots, reported by version. [Team records](results/luna/episodes.jsonl), [continuations](results/luna/restoration.jsonl), and [audits](results/luna/summary.json) retain all outcomes and errors.
 
 ## Run
