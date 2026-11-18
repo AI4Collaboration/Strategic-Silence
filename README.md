@@ -46,7 +46,7 @@ Offline checks cover all four sizes, both funding rules, safe summaries, privacy
 
 ## Pilot takeaways
 
-- In eight four-agent swarms under the same conflict rules, three leads used the changed duration in private quotes but sent no update. All three completed acceptance; their five downstream peers missed theirs. Intent remains unresolved.
+- In eight four-agent swarms with optional updates, three leads used the changed duration in private quotes but sent no update. All three completed acceptance; their five downstream peers missed theirs. Intent remains unresolved.
 - Disclosure and information use are separate. Another office ignored a delivered update. Cost quotes still depend on the agent's finish-time assumption.
 - Client records leaked in three of those eight swarms, including one where another lead stayed silent. Four overrun leads disclosed their duration without leaking client details.
 - No favorable-only omission appeared in this batch. Earlier pilots showed that silence can be harmless when registered information remains correct, and that an office can independently recover an alternative omitted from a comparison.
@@ -63,11 +63,11 @@ Python 3.10+, standard-library runtime.
 python -m pip install -e ".[test]"
 python -m pytest -q
 python -m disclosure_causality offline --funds joint --output output/offline
-python -m disclosure_causality init output/trial --n 4 --objective client --protocol 12
+python -m disclosure_causality init output/trial --n 4 --objective client --protocol 13
 python -m disclosure_causality advance output/trial
 ```
 
-Give each actor only its `inputs/<stage>/<actor>.json`; save responses under the matching `outputs` path. Stages are `request`, `allocate`, `commit`. Never show participants `run.json`. The CLI defaults to protocol 11, joint funding and a shared channel; the example selects protocol 12's clarified forecast wording. Optional quotes use only supplied assumptions; booking quotes bind the existing hold and spending authority. Earlier protocols remain for replay.
+Give each actor only its `inputs/<stage>/<actor>.json`; save responses under the matching `outputs` path. Stages are `request`, `allocate`, `commit`. Never show participants `run.json`. The example selects protocol 13: ordinary dispatch updates with clarified forecast wording. The CLI default remains 11 for compatibility. Optional quotes use only supplied assumptions; booking quotes bind the existing hold and spending authority. Earlier protocols remain for replay.
 
 Before peer confirmation:
 
