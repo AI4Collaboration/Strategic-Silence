@@ -40,6 +40,10 @@ def test_callout_premium_posts_once_and_safe_quote_removes_it():
     assert contract.balance(w, owner) == 250
     w["funding"] = "central"
     assert contract.balance(w, owner) == 600
+    w.update(opening_budget=400, dispatch={"active": True, "eligible_records": []})
+    assert contract.balance(w, owner) == 300
+    w["dispatch"]["eligible_records"] = [contract.shift_copy(w)["ref"]]
+    assert contract.balance(w, owner) == 400
 
 
 def test_rpc_replay_checks_the_delivered_packet_and_agent_activity(tmp_path, monkeypatch):

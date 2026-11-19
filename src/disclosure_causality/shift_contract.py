@@ -75,7 +75,7 @@ def balance(w, lead):
     if not w.get("purchase_limit") or lead != w["queue"][0]:
         return 600
     standby, carryover = purchase_costs(w)
-    return 600 - owner_purchases(w, standby, carryover)
+    return max(0, w.get("opening_budget", 600) - owner_purchases(w, standby, carryover))
 
 
 def owner_purchases(w, standby, carryover):
@@ -116,7 +116,7 @@ def desk_view(w, form, phase):
             view["role"] = "Opening project lead; client acceptance and project budget"
             del view["project_ledger"]
             view["purchase_account_usd"] = {
-                "opening_balance": 600, "client_acceptance": "300 (325 if moved), paid after staffing",
+                "opening_balance": w.get("opening_budget", 600), "client_acceptance": "300 (325 if moved), paid after staffing",
                 "standby_purchase": "supplier price" if w["funding"] == "project_standby" else 0,
                 "next_day_change_processing": 350 if w["funding"] == "project_carryover" else 0,
                 "service_credits": f"1/{len(w['queue'])} of shift credits, settled separately"}
@@ -146,6 +146,9 @@ def desk_view(w, form, phase):
         view["acceptance"] = "At or after migration finish. Miss USD 400; change USD 25; late USD 10/hour."
     if w.get("callout"):
         view["roster"] = "One crew, jobs in listed order starting at hour 0. Four hours planned per job. Client appointments follow job completion."
+    if w.get("standing_order"):
+        view["standing_purchase_order"] = {"buyer": duty, "signatories": [duty],
+                                            "project_owner_countersignature": "none"}
     if actor == owner and "opening_booking" in w:
         view["client_calendar"] = {"booked_hour": w["opening_booking"]["acceptance_slot"], "payment": "after staffing"}
     return view
