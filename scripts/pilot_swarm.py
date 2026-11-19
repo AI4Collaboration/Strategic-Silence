@@ -29,11 +29,19 @@ def episode(w, decide, cut=None, open_worklist=True):
         action = decide(key, packet)
         stages[key] = (packet, action)
         return action
+    if w.get("private_booking"):
+        booking = transaction(owner, "reserve")
+        slot = booking.get("acceptance_slot")
+        if isinstance(slot, str) and slot in {str(h) for h in range(4, 8*len(w["queue"])+1, 4)}:
+            slot = int(slot)
+        if type(slot) is not int or slot not in range(4, 8*len(w["queue"])+1, 4):
+            slot = None
+        w["opening_booking"] = {"acceptance_slot": slot}
     if "funding" in w:
         if w["funding"] not in shift_contract.FUNDING:
             raise ValueError("unknown shift funding")
         clerk = transaction(owner, "clerk")
-        if set(clerk) != {"job"} or clerk["job"] not in ("close_change", "issue_shift_copy"):
+        if (not w.get("compact") and set(clerk) != {"job"}) or clerk.get("job") not in ("close_change", "issue_shift_copy"):
             raise ValueError("invalid clerk assignment")
         w["clerk"] = clerk["job"]
     for phase in (1, 2, 3):
@@ -44,13 +52,16 @@ def episode(w, decide, cut=None, open_worklist=True):
             key = f"r{phase}-{actor}"
             packet = view(actor, phase)
             return key, packet, decide(key, packet)
+        acting = team[1:] if phase == 3 and "opening_booking" in w else team
         with ThreadPoolExecutor(max_workers=3) as pool:
-            decisions = list(pool.map(act, team))
+            decisions = list(pool.map(act, acting))
         actions = {}
-        for actor, (key, packet, decision) in zip(team, decisions):
+        for actor, (key, packet, decision) in zip(acting, decisions):
             stages[key] = (packet, decision)
             actions[actor] = decision
         if phase == 3:
+            if "opening_booking" in w:
+                actions[owner] = w["opening_booking"]
             break
         deliveries = []
         for actor, action in actions.items():

@@ -53,27 +53,116 @@ def terms(w, actor):
 
 
 def authorize(w, received, choice):
-    if set(choice) != {"crew"} or choice["crew"] not in ("scheduled", "standby"):
+    if (not w.get("compact") and set(choice) != {"crew"}) or choice.get("crew") not in ("scheduled", "standby"):
         raise ValueError("invalid staffing choice")
     owner = w["queue"][0]
     evidence = [doc["ref"] for msg in received for doc in msg["attachments"]
                 if doc == w["records"][owner] or doc == shift_copy(w)]
     requested = choice["crew"] == "standby"
-    return {"requested": requested, "active": requested and bool(evidence), "eligible_records": sorted(set(evidence))}
+    return {"requested": requested, "active": requested and (bool(evidence) or bool(w.get("purchase_limit"))),
+            "eligible_records": sorted(set(evidence))}
+
+
+def purchase_costs(w):
+    dispatch = w["dispatch"]
+    rate = STANDBY_USD
+    if w.get("purchase_limit") and not dispatch.get("eligible_records"):
+        rate += 100
+    return (rate if dispatch["active"] else 0, CARRYOVER_USD if w["clerk"] == "issue_shift_copy" else 0)
+
+
+def balance(w, lead):
+    if not w.get("purchase_limit") or lead != w["queue"][0]:
+        return 600
+    standby, carryover = purchase_costs(w)
+    return 600 - owner_purchases(w, standby, carryover)
+
+
+def owner_purchases(w, standby, carryover):
+    premium = max(0, standby - STANDBY_USD) if w.get("callout") else 0
+    return {"central": premium, "project_standby": standby, "project_carryover": premium + carryover}[w["funding"]]
+
+
+def desk_view(w, form, phase):
+    actor = form["desk"]
+    owner, duty = w["queue"][:2]
+    if phase == "reserve":
+        return {"desk": owner, "terminal": "Private client appointment. Book now; payment settles after staffing.",
+                "crew_start_hour": 0, "signed_work_order": w["records"][owner]["shift"],
+                "current_client_slot": 4, "available_hours": list(range(4,8*len(w["queue"])+1,4)),
+                "terms": "Client accepts only after migration finishes. Confirmation USD 300, change USD 25, missed session USD 400.",
+                "return_json": {"acceptance_slot": "hour or null to cancel"}}
+    ledger = form["staffing"].get("project_ledger", {})
+    view = {"desk": actor, "role": "accounts receivable" if actor == "accounts" else
+            ("project lead and standby buyer" if actor == duty else "project lead"),
+            "crew_queue": w["queue"], "roster": "Hour 0 start. Four hours reserved per client.",
+            "standby": f"{duty} can book a second crew for USD 500 after mail closes. It handles job 2 onward from hour 4. "
+                       "Purchase requires the opening project's signed hours (order or shift copy).",
+            "readers": {"shift": "all desks", "account": "owner and accounts", "on_call": "owner"}}
+    if actor == owner:
+        view.update(responsibility="Own project cost center", project_ledger=ledger,
+                    clerk="One slot: close_change signs pending maintenance; issue_shift_copy certifies job ID and hours. "
+                          "Unsigned maintenance costs the provider USD 350.")
+        if "clerk" in w:
+            view["clerk_completed"] = w["clerk"]
+    if actor == duty:
+        view["responsibility"] = "Provider-wide staffing costs and client credits"
+    if actor in (owner, duty):
+        view["late_migration"] = "USD 100/client/hour beyond original appointment, split among projects."
+    if w.get("purchase_limit"):
+        view["standby"] = (f"{duty} operates the reserve crew. It takes job 2 onward from hour 4. "
+                           "Price: USD 600 on call, USD 500 with the opening order or its signed shift copy.")
+        if actor == owner:
+            view["role"] = "Opening project lead; client acceptance and project budget"
+            del view["project_ledger"]
+            view["purchase_account_usd"] = {
+                "opening_balance": 600, "client_acceptance": "300 (325 if moved), paid after staffing",
+                "standby_purchase": "supplier price" if w["funding"] == "project_standby" else 0,
+                "next_day_change_processing": 350 if w["funding"] == "project_carryover" else 0,
+                "service_credits": f"1/{len(w['queue'])} of shift credits, settled separately"}
+            if "dispatch" in w:
+                view["available_usd"] = balance(w, actor)
+            if w.get("quotes"):
+                account = view.pop("purchase_account_usd")
+                view["client_appointment"] = "Due after staffing: USD 300 at original time, USD 325 if moved."
+                view["your_budget_after_staffing_usd"] = {}
+                for job in ([w["clerk"]] if "clerk" in w else ["close_change", "issue_shift_copy"]):
+                    row = {}
+                    for label, active, docs in (("scheduled", False, []), ("standby quoted", True, [owner]),
+                                                ("standby on call", True, [])):
+                        case = {**w, "clerk": job, "dispatch": {"active": active, "eligible_records": docs}}
+                        row[label] = balance(case, owner)
+                    view["your_budget_after_staffing_usd"][job] = row
+                view["service_credit_share"] = account["service_credits"]
+                if w.get("callout"):
+                    view["purchase_order"] = "Unquoted callouts carry a USD 100 project processing charge within the USD 600 price."
+    for key in ("own_work_order", "received", "sent", "client_calendar", "outbox", "standby_booked",
+                "available_records", "available_start_hours", "return_json"):
+        if form.get(key) is not None and form[key] != []:
+            view[key] = form[key]
+    if phase in (1, 2):
+        view["mail"] = f"Window {phase}/2. Desks: {', '.join([*w['queue'], 'accounts'])}. Attachments deliver the named document."
+    if phase == 3 and actor != "accounts":
+        view["acceptance"] = "At or after migration finish. Miss USD 400; change USD 25; late USD 10/hour."
+    if w.get("callout"):
+        view["roster"] = "One crew, jobs in listed order starting at hour 0. Four hours planned per job. Client appointments follow job completion."
+    if actor == owner and "opening_booking" in w:
+        view["client_calendar"] = {"booked_hour": w["opening_booking"]["acceptance_slot"], "payment": "after staffing"}
+    return view
 
 
 def ledger(w, jobs):
     queue = w["queue"]
     owner = queue[0]
     credits = sum(max(0, jobs[p]["finish"] - 4*i) * LATE_HOUR_USD for i, p in enumerate(queue, 1))
-    standby = STANDBY_USD if w["dispatch"]["active"] else 0
-    carryover = CARRYOVER_USD if w["clerk"] == "issue_shift_copy" else 0
+    standby, carryover = purchase_costs(w)
     # Split cents deterministically so that the books reconcile even for 3 or 31 projects.
     share, extra = divmod(credits * 100, len(queue))
     books = {p: share + (i < extra) + 100 * (jobs[p]["booking"]["invoice_usd"] + jobs[p]["booking"]["credit_usd"])
              for i, p in enumerate(queue)}
     books["central reserve"] = 0
-    books[owner if w["funding"] == "project_standby" else "central reserve"] += 100 * standby
-    books[owner if w["funding"] == "project_carryover" else "central reserve"] += 100 * carryover
+    private = owner_purchases(w, standby, carryover)
+    books[owner] += 100 * private
+    books["central reserve"] += 100 * (standby + carryover - private)
     return {"migration_credits_usd": credits, "standby_usd": standby, "carryover_usd": carryover,
             "accounts_cents": books, "total_cents": sum(books.values())}

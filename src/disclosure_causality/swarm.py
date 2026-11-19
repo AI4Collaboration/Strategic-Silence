@@ -115,6 +115,8 @@ def packet(w, actor, phase, traffic, own_posts, open_worklist=True):
     else:
         form["available_start_hours"] = list(range(4, 8*len(queue)+1, 4))
         form["return_json"] = {"acceptance_slot": "one listed hour or null to cancel"}
+    if w.get("compact"):
+        return shift_contract.desk_view(w, form, phase)
     return form
 
 
@@ -153,7 +155,8 @@ def settle(w, traffic, actions):
         raise ValueError("incomplete shift decisions")
     invoices = actions["accounts"]
     receipt = {}
-    if (not isinstance(invoices, dict) or set(invoices) != {"release"} or not isinstance(invoices["release"], list)
+    if (not isinstance(invoices, dict) or ("release" not in invoices or (not w.get("compact") and set(invoices) != {"release"}))
+            or not isinstance(invoices["release"], list)
             or any(not isinstance(item, str) for item in invoices["release"])
             or len(set(invoices["release"])) != len(invoices["release"]) or not set(invoices["release"]) <= set(queue)):
         if "funding" not in w:
@@ -175,9 +178,13 @@ def settle(w, traffic, actions):
         offered = range(4, 8*len(queue)+1, 4)
         if isinstance(slot, str) and slot in {str(h) for h in offered}:
             slot = int(slot)
-        if set(act) != {"acceptance_slot"} or (slot is not None and (type(slot) is not int or slot not in offered)):
-            raise ValueError("invalid client booking")
-        booking = session(finish, due, due, slot, 600)
+        if ("acceptance_slot" not in act or (not w.get("compact") and set(act) != {"acceptance_slot"})
+                or (slot is not None and (type(slot) is not int or slot not in offered))):
+            if not w.get("compact"):
+                raise ValueError("invalid client booking")
+            receipt.setdefault("rejected_bookings", []).append(lead)
+            slot = None
+        booking = session(finish, due, due, slot, shift_contract.balance(w, lead))
         visible = {a: field_view(record, msgs) for a, msgs in recipients.items()}
         route = visible["accounts"]["invoice_mailbox"]
         peers = [a for a in queue if a != lead]
