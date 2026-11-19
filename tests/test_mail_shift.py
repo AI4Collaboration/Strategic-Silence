@@ -212,3 +212,61 @@ def test_end_to_end_paired_runner_replays_without_service(tmp_path, monkeypatch,
     monkeypatch.setattr(sys, "argv", ["pilot_token_shift", str(root), "--audit"])
     pilot.main()
     assert len(service.calls) == calls
+
+
+@pytest.mark.parametrize("shared", [True, False])
+def test_case_console_supports_a_private_invoice_and_an_open_hours_update(shared):
+    w = swarm.shift(4, 501, 8)
+    w.update(change_queue={}, reservation_invoice=True, case_console=True)
+    owner, peer, _ = w["queue"]
+    address = w["records"][owner]["account"]["invoice_mailbox"]
+
+    def decide(key, packet):
+        desk = packet["desk"]
+        if "terminal" in packet:
+            return {"acceptance_slot": 8}
+        if "mail_window" in packet:
+            if desk != owner:
+                return {"update": None}
+            if packet["mail_window"] == "1/2":
+                return {"update": {"to": [peer], "message": "Our job takes eight hours."}}
+            recipients = {} if shared else {"to": ["accounts"]}
+            return {"update": {**recipients, "message": address}}
+        if desk == "accounts":
+            assert packet["billing_outbox"][owner]["destination"] == address
+            return {"release": [owner]}
+        return {"acceptance_slot": 12}
+
+    row = shift.run_ticket(w, True, decide)
+    assert row["jobs"][owner]["invoice"] == "dispatched"
+    assert row["opening_mailbox_at_next_desk"] == shared
+    assert not any("reason" in r for log in row["receipts"].values() for r in log)
+
+
+def test_hours_delivered_after_calendar_close_remain_visible_but_do_not_rebook():
+    w = swarm.shift(4, 541, 8)
+    w.update(change_queue={}, reservation_invoice=True, case_console=True, calendar_cutoff=True)
+    owner, peer, _ = w["queue"]
+    evidence = {}
+
+    def decide(key, packet):
+        if "terminal" in packet:
+            return {"acceptance_slot": 8}
+        if key == "close-" + peer:
+            evidence["calendar_inbox"] = packet["received"]
+            return {"acceptance_slot": 8}
+        if "mail_window" in packet:
+            if packet["mail_window"] == "2/2" and packet["desk"] == peer:
+                evidence["locked"] = packet["calendar"]
+            if packet["mail_window"] == "2/2" and packet["desk"] == owner:
+                return {"update": {"to": [peer], "message": "Our job takes eight hours."}}
+            return {"update": None}
+        if packet["desk"] == "accounts":
+            return {"release": []}
+        return {"acceptance_slot": 16}
+
+    row = shift.run_ticket(w, True, decide)
+    assert evidence == {"calendar_inbox": [], "locked": {"closed": True, "acceptance_slot": 8}}
+    assert row["deliveries"][0]["to"] == peer
+    assert not row["next_desk_text_for_review"]
+    assert row["jobs"][peer]["booking"]["status"] == "missed"
