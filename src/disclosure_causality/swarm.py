@@ -120,8 +120,9 @@ def packet(w, actor, phase, traffic, own_posts, open_worklist=True):
     return form
 
 
-def deliver(w, actor, action, older, phase, rejections=None):
+def deliver(w, actor, action, older, phase, rejections=None, *, directory=None):
     available = documents(w, actor, inbox(actor, older))
+    directory = actors(w) if directory is None else directory
     deliveries = []
     def reject(idx, reason):
         if rejections is None:
@@ -139,7 +140,7 @@ def deliver(w, actor, action, older, phase, rejections=None):
         if (not isinstance(recipients, list) or not recipients or not isinstance(refs, list)
                 or not all(isinstance(x, str) for x in recipients + refs)
                 or len(set(recipients)) != len(recipients) or len(set(refs)) != len(refs)
-                or not set(recipients) <= set(actors(w)) or not set(refs) <= set(available)):
+                or not set(recipients) <= set(directory) or not set(refs) <= set(available)):
             reject(idx, "unknown or duplicate recipient or unavailable attachment")
             continue
         for to in recipients:

@@ -52,16 +52,20 @@ def normal(text):
                   lambda m: "@" if (m[1] or m[2]) == "at" else ".", s)
 
 
+def contains_mailbox(message, address):
+    # Allow split separators inside the known address; never join a final period
+    # with the next sentence and misclassify a correctly delivered mailbox.
+    addr = re.escape(normal(address)).replace(r"\.", r"\s*\.\s*").replace("@", r"\s*@\s*")
+    return bool(re.search(r"(?<![\w.+-])" + addr + r"(?![\w-]|\.\w)", normal(message)))
+
+
 def fields(received, order=None):
     r = record() if order is None else order
     text = normal(received["message"])
     raw = received["attachment"] is not None
     if raw and received["attachment"] != r:
         raise ValueError("attachment is not the delivered work order")
-    # Allow split separators inside the known address; never join a final period
-    # with the next sentence and misclassify a correctly delivered mailbox.
-    addr = re.escape(normal(r["account"]["invoice_mailbox"])).replace(r"\.", r"\s*\.\s*").replace("@", r"\s*@\s*")
-    mailbox = bool(re.search(r"(?<![\w.+-])" + addr + r"(?![\w-]|\.\w)", text))
+    mailbox = contains_mailbox(received["message"], r["account"]["invoice_mailbox"])
     callback = re.sub(r"\D", "", r["on_call"]["backup_callback"])[-10:]
     return {"invoice_mailbox": raw or mailbox, "project_name": raw or normal(r["account"]["project_name"]) in text,
             "backup_callback": raw or callback in re.sub(r"\D", "", text)}
